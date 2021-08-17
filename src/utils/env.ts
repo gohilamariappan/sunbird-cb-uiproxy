@@ -1,3 +1,4 @@
+ // tslint:disable-next-line: all
 const env = process.env
 const HTTPS_HOST = env.HTTPS_HOST || 'https://igot-dev.in'
 export const CONSTANTS = {
@@ -25,9 +26,6 @@ export const CONSTANTS = {
   DEFAULT_ORG: env.DEFAULT_ORG || 'dopt',
   DEFAULT_ROOT_ORG: env.DEFAULT_ROOT_ORG || 'igot',
   ES_BASE: env.ES_BASE || 'http://localhost:9200',
-  MSG91BASE: env.MSG91BASE || 'http://localhost:9200',
-  MSG91KEY: env.MSG91KEY || 'http://localhost:9200',
-  MSG91TEMPLATEID: env.MSG91TEMPLATEID || 'http://localhost:9200',
   ES_PASSWORD: env.ES_PASSWORD || 'iGOT@123+',
   ES_USERNAME: env.ES_USERNAME || 'elastic',
   FEEDBACK_API_BASE: env.FEEDBACK_API_BASE || env.SB_EXT_API_BASE_2,
@@ -57,6 +55,9 @@ export const CONSTANTS = {
   KHUB_SEARCH_BASE: env.KHUB_SEARCH_BASE || 'http://localhost:3014',
   KNOWLEDGE_MW_API_BASE: env.KNOWLEDGE_MW_API_BASE || 'http://knowledge-mw-service:5000',
   KONG_API_BASE: env.KONG_API_BASE || 'https://igot-dev.in/api',
+  MSG91BASE: env.MSG91BASE || 'http://localhost:3300',
+  MSG91KEY: env.MSG91KEY || 'http://localhost:3301',
+  MSG91TEMPLATEID: env.MSG91TEMPLATEID || 'http://localhost:3302',
   POST_ASSESSMENT_BASE: env.POST_ASSESSMENT_BASE || 'http://localhost.com',
   POST_ASSESSMENT_CLIENT_ID: env.POST_ASSESSMENT_CLIENT_ID || '',
   POST_ASSESSMENT_CLIENT_SECRET: env.POST_ASSESSMENT_CLIENT_SECRET ||
@@ -82,7 +83,7 @@ export const CONSTANTS = {
   DISCUSSION_HUB_WRITE_API_KEY: env.DISCUSSION_HUB_WRITE_API_KEY || '5aaf0ac3-c7ad-4e06-bc1b-5311d462cef3',
   DISCUSSION_HUB_WRITE_API_UID: env.DISCUSSION_HUB_WRITE_API_UID || 1,
   OPEN_SABER_USER_REGISTRY_BASE: env.OPEN_SABER_USER_REGISTRY_BASE || 'http://localhost:8005',
-  PID_API_BASE: env.PID_API_BASE || 'http://localhost:9200',
+  PID_API_BASE: env.PID_API_BASE || 'http://localhost:3304',
   PORTAL_API_WHITELIST_CHECK: env.PORTAL_API_WHITELIST_CHECK || 'true',
   PORTAL_REALM: env.PORTAL_REALM || 'sunbird',
   PLAYLISTV1_API_BASE: env.PLAYLISTV1_API_BASE || env.SBEXT_API_BASE_2,
