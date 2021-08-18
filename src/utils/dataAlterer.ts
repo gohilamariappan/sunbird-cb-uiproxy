@@ -53,7 +53,7 @@ function hierarchy(data: any = null) {
 			})
 		}
 	}
-	
+
 	return data
 }
 

@@ -7,7 +7,9 @@ import { certificationApi } from './certifications'
 import { cohortsApi } from './cohorts'
 import { competencyApi } from './competency'
 import { conceptGraphApi } from './concept'
-import { connectionsApi } from './connections'
+// tslint:disable-next-line: no-commented-code
+// import { connectionsApi } from './connections'
+import { connectionsV2Api } from './connections_v2'
 import { contentApi } from './content'
 import { contentValidationApi } from './contentValidation'
 import { counterApi } from './counter'
@@ -15,8 +17,7 @@ import { deptApi } from './departments'
 import { discussionHubApi } from './discussionHub/discussionHub'
 import { externalEventsApi } from './event-external'
 import { eventsApi } from './events'
-import {  fracApi } from './frac'
-import { infyRadioApi } from './infyradio'
+import { fracApi } from './frac'
 import { knowledgeHubApi } from './khub'
 import { leaderBoardApi } from './leaderboard'
 import { navigatorApi } from './navigator'
@@ -24,6 +25,7 @@ import { networkConnectionApi } from './network'
 import { networkHubApi } from './network-hub'
 import { portalApi } from './portal-v3'
 import { recommendationApi } from './recommendation'
+import { userAuthKeyCloakApi } from './resource'
 import { roleActivityApi } from './roleActivity'
 import { scoringApi } from './scoring'
 import { scromApi } from './scrom'
@@ -52,7 +54,6 @@ protectedApiV8.use('/content', contentApi)
 protectedApiV8.use('/profanity', contentValidationApi)
 protectedApiV8.use('/counter', counterApi)
 protectedApiV8.use('/discussionHub', discussionHubApi)
-protectedApiV8.use('/infyradio', infyRadioApi)
 protectedApiV8.use('/khub', knowledgeHubApi)
 protectedApiV8.use('/leaderboard', leaderBoardApi)
 protectedApiV8.use('/navigator', navigatorApi)
@@ -67,12 +68,15 @@ protectedApiV8.use('/translate', translateApi)
 protectedApiV8.use('/attended-content', attendedContentApi)
 protectedApiV8.use('/event-external', externalEventsApi)
 protectedApiV8.use('/network', networkConnectionApi)
-protectedApiV8.use('/connections', connectionsApi)
+// protectedApiV8.use('/connections', connectionsApi)
+protectedApiV8.use('/connections', connectionsV2Api)
 protectedApiV8.use('/competency', competencyApi)
 protectedApiV8.use('/dept', deptApi)
 protectedApiV8.use('/portal', portalApi)
 protectedApiV8.use('/scroing', scoringApi)
 protectedApiV8.use('/workflowhandler', workflowHandlerApi)
+protectedApiV8.use('/frac', fracApi)
 protectedApiV8.use('/roleactivity', roleActivityApi)
+protectedApiV8.use('/resource', userAuthKeyCloakApi)
 protectedApiV8.use('/workallocation', workAllocationApi)
 protectedApiV8.use('/frac', fracApi)
