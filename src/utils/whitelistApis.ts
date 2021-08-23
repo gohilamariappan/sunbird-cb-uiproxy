@@ -28,6 +28,14 @@ const ROLE = {
 export const API_LIST = {
     URL:
     {
+        
+        '/authApi/action/content/parent/hierarchy': {
+            checksNeeded: [CHECK.ROLE],
+            // tslint:disable-next-line: object-literal-sort-keys
+            ROLE_CHECK: [
+                ROLE.PUBLIC,
+            ],
+        },
         '/authApi/content/v3/create': {
             checksNeeded: [CHECK.ROLE],
             // tslint:disable-next-line: object-literal-sort-keys
@@ -43,13 +51,6 @@ export const API_LIST = {
             ],
         },
         '/authApi/content/v3/update/:do_id': {
-            checksNeeded: [CHECK.ROLE],
-            // tslint:disable-next-line: object-literal-sort-keys
-            ROLE_CHECK: [
-                ROLE.PUBLIC,
-            ],
-        },
-        '/authApi/action/content/parent/hierarchy': {
             checksNeeded: [CHECK.ROLE],
             // tslint:disable-next-line: object-literal-sort-keys
             ROLE_CHECK: [
