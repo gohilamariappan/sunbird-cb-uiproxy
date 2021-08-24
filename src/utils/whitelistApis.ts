@@ -36,6 +36,13 @@ export const API_LIST = {
                 ROLE.PUBLIC,
             ],
         },
+        '/authApi/action/content/parent/hierarchy/:do_id': {
+            checksNeeded: [CHECK.ROLE],
+            // tslint:disable-next-line: object-literal-sort-keys
+            ROLE_CHECK: [
+                ROLE.PUBLIC,
+            ],
+        },
         '/authApi/content/v3/create': {
             checksNeeded: [CHECK.ROLE],
             // tslint:disable-next-line: object-literal-sort-keys
@@ -81,6 +88,13 @@ export const API_LIST = {
             ],
         },
         '/proxies/v8/api/user/v2/read': {
+            checksNeeded: [CHECK.ROLE],
+            // tslint:disable-next-line: object-literal-sort-keys
+            ROLE_CHECK: [
+                ROLE.PUBLIC,
+            ],
+        },
+        '/protected/v8/user/iconBadge/unseenNotificationCount': {
             checksNeeded: [CHECK.ROLE],
             // tslint:disable-next-line: object-literal-sort-keys
             ROLE_CHECK: [
@@ -1179,6 +1193,7 @@ export const API_LIST = {
     URL_PATTERN:
     [
         '/authApi/action/content/parent/hierarchy',
+        '/authApi/action/content/parent/hierarchy/:do_id',
         '/authApi/content/v3/create',
         '/authApi/content/v3/read/:do_id',
         '/authApi/content/v3/update/:do_id',
@@ -1248,6 +1263,7 @@ export const API_LIST = {
         '/protected/v8/discussionHub/topics/recent',
         '/protected/v8/cohorts/:cohortType/:contentId',
         '/protected/v8/user/content/like',
+        '/protected/v8/user/iconBadge/unseenNotificationCount',
         '/protected/v8/user/telemetry',
         '/protected/v8/scrom/get/:id',
         '/protected/v8/user/progress/:contentId',
