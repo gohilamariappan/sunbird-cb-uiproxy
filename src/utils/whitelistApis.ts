@@ -28,7 +28,7 @@ const ROLE = {
 export const API_LIST = {
     URL:
     {
-        
+
         '/authApi/action/content/parent/hierarchy': {
             checksNeeded: [CHECK.ROLE],
             // tslint:disable-next-line: object-literal-sort-keys
@@ -1178,10 +1178,10 @@ export const API_LIST = {
     },
     URL_PATTERN:
     [
+        '/authApi/action/content/parent/hierarchy',
         '/authApi/content/v3/create',
         '/authApi/content/v3/read/:do_id',
         '/authApi/content/v3/update/:do_id',
-        '/authApi/action/content/parent/hierarchy',
         '/proxies/v8/api/user/v2/read',
         '/proxies/v8/api/user/v2/read/:id',
         '/proxies/v8/user/v1/read/:id',
