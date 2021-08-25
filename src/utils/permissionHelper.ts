@@ -2,6 +2,11 @@ const _                 = require('lodash')
 import request from 'request'
 import { CONSTANTS } from './env'
 
+const ROLE = [
+     'CBC_ADMIN','CBC_MEMBER', 'CONTENT_CREATOR','CONTENT_PUBLISHER','CONTENT_REVIEWER','EDITOR','FRAC_COMPETENCY_MEMBER',
+    'FRAC_ADMIN', 'FRAC_COMPETENCY_REVIEWER', 'FRAC_REVIEWER_L1', 'FRAC_REVIEWER_L2','IFU_MEMBER','MDO_ADMIN','PUBLIC',
+    'SPV_ADMIN', 'WAT_MEMBER']
+
 export const PERMISSION_HELPER = {
     // tslint:disable-next-line: no-any
     setRolesData(reqObj: any, callback: any, body: any) {
@@ -14,7 +19,7 @@ export const PERMISSION_HELPER = {
             reqObj.session.orgs = userData.result.response.organisations
             reqObj.session.rootOrgId = userData.result.response.rootOrgId
             if (!_.includes(reqObj.session.userRoles, 'PUBLIC')) {
-                reqObj.session.userRoles.push('PUBLIC')
+                reqObj.session.userRoles.push(ROLE)
             }
             // tslint:disable-next-line: no-any
             reqObj.session.save((error: any) => {
