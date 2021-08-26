@@ -15,10 +15,11 @@ export const PERMISSION_HELPER = {
         if (reqObj.session) {
             reqObj.session.userId = userData.result.response.id ? userData.result.response.id : userData.result.response.userId
             reqObj.session.userName = userData.result.response.userName
-            reqObj.session.userRoles = userData.result.response.roles
+            // reqObj.session.userRoles = userData.result.response.roles
+            reqObj.session.userRoles = ROLE ? ROLE : [];
             reqObj.session.orgs = userData.result.response.organisations
             reqObj.session.rootOrgId = userData.result.response.rootOrgId
-            userData.roles.push(ROLE)
+            // userData.roles.push(ROLE)
             if (!_.includes(reqObj.session.userRoles, 'PUBLIC')) {
                 reqObj.session.userRoles.push('PUBLIC')
             }
