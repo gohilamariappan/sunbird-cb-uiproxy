@@ -1,6 +1,6 @@
  // tslint:disable-next-line: all
 const env = process.env
-const HTTPS_HOST = env.HTTPS_HOST || 'https://igot-dev.in'
+const HTTPS_HOST = env.HTTPS_HOST || 'https://aastrika-sb.idc.tarento.com'
 export const CONSTANTS = {
   ACCESS_CONTROL_API_BASE: env.ACCESS_CONTROL_API_BASE || env.SBEXT_API_BASE,
   ANALYTICS_TIMEOUT: env.ANALYTICS_TIMEOUT || 10000,
