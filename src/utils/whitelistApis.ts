@@ -556,6 +556,20 @@ export const API_LIST = {
                 ROLE.PUBLIC,
             ],
         },
+        '/protected/v8/user/playlist': {
+            checksNeeded: [CHECK.ROLE],
+            // tslint:disable-next-line: object-literal-sort-keys
+            ROLE_CHECK: [
+                ROLE.PUBLIC,
+            ],
+        },
+        'protected/v8/user/playlist/create': {
+            checksNeeded: [CHECK.ROLE],
+            // tslint:disable-next-line: object-literal-sort-keys
+            ROLE_CHECK: [
+                ROLE.PUBLIC,
+            ],
+        },
         '/protected/v8/user/telemetry': {
             checksNeeded: [CHECK.ROLE],
             // tslint:disable-next-line: object-literal-sort-keys
@@ -585,6 +599,13 @@ export const API_LIST = {
             ],
         },
         '/protected/v8/user/progress': {
+            checksNeeded: [CHECK.ROLE],
+            // tslint:disable-next-line: object-literal-sort-keys
+            ROLE_CHECK: [
+                ROLE.PUBLIC,
+            ],
+        },
+        '/protected/v8/user/topics/v2/:tsId': {
             checksNeeded: [CHECK.ROLE],
             // tslint:disable-next-line: object-literal-sort-keys
             ROLE_CHECK: [
@@ -826,6 +847,13 @@ export const API_LIST = {
             ],
         },
         '/protected/v8/frac/getNodeById/:id/:type': {
+            checksNeeded: [CHECK.ROLE],
+            // tslint:disable-next-line: object-literal-sort-keys
+            ROLE_CHECK: [
+                ROLE.PUBLIC,
+            ],
+        },
+        'proxies/v8/LA/api/la/contentanalytics/:contentId/:type': {
             checksNeeded: [CHECK.ROLE],
             // tslint:disable-next-line: object-literal-sort-keys
             ROLE_CHECK: [
@@ -1091,6 +1119,20 @@ export const API_LIST = {
                 ROLE.PUBLIC,
             ],
         },
+        'protected/v8/user/goals/user/:sourceField': {
+            checksNeeded: [CHECK.ROLE],
+            // tslint:disable-next-line: object-literal-sort-keys
+            ROLE_CHECK: [
+                ROLE.PUBLIC,
+            ],
+        },
+        '/protected/v8/user/feedbackV2/config': {
+            checksNeeded: [CHECK.ROLE],
+            // tslint:disable-next-line: object-literal-sort-keys
+            ROLE_CHECK: [
+                ROLE.PUBLIC,
+            ],
+        },
         '/protected/v8/user/profileRegistry/getUserRegistryById': {
             checksNeeded: [CHECK.ROLE],
             // tslint:disable-next-line: object-literal-sort-keys
@@ -1196,6 +1238,20 @@ export const API_LIST = {
                 ROLE.PUBLIC,
             ],
         },
+        '/protected/v8/content/:do_id': {
+            checksNeeded: [CHECK.ROLE],
+            // tslint:disable-next-line: object-literal-sort-keys
+            ROLE_CHECK: [
+                ROLE.PUBLIC,
+            ],
+        },
+        '/public/v8/homePage/searchV6': {
+            checksNeeded: [CHECK.ROLE],
+            // tslint:disable-next-line: object-literal-sort-keys
+            ROLE_CHECK: [
+                ROLE.PUBLIC,
+            ],
+        },
     },
     URL_PATTERN:
     [
@@ -1203,7 +1259,7 @@ export const API_LIST = {
         '/authApi/action/content/parent/hierarchy/:do_id',
         '/authApi/content/v3/create',
         '/authApi/content/v3/read/:do_id',
-        '/authApi/content/v3/update/:do_id', 
+        '/authApi/content/v3/update/:do_id',
         '/authContent/:do_id',
         '/proxies/v8/api/user/v2/read',
         '/proxies/v8/api/user/v2/read/:id',
@@ -1292,6 +1348,8 @@ export const API_LIST = {
         '/protected/v8/workflowhandler/historyByApplicationId/:applicationId',
         '/protected/v8/user/autocomplete/:query',
         '/protected/v8/portal/spv/deptAction/userrole',
+        '/protected/v8/user/playlist',
+        'protected/v8/user/playlist/create',
         '/protected/v8/user/preference',
         '/protected/v8/workflowhandler/applicationsSearch',
         '/protected/v8/workallocation/getWorkOrders',
@@ -1337,6 +1395,8 @@ export const API_LIST = {
         '/protected/v8/connections/update/connection',
         '/protected/v8/workflowhandler/userWFApplicationFieldsSearch',
         '/protected/v8/user/details/detailV1',
+        'protected/v8/user/goals/user/:sourceField',
+        '/protected/v8/user/feedbackV2/config',
         '/protected/v8/user/profileRegistry/getMasterNationalities',
         '/protected/v8/user/profileRegistry/getMasterLanguages',
         '/protected/v8/user/profileRegistry/getProfilePageMeta',
@@ -1350,6 +1410,7 @@ export const API_LIST = {
         '/protected/v8/workflowhandler/userWfSearch',
         '/protected/v8/user/profileRegistry/getUserRegistryById',
         '/protected/v8/user/profileRegistry/getUserRegistryById/:id',
+        '/protected/v8/user/topics/v2/:tsId',
         '/protected/v8/workallocation/copy/workOrder',
         '/reset',
         '/protected/v8/user/evaluate/assessment/submit/v2',
@@ -1363,5 +1424,8 @@ export const API_LIST = {
         '/protected/v8/connections/v2/connections/suggests',
         '/protected/v8/connections/v2/update/connection',
         '/protected/v8/content/parents/:do_id',
+        '/protected/v8/content/:do_id',
+        '/public/v8/homePage/searchV6',
+        'proxies/v8/LA/api/la/contentanalytics/:contentId/:type'
     ],
 }
