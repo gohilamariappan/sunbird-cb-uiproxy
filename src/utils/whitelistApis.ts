@@ -28,7 +28,6 @@ const ROLE = {
 export const API_LIST = {
     URL:
     {
-
         '/authApi/action/content/parent/hierarchy': {
             checksNeeded: [CHECK.ROLE],
             // tslint:disable-next-line: object-literal-sort-keys
@@ -123,6 +122,13 @@ export const API_LIST = {
             ],
         },
         '/proxies/v8/sunbirdigot/read': {
+            checksNeeded: [CHECK.ROLE],
+            // tslint:disable-next-line: object-literal-sort-keys
+            ROLE_CHECK: [
+                ROLE.PUBLIC,
+            ],
+        },
+        '/protected/v8/content/searchV5': {
             checksNeeded: [CHECK.ROLE],
             // tslint:disable-next-line: object-literal-sort-keys
             ROLE_CHECK: [
@@ -1347,6 +1353,7 @@ export const API_LIST = {
         '/protected/v8/discussionHub/categories/:cid/:slug?/:tid?',
         '/protected/v8/discussionHub/topics/recent',
         '/protected/v8/cohorts/:cohortType/:contentId',
+        '/protected/v8/content/searchV5',
         '/protected/v8/user/content/like',
         '/protected/v8/user/iconBadge/unseenNotificationCount',
         '/protected/v8/user/telemetry',
