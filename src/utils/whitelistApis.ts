@@ -310,7 +310,21 @@ export const API_LIST = {
                 ROLE.PUBLIC,
             ],
         },
+        '/proxies/v8/LA/api/la/contentanalytics': {
+            checksNeeded: [CHECK.ROLE],
+            // tslint:disable-next-line: object-literal-sort-keys
+            ROLE_CHECK: [
+                ROLE.PUBLIC,
+            ],
+        },
         '/proxies/v8/data/v1/system/settings/get/orgTypeList': {
+            checksNeeded: [CHECK.ROLE],
+            // tslint:disable-next-line: object-literal-sort-keys
+            ROLE_CHECK: [
+                ROLE.PUBLIC,
+            ],
+        },
+        '/proxies/v8/learner/course/v1/enrol': {
             checksNeeded: [CHECK.ROLE],
             // tslint:disable-next-line: object-literal-sort-keys
             ROLE_CHECK: [
@@ -590,13 +604,6 @@ export const API_LIST = {
                 ROLE.PUBLIC,
             ],
         },
-        'protected/v8/user/playlist/create': {
-            checksNeeded: [CHECK.ROLE],
-            // tslint:disable-next-line: object-literal-sort-keys
-            ROLE_CHECK: [
-                ROLE.PUBLIC,
-            ],
-        },
         '/protected/v8/user/telemetry': {
             checksNeeded: [CHECK.ROLE],
             // tslint:disable-next-line: object-literal-sort-keys
@@ -838,6 +845,41 @@ export const API_LIST = {
                 ROLE.PUBLIC,
             ],
         },
+        '/protected/v8/user/badge': {
+            checksNeeded: [CHECK.ROLE],
+            // tslint:disable-next-line: object-literal-sort-keys
+            ROLE_CHECK: [
+                ROLE.PUBLIC,
+            ],
+        },
+        '/protected/v8/user/feedbackV2/content/:do_id': {
+            checksNeeded: [CHECK.ROLE],
+            // tslint:disable-next-line: object-literal-sort-keys
+            ROLE_CHECK: [
+                ROLE.PUBLIC,
+            ],
+        },
+        '/protected/v8/user/goals/action': {
+            checksNeeded: [CHECK.ROLE],
+            // tslint:disable-next-line: object-literal-sort-keys
+            ROLE_CHECK: [
+                ROLE.PUBLIC,
+            ],
+        },
+        '/protected/v8/user/goals/for-others': {
+            checksNeeded: [CHECK.ROLE],
+            // tslint:disable-next-line: object-literal-sort-keys
+            ROLE_CHECK: [
+                ROLE.PUBLIC,
+            ],
+        },
+        '/protected/v8/user/goals/common': {
+            checksNeeded: [CHECK.ROLE],
+            // tslint:disable-next-line: object-literal-sort-keys
+            ROLE_CHECK: [
+                ROLE.PUBLIC,
+            ],
+        },
         '/protected/v8/user/mandatoryContent/checkStatus': {
             checksNeeded: [CHECK.ROLE],
             // tslint:disable-next-line: object-literal-sort-keys
@@ -846,6 +888,13 @@ export const API_LIST = {
             ],
         },
         '/protected/v8/user/rating/content/average-ratingInfo/:do_id': {
+            checksNeeded: [CHECK.ROLE],
+            // tslint:disable-next-line: object-literal-sort-keys
+            ROLE_CHECK: [
+                ROLE.PUBLIC,
+            ],
+        },
+        '/protected/v8/user/realTimeProgress/update/': {
             checksNeeded: [CHECK.ROLE],
             // tslint:disable-next-line: object-literal-sort-keys
             ROLE_CHECK: [
@@ -1286,7 +1335,7 @@ export const API_LIST = {
                 ROLE.PUBLIC,
             ],
         },
-        '/protected/v8/training/content/:do_id': {
+        '/protected/v8/training/content/:do_id//trainings/count': {
             checksNeeded: [CHECK.ROLE],
             // tslint:disable-next-line: object-literal-sort-keys
             ROLE_CHECK: [
@@ -1317,6 +1366,7 @@ export const API_LIST = {
         '/proxies/v8/sunbirdigot/read',
         '/proxies/v8/sunbirdigot/search',
         '/proxies/v8/discussion/user/v1/create',
+        '/proxies/v8/LA/api/la/contentanalytics',
         '/proxies/v8/data/v1/system/settings/get/orgTypeList',
         '/proxies/v8/org/v1/search',
         '/proxies/v8/org/v1/update',
@@ -1367,6 +1417,7 @@ export const API_LIST = {
         '/proxies/v8/user/v1/migrate',
         '/proxies/v8/user/private/v1/migrate',
         '/proxies/v8/user/private/v1/assign/role/userrole',
+        '/proxies/v8/learner/course/v1/enrol',
         '/proxies/v8/learnervm/private/content/v3/retire/',
         '/proxies/v8/private/content/v3/update/:do_id',
         '/protected/v8/user/profileDetails/test',
@@ -1399,10 +1450,9 @@ export const API_LIST = {
         '/protected/v8/workflowhandler/historyByApplicationId/:applicationId',
         '/protected/v8/user/autocomplete/:query',
         '/protected/v8/portal/spv/deptAction/userrole',
-        '/protected/v8/training/content/:do_id',
+        '/protected/v8/training/content/:do_id//trainings/count',
         '/protected/v8/user/playlist',
         '/protected/v8/user/playlist/create',
-        'protected/v8/user/playlist/create',
         '/protected/v8/user/preference',
         '/protected/v8/workflowhandler/applicationsSearch',
         '/protected/v8/workallocation/getWorkOrders',
@@ -1417,8 +1467,14 @@ export const API_LIST = {
         '/protected/v8/workallocation/v2/update',
         '/protected/v8/workallocation/getWOPdf/:workOrderId',
         '/protected/v8/portal/cbp/mydepartment',
+        '/protected/v8/user/badge',
+        '/protected/v8/user/feedbackV2/content/:do_id',
+        '/protected/v8/user/goals/action',
+        '/protected/v8/user/goals/for-others',
+        '/protected/v8/user/goals/common',
         '/protected/v8/user/mandatoryContent/checkStatus',
         '/protected/v8/user/rating/content/average-ratingInfo/:do_id',
+        '/protected/v8/user/realTimeProgress/update/',
         '/protected/v8/social/post/timeline',
         '/protected/v8/user/history/:id',
         '/protected/v8/user/history',
@@ -1449,7 +1505,7 @@ export const API_LIST = {
         '/protected/v8/connections/update/connection',
         '/protected/v8/workflowhandler/userWFApplicationFieldsSearch',
         '/protected/v8/user/details/detailV1',
-        'protected/v8/user/goals/user',
+        '/protected/v8/user/goals/user',
         '/protected/v8/user/feedbackV2/config',
         '/protected/v8/user/profileRegistry/getMasterNationalities',
         '/protected/v8/user/profileRegistry/getMasterLanguages',
