@@ -1336,7 +1336,7 @@ export const API_LIST = {
             ],
         },
         '/protected/v8/training/content/:do_id/trainings/count': {
-            checksNeeded: [CHECK.ROLE],
+            checksNeeded: [],
             // tslint:disable-next-line: object-literal-sort-keys
             ROLE_CHECK: [
                 ROLE.PUBLIC,
