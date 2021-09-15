@@ -894,7 +894,7 @@ export const API_LIST = {
                 ROLE.PUBLIC,
             ],
         },
-        '/protected/v8/user/realTimeProgress/update/': {
+        '/protected/v8/user/realTimeProgress/update/:do_id': {
             checksNeeded: [CHECK.ROLE],
             // tslint:disable-next-line: object-literal-sort-keys
             ROLE_CHECK: [
@@ -1335,7 +1335,7 @@ export const API_LIST = {
                 ROLE.PUBLIC,
             ],
         },
-        '/protected/v8/training/content/:do_id//trainings/count': {
+        '/protected/v8/training/content/:do_id/trainings/count': {
             checksNeeded: [CHECK.ROLE],
             // tslint:disable-next-line: object-literal-sort-keys
             ROLE_CHECK: [
@@ -1450,7 +1450,7 @@ export const API_LIST = {
         '/protected/v8/workflowhandler/historyByApplicationId/:applicationId',
         '/protected/v8/user/autocomplete/:query',
         '/protected/v8/portal/spv/deptAction/userrole',
-        '/protected/v8/training/content/:do_id//trainings/count',
+        '/protected/v8/training/content/:do_id/trainings/count',
         '/protected/v8/user/playlist',
         '/protected/v8/user/playlist/create',
         '/protected/v8/user/preference',
@@ -1474,7 +1474,7 @@ export const API_LIST = {
         '/protected/v8/user/goals/common',
         '/protected/v8/user/mandatoryContent/checkStatus',
         '/protected/v8/user/rating/content/average-ratingInfo/:do_id',
-        '/protected/v8/user/realTimeProgress/update/',
+        '/protected/v8/user/realTimeProgress/update/:do_id',
         '/protected/v8/social/post/timeline',
         '/protected/v8/user/history/:id',
         '/protected/v8/user/history',
