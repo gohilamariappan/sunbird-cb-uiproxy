@@ -196,11 +196,16 @@ profileRegistryApi.get('/getProfilePageMeta', async (_req, res) => {
       .catch((err) => {
         logError(`error fetching designationMeta`, err)
       })
+      const states = await statesMeta()
+      .catch((err) => {
+        logError(`error fetching designationMeta`, err)
+      })
     res.json({
       degrees,
       designations,
       govtOrg,
       industries,
+      states,
     })
   } catch (err) {
     res.status((err && err.response && err.response.status) || 500).send(err)
@@ -282,6 +287,29 @@ export async function degreesMeta() {
       })
     } catch (err) {
       logError('ERROR on degreesMeta')
+      throw err
+    }
+  })
+}
+
+export async function statesMeta() {
+  return new Promise(async (resolve, reject) => {
+    try {
+      await fs.readFile(__dirname + '/../../static-data/states.json', (err: Error, json: string) => {
+        if (!err) {
+          const obj = JSON.parse(json)
+          resolve(
+            obj.industries.map((item: string) => {
+              return { name: item }
+            })
+          )
+        } else {
+          reject(err)
+
+        }
+      })
+    } catch (err) {
+      logError('ERROR on statesMeta')
       throw err
     }
   })
