@@ -196,7 +196,7 @@ profileRegistryApi.get('/getProfilePageMeta', async (_req, res) => {
       .catch((err) => {
         logError(`error fetching designationMeta`, err)
       })
-      const states = await statesMeta()
+    const states = await statesMeta()
       .catch((err) => {
         logError(`error fetching designationMeta`, err)
       })
