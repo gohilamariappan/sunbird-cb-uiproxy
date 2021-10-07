@@ -292,24 +292,24 @@ export async function degreesMeta() {
   })
 }
 
-export async function statesMeta() {
+export async function statesMeta() 
+{
   return new Promise(async (resolve, reject) => {
     try {
       await fs.readFile(__dirname + '/../../static-data/states.json', (err: Error, json: string) => {
-        if (!err) {
+        if (err) {
+          reject(err)
+        } else {
           const obj = JSON.parse(json)
           resolve(
             obj.industries.map((item: string) => {
               return { name: item }
             })
           )
-        } else {
-          reject(err)
-
         }
       })
     } catch (err) {
-      logError('ERROR on statesMeta')
+      logError('StatesMeta data error !')
       throw err
     }
   })
