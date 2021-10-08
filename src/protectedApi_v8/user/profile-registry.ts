@@ -291,9 +291,8 @@ export async function degreesMeta() {
     }
   })
 }
-
-export async function statesMeta() 
-{
+//stateMeta data api 
+export async function statesMeta() {
   return new Promise(async (resolve, reject) => {
     try {
       await fs.readFile(__dirname + '/../../static-data/states.json', (err: Error, json: string) => {
