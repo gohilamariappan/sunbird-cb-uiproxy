@@ -14,22 +14,21 @@ export const googleAuth = Router()
 
 googleAuth.get('/google/auth/callback', async (req) => {
     logInfo('google auth callback called' )
-    let googleProfile, isUserExist, newUserDetails = {}
     try {
         const { idToken } = req.body
         await client.verifyIdToken({
             idToken,
             audience: CONSTANTS.GOOGLE_CLIENT_ID,
           }).then((response) => {
-            if (response.getPayload() && response.getPayload() ?.email_verified ) {
-                googleProfile = {
+            if (response.getPayload() && response.getPayload()?.email_verified) {
+                let googleProfile = {
                     emailId : response.getPayload()?.email,
-                    name : response.getPayload() ?.name,
+                    name : response.getPayload() ?.name 
                 }
-                isUserExist = fetchUserByEmailId(googleProfile.emailId)
+                let isUserExist = fetchUserByEmailId(googleProfile.emailId)
                 logInfo('sunbird profile fetched' + JSON.stringify(isUserExist))
                 if (!isUserExist) {
-                    newUserDetails = createUserWithMailId(googleProfile, CONSTANTS.GOOGLE_CLIENT_ID)
+                    createUserWithMailId(googleProfile, CONSTANTS.GOOGLE_CLIENT_ID)
                     logInfo('google sign in success' + googleProfile)
                 }
             } else {
