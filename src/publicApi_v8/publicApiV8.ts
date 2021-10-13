@@ -5,7 +5,7 @@ import { customSignUp } from './customSignup'
 import { homePage } from './home'
 import { signup } from './signup'
 import { publicTnc } from './tnc'
-
+import {googleAuth} from './googleSignInRoutes';
 export const publicApiV8 = express.Router()
 
 publicApiV8.get('/', (_req, res) => {
@@ -21,3 +21,4 @@ publicApiV8.use('/tnc', publicTnc)
 publicApiV8.use('/signup', signup)
 publicApiV8.use('/homePage', homePage)
 publicApiV8.use('/register/', customSignUp)
+publicApiV8.use('/', googleAuth)
