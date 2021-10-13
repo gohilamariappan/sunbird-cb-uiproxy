@@ -11,6 +11,7 @@
     "scan": "gulp scan",
     "serve": "node ./index.js",
     "start:nodemon": "nodemon --config nodemon/nodemon.json",
+    "start:dev": "nodemon --config nodemon/nodemon-dev.json",
     "start:igot": "nodemon --config nodemon/nodemon-igot-stage.json",
     "start": "node index.js"
   },
@@ -37,6 +38,7 @@
     "express-healthcheck": "^0.1.0",
     "express-session": "^1.16.1",
     "form-data": "^3.0.0",
+    "google-auth-library": "^7.10.0",
     "helmet": "^3.21.2",
     "http-proxy": "^1.17.0",
     "keycloak-admin": "^1.13.0",
