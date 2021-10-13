@@ -157,6 +157,7 @@ export const CONSTANTS = {
   VM_LEARNING_SERVICE_URL: env.VM_LEARNING_SERVICE_URL,
   // tslint:disable-next-line: max-line-length
   CERT_AUTH_TOKEN: 'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJRekw4VVA1dUtqUFdaZVpMd1ZtTFJvNHdqWTg2a2FrcSJ9.TPjV0xLacSbp3FbJ7XeqHoKFN35Rl4YHx3DZNN9pm0o',
+  GOOGLE_CLIENT_ID: env.google_client_id || '770679530323-q259h46ic85g4n5iu4kq2vkcpinka6o6.apps.googleusercontent.com',
 
 }
 
