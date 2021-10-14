@@ -1370,6 +1370,13 @@ export const API_LIST = {
                 ROLE.PUBLIC,
             ],
         },
+        '/public/v8/google/callback': {
+            // checksNeeded: [CHECK.ROLE],
+            // // tslint:disable-next-line: object-literal-sort-keys
+            // ROLE_CHECK: [
+            //     ROLE.PUBLIC,
+            // ],
+        },
     },
     URL_PATTERN:
     [
@@ -1379,6 +1386,7 @@ export const API_LIST = {
         '/authApi/content/v3/read/:do_id',
         '/authApi/content/v3/update/:do_id',
         '/authContent/:do_id',
+        '/public/v8/google/callback',
         '/proxies/v8/api/user/v2/read',
         '/proxies/v8/api/user/v2/read/:id',
         '/proxies/v8/learner/course/v1/batch/create',
