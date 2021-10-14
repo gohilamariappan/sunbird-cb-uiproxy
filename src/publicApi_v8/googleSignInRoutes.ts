@@ -6,21 +6,23 @@ import { axiosRequestConfig } from '../configs/request.config'
 import { CONSTANTS } from '../utils/env'
 import { logError, logInfo } from '../utils/logger'
 const API_END_POINTS = {
-    createUserWithMailId: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/user/v2/signup`,
-   fetchUserByEmailId: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/user/v1/exists/email`,
+    createUserWithMailId: `${CONSTANTS.KONG_API_BASE}/user/v2/signup`,
+   fetchUserByEmailId: `${CONSTANTS.KONG_API_BASE}/user/v2/exists/email/`,
 
 }
 const client = new OAuth2Client(CONSTANTS.GOOGLE_CLIENT_ID)
 export const googleAuth = Router()
 
-googleAuth.get('/callback', async (req,res) => {
+googleAuth.post('/callback', async (req,res) => {
     logInfo('google auth callback called' )
     try {
+        console.log("IDtoken", req.body)
         const { idToken } = req.body
         await client.verifyIdToken({
             audience: CONSTANTS.GOOGLE_CLIENT_ID,
             idToken,
           }).then((response) => {
+              console.log("Response 24 : ",response)
             if (response.getPayload()) {
                 // tslint:disable-next-line: no-any
                 const data: any = response.getPayload()
@@ -29,19 +31,24 @@ googleAuth.get('/callback', async (req,res) => {
                     emailId : data.email,
                     name : data.name,
                 }
+                
+                console.log("Get payload", data)
+                console.log("googleProfile.emailId", googleProfile.emailId)
                 const isUserExist = fetchUserByEmailId(googleProfile.emailId)
-                logInfo('sunbird profile fetched' + JSON.stringify(isUserExist))
-                if (!isUserExist) {
-                    createUserwithMailId(googleProfile, CONSTANTS.GOOGLE_CLIENT_ID)
-                    logInfo('google sign in success' + googleProfile)
-                }
+                isUserExist.then((response)=>{
+                    console.log(response);
+                    if(!response){
+                        createUserwithMailId(googleProfile, CONSTANTS.GOOGLE_CLIENT_ID)
+                    }
+                })
             } else {
-                res.status(400).send('etched user profile failed')
-                logInfo('fetched user profile failed')
+                res.status(400).send('Fetched user profile failed')
+                logInfo('Fetched user profile failed')
             }
           })
     } catch (err) {
-        logError('ERROR CREATING USER>', )
+        
+        logError('ERROR CREATING USER>' +err )
     }
 
 })
@@ -82,6 +89,7 @@ const createUserwithMailId = async (accountDetails: any, client_id: string) => {
 
   }
 const fetchUserByEmailId = async (emailId: string) => {
+    console.log("FetchU 92 : ")
     try {
         const response = await axios( {
             ...axiosRequestConfig,
@@ -92,11 +100,13 @@ const fetchUserByEmailId = async (emailId: string) => {
             url: API_END_POINTS.fetchUserByEmailId + emailId,
 
         })
+        console.log("FetchUserfun : ",response.data)
         if (response.data.responseCode === 'OK') {
             return _.get(response, 'result.exists')
         }
     } catch (err) {
         logError( 'fetchUserByEmailId failed')
+        console.log(err)
     }
 
   }
