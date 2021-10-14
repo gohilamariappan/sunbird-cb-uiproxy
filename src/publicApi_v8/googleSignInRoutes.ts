@@ -13,7 +13,7 @@ const API_END_POINTS = {
 const client = new OAuth2Client(CONSTANTS.GOOGLE_CLIENT_ID)
 export const googleAuth = Router()
 
-googleAuth.get('/google/auth/callback', async (req) => {
+googleAuth.get('/callback', async (req) => {
     logInfo('google auth callback called' )
     try {
         const { idToken } = req.body
@@ -62,7 +62,7 @@ const createUserwithMailId = async (accountDetails: any, client_id: string) => {
                   email: accountDetails.emailId,
                   emailVerified: true,
                   firstName: accountDetails.name,
-    
+
                 }},
             },
             headers: {
@@ -70,19 +70,18 @@ const createUserwithMailId = async (accountDetails: any, client_id: string) => {
             },
             method: 'POST',
             url: API_END_POINTS.createUserWithMailId,
-    
+
         })
         if (response.data.responseCode === 'OK') {
             return response.data
-        } 
-    }catch (err) {
-        logError( 'createUserWithMailId failed') 
+        }
+    } catch (err) {
+        logError( 'createUserWithMailId failed')
     }
 
-   
   }
 const fetchUserByEmailId = async (emailId: string) => {
-    try{
+    try {
         const response = await axios( {
             ...axiosRequestConfig,
             headers: {
@@ -90,14 +89,13 @@ const fetchUserByEmailId = async (emailId: string) => {
             },
             method: 'GET',
             url: API_END_POINTS.fetchUserByEmailId + emailId,
-    
+
         })
         if (response.data.responseCode === 'OK') {
             return _.get(response, 'result.exists')
         }
-    }
-    catch (err) {
+    } catch (err) {
         logError( 'fetchUserByEmailId failed')
     }
-   
+
   }
