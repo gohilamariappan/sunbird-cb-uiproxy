@@ -284,6 +284,8 @@ const validateAPI = (req: Request, res: Response, next: NextFunction) => {
 /**
  * This function is used for checking whether
  */
+const overRideRoleCheck = ['/public/v8/google/callback']
+
 export function apiWhiteListLogger() {
     return (req: Request, res: Response, next: NextFunction) => {
         if (req.path === '/' || checkIsStaticRoute(req.path)) {
@@ -291,6 +293,7 @@ export function apiWhiteListLogger() {
             return
         }
         const REQ_URL = req.path
+        logInfo("ReqURL Check : ",REQ_URL)
         if (!_.includes(REQ_URL, '/resource') && (req.session)) {
             if (!('userRoles' in req.session) || (('userRoles' in req.session) && (req.session.userRoles.length === 0))) {
                 // console.log('Session not there: In If')
@@ -304,5 +307,6 @@ export function apiWhiteListLogger() {
         } else {
             next()
         }
+        
     }
 }
