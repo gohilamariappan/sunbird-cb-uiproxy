@@ -21,8 +21,8 @@ googleAuth.post('/callback', async (req, res) => {
             audience: CONSTANTS.GOOGLE_CLIENT_ID,
             idToken,
           }).then((response) => {
-            logInfo('Response of Auth token : '+ response)
-              if (response.getPayload()) {
+            logInfo('Response of Auth token : ' + response)
+            if (response.getPayload()) {
                 // tslint:disable-next-line: no-any
                 const data: any = response.getPayload()
                 // tslint:disable-next-line: no-any
@@ -33,13 +33,13 @@ googleAuth.post('/callback', async (req, res) => {
 
                 logInfo('Get payload', data)
                 const isUserExist = fetchUserByEmailId(googleProfile.emailId)
-                isUserExist.then((response) => {
-                    logInfo("User Exist Response : ",response)
-                    if (!response) {
+                isUserExist.then((responses) => {
+                    logInfo('User Exist Response : ', responses)
+                    if (!responses) {
                         createUserwithMailId(googleProfile, CONSTANTS.GOOGLE_CLIENT_ID)
                     }
                 })
-                res.end();
+                res.end()
             } else {
                 res.status(400).send('Fetched user profile failed')
                 logInfo('Fetched user profile failed')
