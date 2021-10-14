@@ -36,7 +36,7 @@ googleAuth.post('/callback', async (req, res) => {
                 isUserExist.then((responses) => {
                     logInfo('User Exist Response : ', responses)
                     if (!responses) {
-                        createUserwithMailId(googleProfile, CONSTANTS.GOOGLE_CLIENT_ID)
+                        createUserWithMailId(googleProfile, CONSTANTS.GOOGLE_CLIENT_ID)
                     }
                 })
                 res.end()
@@ -52,7 +52,7 @@ googleAuth.post('/callback', async (req, res) => {
 
 })
 // tslint:disable-next-line: no-any
-const createUserwithMailId = async (accountDetails: any, client_id: string) => {
+const createUserWithMailId = async (accountDetails: any, client_id: string) => {
     if (!accountDetails.name || accountDetails.name === '') {
       throw new Error('USER_NAME_NOT_PRESENT')
     }
