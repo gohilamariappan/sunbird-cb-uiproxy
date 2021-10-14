@@ -13,7 +13,7 @@ const API_END_POINTS = {
 const client = new OAuth2Client(CONSTANTS.GOOGLE_CLIENT_ID)
 export const googleAuth = Router()
 
-googleAuth.get('/callback', async (req) => {
+googleAuth.get('/callback', async (req,res) => {
     logInfo('google auth callback called' )
     try {
         const { idToken } = req.body
@@ -36,7 +36,8 @@ googleAuth.get('/callback', async (req) => {
                     logInfo('google sign in success' + googleProfile)
                 }
             } else {
-                logInfo('fetched user profile')
+                res.status(400).send('etched user profile failed')
+                logInfo('fetched user profile failed')
             }
           })
     } catch (err) {
