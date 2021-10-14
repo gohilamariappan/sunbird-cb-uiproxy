@@ -296,6 +296,7 @@ export function apiWhiteListLogger() {
         logInfo('ReqURL Check : ', REQ_URL)
         if(overRideRoleCheck == '/public/v8/google/callback')
         {
+            logInfo('Callback auth Req Sucess : ', REQ_URL)
             next()
         }
         else
