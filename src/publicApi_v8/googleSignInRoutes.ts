@@ -13,17 +13,16 @@ const API_END_POINTS = {
 const client = new OAuth2Client(CONSTANTS.GOOGLE_CLIENT_ID)
 export const googleAuth = Router()
 
-googleAuth.post('/callback', async (req,res) => {
+googleAuth.post('/callback', async (req, res) => {
     logInfo('google auth callback called' )
     try {
-        console.log("IDtoken", req.body)
         const { idToken } = req.body
         await client.verifyIdToken({
             audience: CONSTANTS.GOOGLE_CLIENT_ID,
             idToken,
           }).then((response) => {
-              console.log("Response 24 : ",response)
-            if (response.getPayload()) {
+            logInfo('Response of Auth token : '+ response)
+              if (response.getPayload()) {
                 // tslint:disable-next-line: no-any
                 const data: any = response.getPayload()
                 // tslint:disable-next-line: no-any
@@ -31,13 +30,13 @@ googleAuth.post('/callback', async (req,res) => {
                     emailId : data.email,
                     name : data.name,
                 }
-                
-                console.log("Get payload", data)
-                console.log("googleProfile.emailId", googleProfile.emailId)
+
+                console.log('Get payload', data)
+                console.log('googleProfile.emailId', googleProfile.emailId)
                 const isUserExist = fetchUserByEmailId(googleProfile.emailId)
-                isUserExist.then((response)=>{
-                    console.log(response);
-                    if(!response){
+                isUserExist.then((response) => {
+                    console.log(response)
+                    if (!response) {
                         createUserwithMailId(googleProfile, CONSTANTS.GOOGLE_CLIENT_ID)
                     }
                 })
@@ -47,8 +46,8 @@ googleAuth.post('/callback', async (req,res) => {
             }
           })
     } catch (err) {
-        
-        logError('ERROR CREATING USER>' +err )
+
+        logError('ERROR CREATING USER>' + err )
     }
 
 })
@@ -89,7 +88,6 @@ const createUserwithMailId = async (accountDetails: any, client_id: string) => {
 
   }
 const fetchUserByEmailId = async (emailId: string) => {
-    console.log("FetchU 92 : ")
     try {
         const response = await axios( {
             ...axiosRequestConfig,
@@ -100,13 +98,12 @@ const fetchUserByEmailId = async (emailId: string) => {
             url: API_END_POINTS.fetchUserByEmailId + emailId,
 
         })
-        console.log("FetchUserfun : ",response.data)
+        logInfo( 'Response Data in Success :', response.data)
         if (response.data.responseCode === 'OK') {
             return _.get(response, 'result.exists')
         }
     } catch (err) {
         logError( 'fetchUserByEmailId failed')
-        console.log(err)
     }
 
   }
