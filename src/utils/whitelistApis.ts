@@ -1371,11 +1371,11 @@ export const API_LIST = {
             ],
         },
         '/public/v8/google/callback': {
-            // checksNeeded: [CHECK.ROLE],
-            // // tslint:disable-next-line: object-literal-sort-keys
-            // ROLE_CHECK: [
-            //     ROLE.PUBLIC,
-            // ],
+            checksNeeded: [CHECK.ROLE],
+            // tslint:disable-next-line: object-literal-sort-keys
+            ROLE_CHECK: [
+                ROLE.PUBLIC,
+            ],
         },
     },
     URL_PATTERN:
