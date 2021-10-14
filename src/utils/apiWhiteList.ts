@@ -292,20 +292,18 @@ export function apiWhiteListLogger() {
             next()
             return
         }
-        const REQ_URL = req.path
-        logInfo('ReqURL Check : ', REQ_URL)
-        if (overRideRoleCheck === '/public/v8/google/callback') {
-            logInfo('Callback auth Req Sucess : ', REQ_URL)
+        if (overRideRoleCheck === req.path) {
+            logInfo('Callback auth Req Sucess : ', req.path)
             next()
         } else {
-            if (!_.includes(REQ_URL, '/resource') && (req.session)) {
+            if (!_.includes(req.path, '/resource') && (req.session)) {
                 if (!('userRoles' in req.session) || (('userRoles' in req.session) && (req.session.userRoles.length === 0))) {
                     // console.log('Session not there: In If')
                     logError('Portal_API_WHITELIST_LOGGER: User needs to authenticated themselves')
                     respond419(req, res)
                 } else {
                     // Pattern match for URL
-                    logInfo('In WhilteList Call========' + REQ_URL)
+                    logInfo('In WhilteList Call========' + req.path)
                     validateAPI(req, res, next)
                 }
             } else {
