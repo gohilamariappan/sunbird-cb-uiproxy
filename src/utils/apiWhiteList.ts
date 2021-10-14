@@ -284,32 +284,20 @@ const validateAPI = (req: Request, res: Response, next: NextFunction) => {
 /**
  * This function is used for checking whether
  */
-const overRideRoleCheck = '/public/v8/google/callback'
 
 export function apiWhiteListLogger() {
     return (req: Request, res: Response, next: NextFunction) => {
-        if (req.path === '/' || checkIsStaticRoute(req.path)) {
+        if (req.path === '/' || checkIsStaticRoute(req.path) ||     _.includes(req.path , 'public') ) {
             next()
             return
         }
-        if (overRideRoleCheck === req.path) {
-            logInfo('Callback auth Req Sucess : ', req.path)
-            next()
-        } else {
             if (!_.includes(req.path, '/resource') && (req.session)) {
                 if (!('userRoles' in req.session) || (('userRoles' in req.session) && (req.session.userRoles.length === 0))) {
-                    // console.log('Session not there: In If')
                     logError('Portal_API_WHITELIST_LOGGER: User needs to authenticated themselves')
                     respond419(req, res)
                 } else {
-                    // Pattern match for URL
                     logInfo('In WhilteList Call========' + req.path)
-                    validateAPI(req, res, next)
-                }
-            } else {
-                next()
-            }
-        }
-
+                    validateAPI(req, res, next)  }
+            } else {  next()  }
     }
 }
