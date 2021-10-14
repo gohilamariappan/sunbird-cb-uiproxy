@@ -31,15 +31,15 @@ googleAuth.post('/callback', async (req, res) => {
                     name : data.name,
                 }
 
-                console.log('Get payload', data)
-                console.log('googleProfile.emailId', googleProfile.emailId)
+                logInfo('Get payload', data)
                 const isUserExist = fetchUserByEmailId(googleProfile.emailId)
                 isUserExist.then((response) => {
-                    console.log(response)
+                    logInfo("User Exist Response : ",response)
                     if (!response) {
                         createUserwithMailId(googleProfile, CONSTANTS.GOOGLE_CLIENT_ID)
                     }
                 })
+                res.end();
             } else {
                 res.status(400).send('Fetched user profile failed')
                 logInfo('Fetched user profile failed')
@@ -47,7 +47,7 @@ googleAuth.post('/callback', async (req, res) => {
           })
     } catch (err) {
 
-        logError('ERROR CREATING USER>' + err )
+        logError('ERROR CREATING USER' + err )
     }
 
 })
