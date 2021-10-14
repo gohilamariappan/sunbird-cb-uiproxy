@@ -49,47 +49,55 @@ const createUserwithMailId = async (accountDetails: any, client_id: string) => {
     if (!accountDetails.name || accountDetails.name === '') {
       throw new Error('USER_NAME_NOT_PRESENT')
     }
-    const response = await axios( {
-        ...axiosRequestConfig,
-        data: {
-            body: {
-            params: {
-              signupType: 'google',
-              source: client_id,
+    try {
+        const response = await axios( {
+            ...axiosRequestConfig,
+            data: {
+                body: {
+                params: {
+                  signupType: 'google',
+                  source: client_id,
+                },
+                request: {
+                  email: accountDetails.emailId,
+                  emailVerified: true,
+                  firstName: accountDetails.name,
+    
+                }},
             },
-            request: {
-              email: accountDetails.emailId,
-              emailVerified: true,
-              firstName: accountDetails.name,
-
-            }},
-        },
-        headers: {
-                Authorization: CONSTANTS.SB_API_KEY,
-        },
-        method: 'POST',
-        url: API_END_POINTS.createUserWithMailId,
-
-    })
-    if (response.data.responseCode === 'OK') {
-        return response.data
-    } else {
-        logError( 'createUserWithMailId failed')
+            headers: {
+                    Authorization: CONSTANTS.SB_API_KEY,
+            },
+            method: 'POST',
+            url: API_END_POINTS.createUserWithMailId,
+    
+        })
+        if (response.data.responseCode === 'OK') {
+            return response.data
+        } 
+    }catch (err) {
+        logError( 'createUserWithMailId failed') 
     }
+
+   
   }
 const fetchUserByEmailId = async (emailId: string) => {
-    const response = await axios( {
-        ...axiosRequestConfig,
-        headers: {
-            Authorization: CONSTANTS.SB_API_KEY,
-        },
-        method: 'GET',
-        url: API_END_POINTS.fetchUserByEmailId + emailId,
-
-    })
-    if (response.data.responseCode === 'OK') {
-        return _.get(response, 'result.exists')
-    } else {
+    try{
+        const response = await axios( {
+            ...axiosRequestConfig,
+            headers: {
+                Authorization: CONSTANTS.SB_API_KEY,
+            },
+            method: 'GET',
+            url: API_END_POINTS.fetchUserByEmailId + emailId,
+    
+        })
+        if (response.data.responseCode === 'OK') {
+            return _.get(response, 'result.exists')
+        }
+    }
+    catch (err) {
         logError( 'fetchUserByEmailId failed')
     }
+   
   }
