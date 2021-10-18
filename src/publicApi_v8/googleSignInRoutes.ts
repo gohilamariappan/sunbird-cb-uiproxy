@@ -100,6 +100,7 @@ const fetchUserByEmailId = async (emailId: string) => {
             url: API_END_POINTS.fetchUserByEmailId + emailId,
 
         })
+        logInfo( 'Response Data in JSON :', JSON.stringify(response.data))
         logInfo( 'Response Data in Success :', response.data.responseCode)
         if (response.data.responseCode === 'OK') {
             logInfo( 'Response result.exists :', _.get(response, 'data.result.exists'))
