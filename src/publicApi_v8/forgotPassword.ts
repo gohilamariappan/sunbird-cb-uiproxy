@@ -3,19 +3,18 @@ import { Router } from 'express'
 import { axiosRequestConfig } from '../configs/request.config'
 import { extractUserToken } from '../utils/requestExtract'
 
-import { logInfo, logError } from '../utils/logger'
+import { logError, logInfo } from '../utils/logger'
 
 import { CONSTANTS } from '../utils/env'
-
 
 const API_END_POINTS = {
     kongSearchUser: `${CONSTANTS.KONG_API_BASE}/user/v1/search`,
     kongUserResetPassword: `${CONSTANTS.KONG_API_BASE}/private/user/v1/password/reset`,
   }
-  
-  const uuidv1            = require('uuid/v1')
-  const dateFormat        = require('dateformat')
-  const emailAdressExist = 'Email address already exist'
+
+const uuidv1            = require('uuid/v1')
+const dateFormat        = require('dateformat')
+const emailAdressExist = 'Email address already exist'
 
 export const forgotPassword = Router()
 
@@ -78,8 +77,8 @@ forgotPassword.post('/', async (req, res) => {
                 res.status(200).send('User password reset successfully !!')
             }
         }
-       
+
     } catch (err) {
-       
+        logError('Error failing the call'+ err)
     }
 })
