@@ -37,11 +37,12 @@ googleAuth.post('/callback', async (req, res) => {
                     logInfo('User Exist Response : ', userExist)
                     if (!userExist) {
                         logInfo('User Doesnt Exist Response : ', userExist)
-                        createuserwithmailId(googleProfile).then((userdata)=>{
-                            if(userdata){
+                        createuserwithmailId(googleProfile).then((userdata) => {
+                            logInfo("Checking the log here")
+                            if (userdata) {
                                 res.status(200).send(userdata)
-                            }else {
-                                res.status(500).send('User creation failed') 
+                            } else {
+                                res.status(500).send('User creation failed')
                             }
                         })
                     }
@@ -82,6 +83,7 @@ const createuserwithmailId = async (accountDetails: any) => {
 
         })
         if (response.data.responseCode === 'OK') {
+            logInfo( 'Log of createuser if OK :')
             return response.data
         }
     } catch (err) {
