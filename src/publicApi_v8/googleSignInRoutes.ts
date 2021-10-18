@@ -33,10 +33,10 @@ googleAuth.post('/callback', async (req, res) => {
 
                 logInfo('Get payload', data)
                 const isUserExist = fetchUserByEmailId(googleProfile.emailId)
-                isUserExist.then((responses) => {
-                    logInfo('User Exist Response : ', responses)
-                    if (!responses) {
-                        logInfo('User Doesnt Exist Response : ', responses)
+                isUserExist.then((userExist) => {
+                    logInfo('User Exist Response : ', userExist)
+                    if (!userExist) {
+                        logInfo('User Doesnt Exist Response : ', userExist)
                         createuserwithmailId(googleProfile, CONSTANTS.GOOGLE_CLIENT_ID)
                     }
                 })
@@ -89,7 +89,7 @@ const createuserwithmailId = async (accountDetails: any, client_id: string) => {
 
   }
 const fetchUserByEmailId = async (emailId: string) => {
-    logInfo("Checking Fetch email id value : ", API_END_POINTS.fetchUserByEmailId + emailId)
+    logInfo('Checking Fetch email id value : ', API_END_POINTS.fetchUserByEmailId + emailId)
     try {
         const response = await axios( {
             ...axiosRequestConfig,
@@ -100,8 +100,9 @@ const fetchUserByEmailId = async (emailId: string) => {
             url: API_END_POINTS.fetchUserByEmailId + emailId,
 
         })
-        logInfo( 'Response Data in Success :', response.data)
+        logInfo( 'Response Data in Success :', response.data.responseCode)
         if (response.data.responseCode === 'OK') {
+            logInfo( 'Response result.exists :', _.get(response, 'result.exists'))
             return _.get(response, 'result.exists')
         }
     } catch (err) {
