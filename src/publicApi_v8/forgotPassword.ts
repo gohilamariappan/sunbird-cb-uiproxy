@@ -19,7 +19,7 @@ const emailAdressExist = 'Email address already exist'
 export const forgotPassword = Router()
 
 forgotPassword.post('/verify', async (req, res) => {
-    logInfo("Entered into forgot password")
+    logInfo('Entered into forgot password')
     try {
         const sbemail_ = req.body.personalDetails.email
         const searchresponse = await axios({
@@ -28,14 +28,13 @@ forgotPassword.post('/verify', async (req, res) => {
             headers: {
                 Authorization: CONSTANTS.SB_API_KEY,
                 // tslint:disable-next-line: all
-                'x-authenticated-user-token': extractUserToken(req),
             },
             method: 'POST',
             url: API_END_POINTS.kongSearchUser,
         })
 
         if (searchresponse.data.result.response.count > 0) {
-            logInfo("Entered into Search Response")
+            logInfo('Entered into Search Response')
             res.status(400).send(
             {
                 id: 'api.error.createUser',
