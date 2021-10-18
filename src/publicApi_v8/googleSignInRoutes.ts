@@ -75,6 +75,7 @@ const createuserwithmailId = async (accountDetails: any) => {
 
         })
         if (response.data.responseCode === 'OK') {
+            logInfo( 'Log of createuser if OK :')
             return response.data
         }
     } catch (err) {
