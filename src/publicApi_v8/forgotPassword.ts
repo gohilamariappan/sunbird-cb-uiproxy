@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { Router } from 'express'
 import { axiosRequestConfig } from '../configs/request.config'
-import { extractUserToken } from '../utils/requestExtract'
+//import { extractUserToken } from '../utils/requestExtract'
 
 import { logError, logInfo } from '../utils/logger'
 
