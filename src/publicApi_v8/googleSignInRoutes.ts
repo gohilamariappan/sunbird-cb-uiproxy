@@ -47,7 +47,7 @@ googleAuth.post('/callback', async (req, res) => {
             }
           })
     } catch (err) {
-
+        res.status(400).send('Token Expired !!')  
         logError('ERROR CREATING USER' + err )
     }
 
@@ -66,9 +66,9 @@ const createuserwithmailId = async (accountDetails: any) => {
                   emailVerified: true,
                   firstName: accountDetails.name,
                   lastname :  accountDetails.name,
-                }
-            },    
-            
+                },
+            },
+
             headers: {
                     Authorization: CONSTANTS.SB_API_KEY,
             },
