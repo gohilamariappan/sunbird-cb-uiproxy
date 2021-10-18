@@ -26,6 +26,7 @@ googleAuth.post('/callback', async (req, res) => {
             if(isTokenVerfiy.getPayload()){
                 // tslint:disable-next-line: no-any
                 const data: any = isTokenVerfiy.getPayload()
+                logInfo('google user data', data );
                 // tslint:disable-next-line: no-any
                 googleProfile = {
                     emailId : data.email,
