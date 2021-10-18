@@ -17,46 +17,37 @@ googleAuth.post('/callback', async (req, res) => {
     logInfo('google auth callback called' )
     try {
         const { idToken } = req.body
-        await client.verifyIdToken({
+        let googleProfile, isUserExist, newUserDetails = {};
+        const isTokenVerfiy = await client.verifyIdToken({
             audience: CONSTANTS.GOOGLE_CLIENT_ID,
             idToken,
-          }).then((response) => {
-            logInfo('Response of Auth token : ' + response)
-            if (response.getPayload()) {
+        });
+        if(isTokenVerfiy){
+            if(isTokenVerfiy.getPayload()){
                 // tslint:disable-next-line: no-any
-                const data: any = response.getPayload()
+                const data: any = isTokenVerfiy.getPayload()
                 // tslint:disable-next-line: no-any
-                const googleProfile: any = {
+                googleProfile = {
                     emailId : data.email,
                     name : data.name,
                 }
-
-                logInfo('Get payload', data)
-                const isUserExist = fetchUserByEmailId(googleProfile.emailId)
-                isUserExist.then((userExist) => {
-                    logInfo('User Exist Response : ', userExist)
-                    if (!userExist) {
-                        logInfo('User Doesnt Exist Response : ', userExist)
-                        createuserwithmailId(googleProfile).then((userdata)=>{
-                            if(userdata){
-                                res.status(200).send(userdata)
-                            }else {
-                                res.status(500).send('User creation failed') 
-                            }
-                        })
-                    }
-                })
-            } else {
-                res.status(400).send('Fetched user profile failed')
-                logInfo('Fetched user profile failed')
             }
-          })
+        }
+        isUserExist = await fetchUserByEmailId(googleProfile?.emailId)
+        if (!isUserExist) {
+            logInfo('creating new google user');
+            newUserDetails =  await createuserwithmailId(googleProfile)
+            if(newUserDetails){
+                res.status(200).send('user created successfully')
+            }
+        }
     } catch (err) {
         res.status(400).send('Token Expired !!')
         logError('ERROR CREATING USER' + err )
     }
 
 })
+
 // tslint:disable-next-line: no-any
 const createuserwithmailId = async (accountDetails: any) => {
     if (!accountDetails.name || accountDetails.name === '') {
@@ -73,7 +64,6 @@ const createuserwithmailId = async (accountDetails: any) => {
                   lastname :  accountDetails.name,
                 },
             },
-
             headers: {
                     Authorization: CONSTANTS.SB_API_KEY,
             },
