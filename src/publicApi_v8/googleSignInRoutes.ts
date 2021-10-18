@@ -102,8 +102,8 @@ const fetchUserByEmailId = async (emailId: string) => {
         })
         logInfo( 'Response Data in Success :', response.data.responseCode)
         if (response.data.responseCode === 'OK') {
-            logInfo( 'Response result.exists :', _.get(response, 'result.exists'))
-            return _.get(response, 'result.exists')
+            logInfo( 'Response result.exists :', _.get(response, 'data.result.exists'))
+            return _.get(response, 'data.result.exists')
         }
     } catch (err) {
         logError( 'fetchUserByEmailId failed')
