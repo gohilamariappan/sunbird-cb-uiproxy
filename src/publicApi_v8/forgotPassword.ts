@@ -18,7 +18,8 @@ const emailAdressExist = 'Email address already exist'
 
 export const forgotPassword = Router()
 
-forgotPassword.post('/', async (req, res) => {
+forgotPassword.post('/verify', async (req, res) => {
+    logInfo("Entered into forgot password")
     try {
         const sbemail_ = req.body.personalDetails.email
         const searchresponse = await axios({
@@ -34,6 +35,7 @@ forgotPassword.post('/', async (req, res) => {
         })
 
         if (searchresponse.data.result.response.count > 0) {
+            logInfo("Entered into Search Response")
             res.status(400).send(
             {
                 id: 'api.error.createUser',
@@ -79,6 +81,6 @@ forgotPassword.post('/', async (req, res) => {
         }
 
     } catch (err) {
-        logError('Error failing the call'+ err)
+        logError('Error failing the call' + err)
     }
 })
