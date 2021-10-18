@@ -17,7 +17,10 @@ googleAuth.post('/callback', async (req, res) => {
     logInfo('google auth callback called' )
     try {
         const { idToken } = req.body
-        let googleProfile, isUserExist, newUserDetails = {}
+        // tslint:disable-next-line: no-any
+        let googleProfile :any = {}
+        let isUserExist = {}
+        let newUserDetails = {}
         const isTokenVerfiy = await client.verifyIdToken({
             audience: CONSTANTS.GOOGLE_CLIENT_ID,
             idToken,
@@ -32,7 +35,8 @@ googleAuth.post('/callback', async (req, res) => {
                     name : data.name,
                 }
         }
-        isUserExist = await fetchUserByEmailId(googleProfile?.emailId)
+        logInfo('google profile ', googleProfile )
+        isUserExist = await fetchUserByEmailId(googleProfile?.emailId )
         if (!isUserExist) {
             logInfo('creating new google user')
             newUserDetails =  await createuserwithmailId(googleProfile)
