@@ -1,10 +1,9 @@
 import axios from 'axios'
 import { Router } from 'express'
 import { axiosRequestConfig } from '../configs/request.config'
-
 import { logError, logInfo } from '../utils/logger'
-
 import { CONSTANTS } from '../utils/env'
+import { extractUserToken } from '../utils/requestExtract'
 
 const API_END_POINTS = {
     kongSearchUser: `${CONSTANTS.KONG_API_BASE}/user/v1/search`,
@@ -27,6 +26,7 @@ forgotPassword.post('/verify', async (req, res) => {
             headers: {
                 Authorization: CONSTANTS.SB_API_KEY,
                 // tslint:disable-next-line: all
+                'x-authenticated-user-token': extractUserToken(req)
             },
             method: 'POST',
             url: API_END_POINTS.kongSearchUser,
