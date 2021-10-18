@@ -6,7 +6,7 @@ import { axiosRequestConfig } from '../configs/request.config'
 import { CONSTANTS } from '../utils/env'
 import { logError, logInfo } from '../utils/logger'
 const API_END_POINTS = {
-    createUserWithMailId: `${CONSTANTS.KONG_API_BASE}/user/v2/signup`,
+    createUserWithMailId: `${CONSTANTS.KONG_API_BASE}/user/v1/signup`,
    fetchUserByEmailId: `${CONSTANTS.KONG_API_BASE}/user/v1/exists/email/`,
 
 }
@@ -37,7 +37,7 @@ googleAuth.post('/callback', async (req, res) => {
                     logInfo('User Exist Response : ', userExist)
                     if (!userExist) {
                         logInfo('User Doesnt Exist Response : ', userExist)
-                        createuserwithmailId(googleProfile, CONSTANTS.GOOGLE_CLIENT_ID)
+                        createuserwithmailId(googleProfile)
                     }
                 })
                 res.end()
@@ -53,7 +53,7 @@ googleAuth.post('/callback', async (req, res) => {
 
 })
 // tslint:disable-next-line: no-any
-const createuserwithmailId = async (accountDetails: any, client_id: string) => {
+const createuserwithmailId = async (accountDetails: any) => {
     if (!accountDetails.name || accountDetails.name === '') {
       throw new Error('USER_NAME_NOT_PRESENT')
     }
@@ -61,18 +61,14 @@ const createuserwithmailId = async (accountDetails: any, client_id: string) => {
         const response = await axios( {
             ...axiosRequestConfig,
             data: {
-                body: {
-                params: {
-                  signupType: 'google',
-                  source: client_id,
-                },
                 request: {
                   email: accountDetails.emailId,
                   emailVerified: true,
                   firstName: accountDetails.name,
-
-                }},
-            },
+                  lastname :  accountDetails.name,
+                }
+            },    
+            
             headers: {
                     Authorization: CONSTANTS.SB_API_KEY,
             },
@@ -85,6 +81,7 @@ const createuserwithmailId = async (accountDetails: any, client_id: string) => {
         }
     } catch (err) {
         logError( 'createUserWithMailId failed')
+       // res.status(500).send('create user profile failed')
     }
 
   }
