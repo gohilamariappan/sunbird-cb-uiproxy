@@ -7,7 +7,7 @@ import { CONSTANTS } from '../utils/env'
 import { logError, logInfo } from '../utils/logger'
 const API_END_POINTS = {
     createUserWithMailId: `${CONSTANTS.KONG_API_BASE}/user/v2/signup`,
-   fetchUserByEmailId: `${CONSTANTS.KONG_API_BASE}/user/v2/exists/email/`,
+   fetchUserByEmailId: `${CONSTANTS.KONG_API_BASE}/user/v1/exists/email/`,
 
 }
 const client = new OAuth2Client(CONSTANTS.GOOGLE_CLIENT_ID)
@@ -36,6 +36,7 @@ googleAuth.post('/callback', async (req, res) => {
                 isUserExist.then((responses) => {
                     logInfo('User Exist Response : ', responses)
                     if (!responses) {
+                        logInfo('User Doesnt Exist Response : ', responses)
                         createuserwithmailId(googleProfile, CONSTANTS.GOOGLE_CLIENT_ID)
                     }
                 })
@@ -88,6 +89,7 @@ const createuserwithmailId = async (accountDetails: any, client_id: string) => {
 
   }
 const fetchUserByEmailId = async (emailId: string) => {
+    logInfo("Checking Fetch email id value : ", API_END_POINTS.fetchUserByEmailId + emailId)
     try {
         const response = await axios( {
             ...axiosRequestConfig,
