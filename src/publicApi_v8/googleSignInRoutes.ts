@@ -37,7 +37,9 @@ googleAuth.post('/callback', async (req, res) => {
                     logInfo('User Exist Response : ', userExist)
                     if (!userExist) {
                         logInfo('User Doesnt Exist Response : ', userExist)
-                        createuserwithmailId(googleProfile)
+                        createuserwithmailId(googleProfile).then((userData) => {
+                            logInfo('User return of creation : ', userData)
+                        })
                     }
                 })
                 res.end()
@@ -47,7 +49,7 @@ googleAuth.post('/callback', async (req, res) => {
             }
           })
     } catch (err) {
-        res.status(400).send('Token Expired !!')  
+        res.status(400).send('Token Expired !!')
         logError('ERROR CREATING USER' + err )
     }
 
@@ -81,7 +83,6 @@ const createuserwithmailId = async (accountDetails: any) => {
         }
     } catch (err) {
         logError( 'createUserWithMailId failed')
-       // res.status(500).send('create user profile failed')
     }
 
   }
