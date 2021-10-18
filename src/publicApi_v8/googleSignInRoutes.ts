@@ -39,7 +39,7 @@ googleAuth.post('/callback', async (req, res) => {
         isUserExist = await fetchUserByEmailId(googleProfile.emailId)
         if (!isUserExist) {
             logInfo('creating new google user')
-            newUserDetails =  await createuserwithmailId(googleProfile)
+            newUserDetails =  await createuserwithmailId(googleProfile).catch(handleCreateUserError)
             if (newUserDetails) {
                 res.status(200).send('user created successfully')
             }
@@ -50,6 +50,19 @@ googleAuth.post('/callback', async (req, res) => {
     }
 
 })
+
+const handleCreateUserError = (error:any) => {
+    logInfo("Error ocurred while creating user"+error);
+    if (_.get(error, 'error.params')) {
+      throw error.error.params;
+    } else if (error instanceof Error) {
+      throw error.message;
+    } else {
+      throw 'unhandled exception while getting userDetails';
+    }
+  }
+  
+  
 
 // tslint:disable-next-line: no-any
 const createuserwithmailId = async (accountDetails: any) => {
@@ -77,7 +90,10 @@ const createuserwithmailId = async (accountDetails: any) => {
         if (response.data.responseCode === 'OK') {
             logInfo( 'Log of createuser if OK :')
             return response.data
+        } else {
+            return new Error(_.get(response.data, 'params.errmsg') || _.get(response.data, 'params.err'));
         }
+        
     } catch (err) {
         logError( 'createUserWithMailId failed')
     }
