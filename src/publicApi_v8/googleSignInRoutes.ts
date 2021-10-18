@@ -37,12 +37,15 @@ googleAuth.post('/callback', async (req, res) => {
                     logInfo('User Exist Response : ', userExist)
                     if (!userExist) {
                         logInfo('User Doesnt Exist Response : ', userExist)
-                        createuserwithmailId(googleProfile).then((userData) => {
-                            logInfo('User return of creation : ', userData)
+                        createuserwithmailId(googleProfile).then((userdata)=>{
+                            if(userdata){
+                                res.status(200).send(userdata)
+                            }else {
+                                res.status(500).send('User creation failed') 
+                            }
                         })
                     }
                 })
-                res.end()
             } else {
                 res.status(400).send('Fetched user profile failed')
                 logInfo('Fetched user profile failed')
