@@ -43,6 +43,10 @@ googleAuth.post('/callback', async (req, res) => {
             if (newUserDetails) {
                 res.status(200).send('user created successfully')
             }
+        } else {
+            logInfo('Email already exists.')
+            res.status(400).send('Email already exists.')
+            return
         }
     } catch (err) {
         res.status(400).send('Token Expired !!')
@@ -90,7 +94,7 @@ const createuserwithmailId = async (accountDetails: any) => {
             logInfo( 'Log of createuser if OK :')
             return response.data
         } else {
-            return new Error(_.get(response.data, 'params.errmsg') || _.get(response.data, 'params.err'))
+            throw new Error(_.get(response.data, 'params.errmsg') || _.get(response.data, 'params.err'))
         }
 
     } catch (err) {
