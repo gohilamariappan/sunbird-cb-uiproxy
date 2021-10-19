@@ -14,7 +14,7 @@ const client = new OAuth2Client(CONSTANTS.GOOGLE_CLIENT_ID)
 export const googleAuth = Router()
 
 googleAuth.post('/callback', async (req, res) => {
-    logInfo('google auth callback called' )
+    logInfo('Google auth callback called' )
     try {
         const { idToken } = req.body
         // tslint:disable-next-line: no-any
@@ -49,7 +49,7 @@ googleAuth.post('/callback', async (req, res) => {
             return
         }
     } catch (err) {
-        res.status(400).send('Token Expired !!')
+        res.status(401).send('Token Expired !!')
         logError('ERROR CREATING USER' + err )
     }
 
