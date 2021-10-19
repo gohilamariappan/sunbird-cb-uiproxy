@@ -1,8 +1,8 @@
 import axios from 'axios'
 import { Router } from 'express'
 import { axiosRequestConfig } from '../configs/request.config'
-import { logError, logInfo } from '../utils/logger'
 import { CONSTANTS } from '../utils/env'
+import { logError, logInfo } from '../utils/logger'
 import { extractUserToken } from '../utils/requestExtract'
 
 const API_END_POINTS = {
