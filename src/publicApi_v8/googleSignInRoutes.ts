@@ -45,7 +45,7 @@ googleAuth.post('/callback', async (req, res) => {
             }
         } else {
             logInfo('Email already exists.')
-            res.status(400).send('Email already exists.')
+            res.status(400).send({msg: 'Email already exists.'})
             return
         }
     } catch (err) {
