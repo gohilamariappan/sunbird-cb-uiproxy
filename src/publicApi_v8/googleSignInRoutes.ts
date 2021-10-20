@@ -41,11 +41,11 @@ googleAuth.post('/callback', async (req, res) => {
             logInfo('creating new google user')
             newUserDetails =  await createuserwithmailId(googleProfile).catch(handleCreateUserError)
             if (newUserDetails) {
-                res.status(200).send('user created successfully')
+                res.status(200).json({ status: 'success', status_code:200, msg: 'user created successfully'});
             }
         } else {
             logInfo('Email already exists.')
-            res.status(400).send({msg: 'Email already exists.'})
+            res.status(400).json({ status: 'error' , status_code:400, msg: 'Email already exists.' });
             return
         }
     } catch (err) {
