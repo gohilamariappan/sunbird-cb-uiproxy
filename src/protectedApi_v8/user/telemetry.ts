@@ -11,7 +11,7 @@ const API_END_POINTS = {
 export const telemetryApi = Router()
 
 telemetryApi.post('/', async (req: Request, res: Response) => {
-    logInfo('Reuest Body for TELEMETRY -', JSON.stringify(req.body))
+    logInfo('Reuest Body for TELEMETRY -', JSON.stringify(req.body)) 
     try {
         const response = await axios.post(
             API_END_POINTS.telemetry,
