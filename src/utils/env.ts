@@ -12,7 +12,7 @@ export const CONSTANTS = {
   BADGE_API_BASE: env.BADGE_API_BASE || env.SB_EXT_API_BASE_2,
   NETWORK_HUB_SERVICE_BACKEND: env.NETWORK_HUB_SERVICE_BACKEND || 'http://localhost:3013',
 
-  CASSANDRA_IP: env.CASSANDRA_IP || '10.177.157.30',
+  CASSANDRA_IP: env.CASSANDRA_IP || '',
   CASSANDRA_KEYSPACE: env.CASSANDRA_KEYSPACE || 'bodhi',
   CASSANDRA_PASSWORD: env.CASSANDRA_PASSWORD || '',
   CASSANDRA_USERNAME: env.CASSANDRA_USERNAME || '',
@@ -61,7 +61,7 @@ export const CONSTANTS = {
   POST_ASSESSMENT_BASE: env.POST_ASSESSMENT_BASE || 'http://localhost.com',
   POST_ASSESSMENT_CLIENT_ID: env.POST_ASSESSMENT_CLIENT_ID || '',
   POST_ASSESSMENT_CLIENT_SECRET: env.POST_ASSESSMENT_CLIENT_SECRET ||
-    '4ffb4f4ab7547d8c7d2320f83e1d7cfaa930d500fd55e262a825a2516c5e5b5b',
+    '',
   LEADERBOARD_API_BASE: env.LEADERBOARD_API_BASE || env.SB_EXT_API_BASE_2,
   LEARNING_HISTORY_API_BASE: env.LEARNING_HISTORY_API_BASE || env.SB_SEXT_API_BASE_3,
   LEARNING_HUB_API_BASE: env.LEARNING_HUB_API_BASE || env.SB_EXT_API_BASE_2,
@@ -141,9 +141,9 @@ export const CONSTANTS = {
   SUNBIRD_PROXY_API_BASE: env.SUNBIRD_PROXY_API_BASE || 'https://igot-dev.in/api',
   SCORING_SERVICE_API_BASE: env.SCORING_SERVICE_API_BASE || 'http://localhost:7014',
   // tslint:disable-next-line:max-line-length
-  SB_API_KEY: env.SB_API_KEY || 'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJRekw4VVA1dUtqUFdaZVpMd1ZtTFJvNHdqWTg2a2FrcSJ9.TPjV0xLacSbp3FbJ7XeqHoKFN35Rl4YHx3DZNN9pm0o',
+  SB_API_KEY: env.SB_API_KEY || '',
   LEARNER_SERVICE_API_BASE: env.LEARNER_SERVICE_API_BASE || 'http://learner-service:9000',
-  X_Channel_Id: env.X_CHANNEL_ID || '0131397178949058560',
+  X_Channel_Id: env.X_CHANNEL_ID || '',
   NOTIFICATION_SERVIC_API_BASE: env.NOTIFICATION_SERVIC_API_BASE || 'http://notification-service:9000',
   NOTIFY_SEND_FOR_REVIEW_BODY: 'You have received request to review the content #contentLink',
   NOTIFY_REVIEW_FAILED: 'The content #contentLink which sent for review requires few more changes. Please contact the reviewers.',
@@ -156,8 +156,8 @@ export const CONSTANTS = {
   CONTENT_SERVICE_API_BASE: env.CONTENT_SERVICE_API_BASE || 'http://content-service:9000',
   VM_LEARNING_SERVICE_URL: env.VM_LEARNING_SERVICE_URL,
   // tslint:disable-next-line: max-line-length
-  CERT_AUTH_TOKEN: 'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJRekw4VVA1dUtqUFdaZVpMd1ZtTFJvNHdqWTg2a2FrcSJ9.TPjV0xLacSbp3FbJ7XeqHoKFN35Rl4YHx3DZNN9pm0o',
-  GOOGLE_CLIENT_ID: env.google_client_id || '770679530323-q259h46ic85g4n5iu4kq2vkcpinka6o6.apps.googleusercontent.com',
+  CERT_AUTH_TOKEN: '',
+  GOOGLE_CLIENT_ID: env.google_client_id || '',
 
 }
 
