@@ -1363,7 +1363,28 @@ export const API_LIST = {
                 ROLE.PUBLIC,
             ],
         },
+        '/protected/v8/user/tnc/accept': {
+            checksNeeded: [],
+            // tslint:disable-next-line: object-literal-sort-keys
+            ROLE_CHECK: [
+                ROLE.PUBLIC,
+            ],
+        },
         '/public/v8/homePage/searchV6': {
+            checksNeeded: [CHECK.ROLE],
+            // tslint:disable-next-line: object-literal-sort-keys
+            ROLE_CHECK: [
+                ROLE.PUBLIC,
+            ],
+        },
+        '/public/v8/forgot-password/verify': {
+            checksNeeded: [CHECK.ROLE],
+            // tslint:disable-next-line: object-literal-sort-keys
+            ROLE_CHECK: [
+                ROLE.PUBLIC,
+            ],
+        },
+        '/public/v8/google/callback': {
             checksNeeded: [CHECK.ROLE],
             // tslint:disable-next-line: object-literal-sort-keys
             ROLE_CHECK: [
@@ -1379,6 +1400,7 @@ export const API_LIST = {
         '/authApi/content/v3/read/:do_id',
         '/authApi/content/v3/update/:do_id',
         '/authContent/:do_id',
+        '/public/v8/google/callback',
         '/proxies/v8/api/user/v2/read',
         '/proxies/v8/api/user/v2/read/:id',
         '/proxies/v8/learner/course/v1/batch/create',
@@ -1560,7 +1582,9 @@ export const API_LIST = {
         '/protected/v8/connections/v2/update/connection',
         '/protected/v8/content/parents/:do_id',
         '/protected/v8/content/:do_id/parent',
+        '/protected/v8/user/tnc/accept',
         '/public/v8/homePage/searchV6',
+        '/public/v8/forgot-password/verify',
         '/proxies/v8/LA/api/la/contentanalytics/:contentId/:type',
     ],
 }

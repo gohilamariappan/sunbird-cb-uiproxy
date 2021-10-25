@@ -113,7 +113,10 @@
       "check-format",
       "ban-keywords",
       "allow-leading-underscore",
-      "allow-trailing-underscore"
+      "allow-trailing-underscore",
+      "allow-snake-case"
+
+
     ]
   },
   "rulesDirectory": []

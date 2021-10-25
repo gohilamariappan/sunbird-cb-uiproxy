@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { Request, Response, Router } from 'express'
+import { logInfo } from '../../utils/logger'
 import { axiosRequestConfig } from '../../configs/request.config'
 import { CONSTANTS } from '../../utils/env'
 
@@ -10,6 +11,7 @@ const API_END_POINTS = {
 export const telemetryApi = Router()
 
 telemetryApi.post('/', async (req: Request, res: Response) => {
+    logInfo('Reuest Body for TELEMETRY -', JSON.stringify(req.body)) 
     try {
         const response = await axios.post(
             API_END_POINTS.telemetry,
