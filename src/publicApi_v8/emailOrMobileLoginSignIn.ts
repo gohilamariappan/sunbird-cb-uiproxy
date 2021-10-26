@@ -29,10 +29,9 @@ emailOrMobileLogin.post("/signup", async (req, res) => {
     if (!isUserExist) {
       logInfo("creating new  user");
       // tslint:disable-next-line: no-any
-
       profile = {
-        email: email,
-        firstName: firstName,
+        emailId: email,
+        name: firstName,
         phone: phone,
       };
       newUserDetails = await createuserWithmobileOrEmail(profile).catch(
