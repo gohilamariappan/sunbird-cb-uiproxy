@@ -108,8 +108,8 @@ const createuserWithmobileOrEmail = async (accountDetails: any) => {
       ...axiosRequestConfig,
       data: {
         request: {
-          firstName: accountDetails.firstName,
-          phone: accountDetails.phone,
+          firstName: accountDetails.name,
+          phone: accountDetails.mobile,
         },
       },
       headers: {
