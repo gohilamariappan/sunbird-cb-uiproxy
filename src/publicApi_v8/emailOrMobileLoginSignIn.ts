@@ -28,6 +28,8 @@ emailOrMobileLogin.post("/signup", async (req, res) => {
     isUserExist = await fetchUserByMobile(phone);
     if (!isUserExist) {
       logInfo("creating new  user");
+      // tslint:disable-next-line: no-any
+
       profile = {
         email: email,
         firstName: firstName,
