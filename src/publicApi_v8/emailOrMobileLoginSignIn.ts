@@ -1,6 +1,5 @@
 import axios from "axios";
 import { Router } from "express";
-import { OAuth2Client } from "google-auth-library";
 import _ from "lodash";
 import { axiosRequestConfig } from "../configs/request.config";
 import { CONSTANTS } from "../utils/env";
@@ -30,9 +29,9 @@ emailOrMobileLogin.post("/signup", async (req, res) => {
     if (!isUserExist) {
       logInfo("creating new  user");
       profile = {
-        firstName,
-        email,
-        phone,
+        email: email,
+        firstName: firstName,
+        phone: phone,
       };
       newUserDetails = await createuserWithmobileOrEmail(profile).catch(
         handleCreateUserError
@@ -69,28 +68,6 @@ const handleCreateUserError = (error: any) => {
   } else {
     throw new Error("unhandled exception while getting userDetails");
   }
-};
-const emailOrMobile = (value: string) => {
-  const isValidEmail = emailValidator(value);
-  if (isValidEmail) {
-    return "email";
-  } else {
-    const isValidMobile = mobileValidator(value);
-    if (isValidMobile) {
-      return "phone";
-    }
-  }
-  return "error";
-};
-
-const emailValidator = (value: string) => {
-  // tslint:disable-next-line: max-line-length
-  return /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(
-    value
-  );
-};
-const mobileValidator = (value: string) => {
-  return /^([7-9][0-9]{9})$/.test(value);
 };
 const fetchUserByMobile = async (phone: string) => {
   logInfo(
