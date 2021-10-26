@@ -14,15 +14,15 @@ export const emailOrMobileLogin = Router();
 
 emailOrMobileLogin.post("/signup", async (req, res) => {
   try {
-    // tslint:disable-next-line: no-any
     if (!req.body.email || req.body.phone === undefined) {
       res.status(400).json({
+        msg: "Mobile No or Email id can not be empty",
         status: "error",
         status_code: 400,
-        msg: "Mobile No or Email id can not be empty",
       });
     }
     const { phone, firstName, email } = req.body;
+    // tslint:disable-next-line: no-any
     let profile: any = {};
     let isUserExist = {};
     let newUserDetails = {};
@@ -30,30 +30,34 @@ emailOrMobileLogin.post("/signup", async (req, res) => {
     if (!isUserExist) {
       logInfo("creating new  user");
       profile = {
-        phone: phone,
-        firstName: firstName,
-        email: email,
+        firstName,
+        email,
+        phone,
       };
       newUserDetails = await createuserWithmobileOrEmail(profile).catch(
         handleCreateUserError
       );
       if (newUserDetails) {
         res.status(200).json({
+          msg: "user created successfully",
           status: "success",
           status_code: 200,
-          msg: "user created successfully",
         });
       } else {
         logInfo("Mobile already exists.");
         res.status(400).json({
+          msg: "Mobile Number already exists.",
           status: "error",
           status_code: 400,
-          msg: "Mobile Number already exists.",
         });
         return;
       }
     }
-  } catch (error) {}
+  } catch (error) {
+    res.status(401).send({
+      error: "error while creating user !!",
+    });
+  }
 });
 // tslint:disable-next-line: no-any
 const handleCreateUserError = (error: any) => {
@@ -126,8 +130,8 @@ const createuserWithmobileOrEmail = async (accountDetails: any) => {
       ...axiosRequestConfig,
       data: {
         request: {
-          phone: accountDetails.phone,
           firstName: accountDetails.firstName,
+          phone: accountDetails.phone,
         },
       },
       headers: {
