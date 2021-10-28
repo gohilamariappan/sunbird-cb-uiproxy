@@ -291,7 +291,7 @@ export async function degreesMeta() {
     }
   })
 }
-//stateMeta data api 
+// stateMeta data api
 export async function statesMeta() {
   return new Promise(async (resolve, reject) => {
     try {

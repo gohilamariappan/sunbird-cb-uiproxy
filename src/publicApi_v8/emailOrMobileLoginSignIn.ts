@@ -25,6 +25,8 @@ emailOrMobileLogin.post('/signup', async (req, res) => {
     let profile: any = {}
     let isUserExist = {}
     let newUserDetails = {}
+    logInfo("Req body", req.body)
+    logInfo("Phone : ", phone)
     isUserExist = await fetchUserByMobile(phone)
     if (!isUserExist) {
       logInfo('creating new  user')
