@@ -46,20 +46,16 @@ const fetchAssessment = async (artifactUrl: string) => {
 const getFormatedResponse = (questions: any) => {
   logInfo("Response of questions in JSON :", JSON.stringify(questions));
   return _.forEach(questions, (qkey) => {
-    if (qkey === "mcq-sca") {
-      if (qkey.options.length > 0) {
-        _.forEach(qkey.options, (optKey) => {
-          _.set(optKey, "isCorrect", "false");
-        });
-      }
+    if (qkey === "mcq-sca" && qkey.options.length > 0) {
+      _.forEach(qkey.options, (optKey) => {
+        _.set(optKey, "isCorrect", "false");
+      });
       // eslint-disable-next-line
-    } else if (qkey === "mtf") {
-      if (qkey.options.length > 0) {
-        _.forEach(qkey.options, (optKey) => {
-          _.set(optKey, "isCorrect", "false");
-          _.set(optKey, "match", "");
-        });
-      }
+    } else if (qkey === "mtf" && qkey.options.length > 0) {
+      _.forEach(qkey.options, (optKey) => {
+        _.set(optKey, "isCorrect", "false");
+        _.set(optKey, "match", "");
+      });
     }
   });
 };
