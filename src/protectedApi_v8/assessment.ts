@@ -50,13 +50,13 @@ const getFormatedResponse = (questions: any) => {
   );
   return _.forEach(questions, (qkey) => {
     logInfo("inside for each");
-    if (qkey === "mcq-sca" && qkey.options.length > 0) {
-      logInfo("inside qkey ");
+    logInfo("inside qkey ", qkey.questionType);
+    if (qkey.questionType === "mcq-sca" && qkey.options.length > 0) {
       _.forEach(qkey.options, (optKey) => {
         _.set(optKey, "isCorrect", "false");
       });
       // eslint-disable-next-line
-    } else if (qkey === "mtf" && qkey.options.length > 0) {
+    } else if (qkey.questionType === "mtf" && qkey.options.length > 0) {
       _.forEach(qkey.options, (optKey) => {
         _.set(optKey, "isCorrect", "false");
         _.set(optKey, "match", "");
