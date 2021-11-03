@@ -1,7 +1,7 @@
 import axios from "axios";
 import { Router } from "express";
-import { axiosRequestConfig } from "../configs/request.config";
 import _ from "lodash";
+import { axiosRequestConfig } from "../configs/request.config";
 import { logError, logInfo } from "../utils/logger";
 export const assessmentApi = Router();
 assessmentApi.post("/get", async (req, res) => {
@@ -24,6 +24,7 @@ assessmentApi.post("/get", async (req, res) => {
     });
   }
 });
+// tslint:disable-next-line: no-any
 const fetchAssessment = async (artifactUrl: string) => {
   logInfo("Checking fetchAssessment : ", artifactUrl);
   try {
@@ -44,8 +45,7 @@ const fetchAssessment = async (artifactUrl: string) => {
 
 const getFormatedResponse = (questions: any) => {
   logInfo("Response of questions in JSON :", JSON.stringify(questions));
-
-  const data = _.forEach(questions, (qkey) => {
+  return _.forEach(questions, (qkey) => {
     if (qkey === "mcq-sca") {
       if (qkey.options.length > 0) {
         _.forEach(qkey.options, (optKey) => {
@@ -56,9 +56,9 @@ const getFormatedResponse = (questions: any) => {
       if (qkey.options.length > 0) {
         _.forEach(qkey.options, (optKey) => {
           _.set(optKey, "isCorrect", "false");
+          _.set(optKey, "match", "");
         });
       }
     }
   });
-  return data;
 };
