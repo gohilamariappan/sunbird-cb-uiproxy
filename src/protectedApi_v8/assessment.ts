@@ -52,6 +52,7 @@ const getFormatedResponse = (questions: any) => {
           _.set(optKey, "isCorrect", "false");
         });
       }
+      // eslint-disable-next-line
     } else if (qkey === "mtf") {
       if (qkey.options.length > 0) {
         _.forEach(qkey.options, (optKey) => {
