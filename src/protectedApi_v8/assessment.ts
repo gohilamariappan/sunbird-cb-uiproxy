@@ -44,9 +44,14 @@ const fetchAssessment = async (artifactUrl: string) => {
 };
 // tslint:disable-next-line: no-any
 const getFormatedResponse = (questions: any) => {
-  logInfo("Response of questions in JSON :", JSON.stringify(questions));
+  logInfo(
+    "Response of questions in formated method JSON :",
+    JSON.stringify(questions)
+  );
   return _.forEach(questions, (qkey) => {
+    logInfo("inside for each");
     if (qkey === "mcq-sca" && qkey.options.length > 0) {
+      logInfo("inside qkey ");
       _.forEach(qkey.options, (optKey) => {
         _.set(optKey, "isCorrect", "false");
       });
