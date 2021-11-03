@@ -34,9 +34,9 @@ const fetchAssessment = async (artifactUrl: string) => {
       url: artifactUrl,
     });
     logInfo("Response Data in JSON :", JSON.stringify(response.data));
-    logInfo("Response Data in Success :", response.data.responseCode);
     if (response.data.questions) {
       logInfo("Response questions :", _.get(response, "data.questions"));
+      return _.get(response, "data.questions");
     }
   } catch (err) {
     logError("fetchAssement  failed");
