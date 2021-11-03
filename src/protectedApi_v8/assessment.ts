@@ -42,7 +42,7 @@ const fetchAssessment = async (artifactUrl: string) => {
     logError("fetchAssement  failed");
   }
 };
-
+// tslint:disable-next-line: no-any
 const getFormatedResponse = (questions: any) => {
   logInfo("Response of questions in JSON :", JSON.stringify(questions));
   return _.forEach(questions, (qkey) => {
@@ -52,7 +52,7 @@ const getFormatedResponse = (questions: any) => {
           _.set(optKey, "isCorrect", "false");
         });
       }
-    } else if (qkey === "questionType") {
+    } else if (qkey === "mtf") {
       if (qkey.options.length > 0) {
         _.forEach(qkey.options, (optKey) => {
           _.set(optKey, "isCorrect", "false");
