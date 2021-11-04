@@ -12,7 +12,7 @@ const API_END_POINTS = {
 
 const uuidv1            = require('uuid/v1')
 const dateFormat        = require('dateformat')
-const emailAdressDoesntExist = 'Email address doesnot exist'
+const emailAdressExist = 'Email address already exist'
 
 export const forgotPassword = Router()
 
@@ -36,7 +36,26 @@ forgotPassword.post('/verify', async (req, res) => {
 
         if (searchresponse.data.result.response.count > 0) {
             logInfo('Entered into Search Response')
-
+            res.status(200).send(
+            {
+                id: 'api.error.createUser',
+                ver: '1.0',
+                // tslint:disable-next-line: object-literal-sort-keys
+                ts: dateFormat(new Date(), 'yyyy-mm-dd HH:MM:ss:lo'),
+                params:
+                {
+                    resmsgid: uuidv1(),
+                    // tslint:disable-next-line: object-literal-sort-keys
+                    msgid: null,
+                    status: 'failed',
+                    err: 'USR_EMAIL_EXISTS',
+                    errmsg: emailAdressExist,
+                },
+                responseCode: 'USR_EMAIL_EXISTS',
+                result: {},
+            })
+            return
+        } else {
             const sbUserId = searchresponse.data.result.userId
             const passwordResetRequest = {
                 key: 'email',
@@ -46,30 +65,20 @@ forgotPassword.post('/verify', async (req, res) => {
 
             logInfo('Sending Password reset request -> ' + passwordResetRequest)
             logInfo('User id -> ' + sbUserId)
-   
-
-            return
-
-        } else {
-            logInfo("User email doesn't exists log")
-            res.status(400).send(
-                {
-                    id: 'api.error.createUser',
-                    ver: '1.0',
-                    // tslint:disable-next-line: object-literal-sort-keys
-                    ts: dateFormat(new Date(), 'yyyy-mm-dd HH:MM:ss:lo'),
-                    params:
-                    {
-                        resmsgid: uuidv1(),
-                        // tslint:disable-next-line: object-literal-sort-keys
-                        msgid: null,
-                        status: 'failed',
-                        err: 'USR_EMAIL_DOESNT_EXISTS',
-                        errmsg: 'User email doesnot exists !!',
-                    },
-                    responseCode: emailAdressDoesntExist,
-                    result: {},
-                })
+            const passwordResetResponse = await axios({
+                ...axiosRequestConfig,
+                data: { request: passwordResetRequest },
+                headers: {
+                    Authorization: CONSTANTS.SB_API_KEY,
+                },
+                method: 'POST',
+                url: API_END_POINTS.kongUserResetPassword,
+            })
+            logInfo('Received response from password reset -> ' + passwordResetResponse)
+            if (passwordResetResponse.data.params.status === 'success') {
+                logInfo('Reset password', passwordResetResponse.data.params.status)
+                res.status(200).send('User password reset successfully !!')
+            }
         }
 
     } catch (err) {
