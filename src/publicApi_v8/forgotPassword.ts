@@ -12,7 +12,7 @@ const API_END_POINTS = {
 
 const uuidv1            = require('uuid/v1')
 const dateFormat        = require('dateformat')
-const emailAdressExist = 'Email address already exist'
+const emailAdressDoesntExist = 'Email address doesnot exist'
 
 export const forgotPassword = Router()
 
@@ -36,7 +36,6 @@ forgotPassword.post('/verify', async (req, res) => {
 
         if (searchresponse.data.result.response.count > 0) {
             logInfo('Entered into Search Response')
-           
 
             const sbUserId = searchresponse.data.result.userId
             const passwordResetRequest = {
@@ -63,7 +62,7 @@ forgotPassword.post('/verify', async (req, res) => {
             }
 
             return
-            
+
         } else {
             logInfo("User email doesn't exists log")
             res.status(400).send(
@@ -79,9 +78,9 @@ forgotPassword.post('/verify', async (req, res) => {
                         msgid: null,
                         status: 'failed',
                         err: 'USR_EMAIL_DOESNT_EXISTS',
-                        errmsg: "User email doesnot exists !!",
+                        errmsg: 'User email doesnot exists !!',
                     },
-                    responseCode: 'USR_EMAIL_DOESNT_EXISTS',
+                    responseCode: emailAdressDoesntExist,
                     result: {},
                 })
         }
