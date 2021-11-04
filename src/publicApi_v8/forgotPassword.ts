@@ -20,6 +20,7 @@ forgotPassword.post('/verify', async (req, res) => {
     logInfo('Entered into forgot password')
     try {
         const sbemail_ = req.body.personalDetails.email
+        logInfo('URL Passing : ', req.body.personalDetails.email)
         const searchresponse = await axios({
             ...axiosRequestConfig,
             data: { request: { query: '', filters: { email: sbemail_.toLowerCase() } } },
@@ -31,6 +32,7 @@ forgotPassword.post('/verify', async (req, res) => {
             method: 'POST',
             url: API_END_POINTS.kongSearchUser,
         })
+        logInfo('Email Data : ', req.body.personalDetails.email)
 
         if (searchresponse.data.result.response.count > 0) {
             logInfo('Entered into Search Response')
@@ -62,6 +64,7 @@ forgotPassword.post('/verify', async (req, res) => {
             }
 
             logInfo('Sending Password reset request -> ' + passwordResetRequest)
+            logInfo('User id 67 -> ' + sbUserId)
             const passwordResetResponse = await axios({
                 ...axiosRequestConfig,
                 data: { request: passwordResetRequest },
