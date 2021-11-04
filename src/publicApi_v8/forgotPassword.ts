@@ -34,37 +34,16 @@ forgotPassword.post('/verify', async (req, res) => {
         })
         logInfo('Email Data : ', req.body.personalDetails.email)
 
+        const sbUserId = searchresponse.data.result.userId
+        const passwordResetRequest = {
+            key: 'email',
+            type: 'email',
+            userId: sbUserId,
+        }
+
         if (searchresponse.data.result.response.count > 0) {
             logInfo('Entered into Search Response')
-            res.status(400).send(
-            {
-                id: 'api.error.createUser',
-                ver: '1.0',
-                // tslint:disable-next-line: object-literal-sort-keys
-                ts: dateFormat(new Date(), 'yyyy-mm-dd HH:MM:ss:lo'),
-                params:
-                {
-                    resmsgid: uuidv1(),
-                    // tslint:disable-next-line: object-literal-sort-keys
-                    msgid: null,
-                    status: 'failed',
-                    err: 'USR_EMAIL_EXISTS',
-                    errmsg: emailAdressExist,
-                },
-                responseCode: 'USR_EMAIL_EXISTS',
-                result: {},
-            })
-            return
-        } else {
-            const sbUserId = searchresponse.data.result.userId
-            const passwordResetRequest = {
-                key: 'email',
-                type: 'email',
-                userId: sbUserId,
-            }
 
-            logInfo('Sending Password reset request -> ' + passwordResetRequest)
-            logInfo('User id 67 -> ' + sbUserId)
             const passwordResetResponse = await axios({
                 ...axiosRequestConfig,
                 data: { request: passwordResetRequest },
@@ -79,6 +58,46 @@ forgotPassword.post('/verify', async (req, res) => {
                 logInfo('Reset password', passwordResetResponse.data.params.status)
                 res.status(200).send('User password reset successfully !!')
             }
+
+            // res.status(400).send(
+            // {
+            //     id: 'api.error.createUser',
+            //     ver: '1.0',
+            //     // tslint:disable-next-line: object-literal-sort-keys
+            //     ts: dateFormat(new Date(), 'yyyy-mm-dd HH:MM:ss:lo'),
+            //     params:
+            //     {
+            //         resmsgid: uuidv1(),
+            //         // tslint:disable-next-line: object-literal-sort-keys
+            //         msgid: null,
+            //         status: 'failed',
+            //         err: 'USR_EMAIL_EXISTS',
+            //         errmsg: emailAdressExist,
+            //     },
+            //     responseCode: 'USR_EMAIL_EXISTS',
+            //     result: {},
+            // })
+            return
+        } else {
+            res.status(400).send(
+            {
+                id: 'api.error.createUser',
+                ver: '1.0',
+                // tslint:disable-next-line: object-literal-sort-keys
+                ts: dateFormat(new Date(), 'yyyy-mm-dd HH:MM:ss:lo'),
+                params:
+                {
+                    resmsgid: uuidv1(),
+                    // tslint:disable-next-line: object-literal-sort-keys
+                    msgid: null,
+                    status: 'failed',
+                    err: 'USR_EMAIL_DOESNT_EXISTS',
+                    errmsg: emailAdressExist,
+                },
+                responseCode: 'USR_EMAIL_DOESNT_EXISTS',
+                message : 'User email doesnot exist !!',
+                result: {},
+            })
         }
 
     } catch (err) {
