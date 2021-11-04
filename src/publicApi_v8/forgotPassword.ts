@@ -46,20 +46,20 @@ forgotPassword.post('/verify', async (req, res) => {
 
             logInfo('Sending Password reset request -> ' + passwordResetRequest)
             logInfo('User id -> ' + sbUserId)
-            const passwordResetResponse = await axios({
-                ...axiosRequestConfig,
-                data: { request: passwordResetRequest },
-                headers: {
-                    Authorization: CONSTANTS.SB_API_KEY,
-                },
-                method: 'POST',
-                url: API_END_POINTS.kongUserResetPassword,
-            })
-            logInfo('Received response from password reset -> ' + passwordResetResponse)
-            if (passwordResetResponse.data.params.status === 'success') {
-                logInfo('Reset password', passwordResetResponse.data.params.status)
-                res.status(200).send('User password reset successfully !!')
-            }
+            // const passwordResetResponse = await axios({
+            //     ...axiosRequestConfig,
+            //     data: { request: passwordResetRequest },
+            //     headers: {
+            //         Authorization: CONSTANTS.SB_API_KEY,
+            //     },
+            //     method: 'POST',
+            //     url: API_END_POINTS.kongUserResetPassword,
+            // })
+            // logInfo('Received response from password reset -> ' + passwordResetResponse)
+            // if (passwordResetResponse.data.params.status === 'success') {
+            //     logInfo('Reset password', passwordResetResponse.data.params.status)
+            //     res.status(200).send('User password reset successfully !!')
+            // }
 
             return
 
