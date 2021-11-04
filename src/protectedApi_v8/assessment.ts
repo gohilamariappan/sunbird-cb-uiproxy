@@ -61,6 +61,11 @@ const getFormatedResponse = (questions: any) => {
         _.set(optKey, "isCorrect", "false");
         _.set(optKey, "match", "");
       });
+    } else if (qkey.questionType === "fitb" && qkey.options.length > 0) {
+      _.forEach(qkey.options, (optKey) => {
+        _.set(optKey, "isCorrect", "false");
+        _.set(optKey, "text", "");
+      });
     }
   });
 };
