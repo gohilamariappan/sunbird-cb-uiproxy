@@ -17,7 +17,7 @@ forgotPassword.post('/verify', async (req, _res) => {
     logInfo('Entered into forgot password and email is : ', sbemail)
     logInfo('Checking Fetch email id value : ', API_END_POINTS.fetchUserByEmailId + sbemail)
     try {
-        const res = await axios( {
+        const _res = await axios( {
             ...axiosRequestConfig,
             headers: {
                 Authorization: CONSTANTS.SB_API_KEY,
@@ -26,11 +26,11 @@ forgotPassword.post('/verify', async (req, _res) => {
             url: API_END_POINTS.fetchUserByEmailId + sbemail,
 
         })
-        logInfo( 'res Data in JSON :', JSON.stringify(res.data))
-        logInfo( 'res Data in Success :', res.data.responseCode)
-        if (res.data.responseCode === 'OK') {
-            logInfo( 'res result.exists :', _.get(res, 'data.result.exists'))
-            return _.get(res, 'data.result.exists')
+        logInfo( 'res Data in JSON :', JSON.stringify(_res.data))
+        logInfo( 'res Data in Success :', _res.data.responseCode)
+        if (_res.data.responseCode === 'OK') {
+            logInfo( 'res result.exists :', _.get(_res, 'data.result.exists'))
+            return _.get(_res, 'data.result.exists')
         }
     } catch (err) {
         logError( 'fetchUserByEmailId failed : ' + err)
