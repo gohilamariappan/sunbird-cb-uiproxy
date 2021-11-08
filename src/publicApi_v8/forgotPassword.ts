@@ -19,8 +19,8 @@ export const forgotPassword = Router()
 forgotPassword.post('/verify', async (req, res) => {
     logInfo('Entered into forgot password')
     try {
-        const { sbemail } = req.body
-        logInfo('URL Passing : ', JSON.stringify(req.body))
+        const  sbemail  = req.body.email
+        logInfo('URL Passing : ', sbemail)
         const searchresponse = await axios({
             ...axiosRequestConfig,
             data: { request: { query: '', filters: { email: sbemail.toLowerCase() } } },
