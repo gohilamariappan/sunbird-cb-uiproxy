@@ -3,66 +3,39 @@ import { Router } from 'express'
 import { axiosRequestConfig } from '../configs/request.config'
 import { CONSTANTS } from '../utils/env'
 import { logError, logInfo } from '../utils/logger'
-import { extractUserToken } from '../utils/requestExtract'
+
 
 const API_END_POINTS = {
     kongSearchUser: `${CONSTANTS.KONG_API_BASE}/user/v1/search`,
     kongUserResetPassword: `${CONSTANTS.KONG_API_BASE}/private/user/v1/password/reset`,
+    fetchUserByEmailId: `${CONSTANTS.KONG_API_BASE}/user/v1/exists/email/`,
   }
 
 
 export const forgotPassword = Router()
 
-forgotPassword.post('/verify', async (req, res) => {
-    logInfo('Entered into forgot password')
+
+forgotPassword.post('/verify', async (req, _res) => {
+    const sbemail = req.body.personalDetails.email
+    logInfo('Entered into forgot password and email is : ', sbemail)
+    logInfo('Checking Fetch email id value : ', API_END_POINTS.fetchUserByEmailId + sbemail)
     try {
-        const sbemail_ = req.body.personalDetails.email
-        logInfo('URL Passing : ', req.body.personalDetails.email)
-        const searchresponse = await axios({
+        const res = await axios( {
             ...axiosRequestConfig,
-            data: { request: { query: '', filters: { email: sbemail_.toLowerCase() } } },
             headers: {
                 Authorization: CONSTANTS.SB_API_KEY,
-                // tslint:disable-next-line: all
-                'x-authenticated-user-token': extractUserToken(req)
             },
-            method: 'POST',
-            url: API_END_POINTS.kongSearchUser,
+            method: 'GET',
+            url: API_END_POINTS.fetchUserByEmailId + sbemail,
+
         })
-        logInfo('Email Data : ', req.body.personalDetails.email)
-
-        if (searchresponse.data.result.response.count > 0) {
-            logInfo('Entered into Search Response')
-           
-            res.status(200).send('User search successful')
-            return
-        } else {
-            const sbUserId = searchresponse.data.result.userId
-            const passwordResetRequest = {
-                key: 'email',
-                type: 'email',
-                userId: sbUserId,
-            }
-
-            logInfo('Sending Password reset request -> ' + passwordResetRequest)
-            logInfo('User id -> ' + sbUserId)
-            const passwordResetResponse = await axios({
-                ...axiosRequestConfig,
-                data: { request: passwordResetRequest },
-                headers: {
-                    Authorization: CONSTANTS.SB_API_KEY,
-                },
-                method: 'POST',
-                url: API_END_POINTS.kongUserResetPassword,
-            })
-            logInfo('Received response from password reset -> ' + passwordResetResponse)
-            if (passwordResetResponse.data.params.status === 'success') {
-                logInfo('Reset password', passwordResetResponse.data.params.status)
-                res.status(200).send('User password reset successfully !!')
-            }
+        logInfo( 'res Data in JSON :', JSON.stringify(res.data))
+        logInfo( 'res Data in Success :', res.data.responseCode)
+        if (res.data.responseCode === 'OK') {
+            logInfo( 'res result.exists :', _.get(res, 'data.result.exists'))
+            return _.get(res, 'data.result.exists')
         }
-
     } catch (err) {
-        logError('Error failing the call : ' + err)
+        logError( 'fetchUserByEmailId failed : '+ err)
     }
 })
