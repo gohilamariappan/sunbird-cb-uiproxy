@@ -33,7 +33,7 @@ const checkIsStaticRoute = (REQ_URL: any) => {
         '/assets/',
         '/content-plugins/',
         '/editors/',
-        '/learning-analytics'
+        '/learning-analytics',
     ]
     // tslint:disable-next-line: no-any
     return _.some(excludePath, (path: any) => _.includes(REQ_URL, path))
@@ -208,7 +208,7 @@ const respond419 = (req: Request, res: Response) => {
  */
 export const isAllowed = () => {
     // tslint:disable-next-line: only-arrow-functions
-    return function (req: Request, res: Response, next: NextFunction) {
+    return function(req: Request, res: Response, next: NextFunction) {
         let REQ_URL = req.path
         if (CONSTANTS.PORTAL_API_WHITELIST_CHECK === 'true') {
             if (shouldAllow(req) || _.includes(REQ_URL, '/resource')) {

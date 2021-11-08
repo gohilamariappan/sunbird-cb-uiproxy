@@ -1,4 +1,5 @@
 import axios from 'axios'
+import elasticsearch from 'elasticsearch'
 import express from 'express'
 import { UploadedFile } from 'express-fileupload'
 import FormData from 'form-data'
@@ -21,16 +22,14 @@ import {
   scormProxyCreatorRoute
 } from '../utils/proxyCreator'
 import { extractUserIdFromRequest, extractUserToken } from '../utils/requestExtract'
-import elasticsearch from 'elasticsearch'
-
 
 const API_END_POINTS = {
   contentNotificationEmail: `${CONSTANTS.NOTIFICATION_SERVIC_API_BASE}/v1/notification/send/sync`,
 }
 
-let client = new elasticsearch.Client({
-  hosts: ['http://10.1.2.138:9200']
-});
+const client = new elasticsearch.Client({
+  hosts: ['http://10.1.2.138:9200'],
+})
 
 export const proxiesV8 = express.Router()
 
@@ -40,31 +39,28 @@ proxiesV8.get('/', (_req, res) => {
   })
 })
 
-
-proxiesV8.get("/learning-analytics", (req, res) => {
-  const day = req.body.event;// Should be in this format "24-12-2021"
+proxiesV8.get('/learning-analytics', (req, res) => {
+  const day = req.body.event// Should be in this format "24-12-2021"
   client.search({
     index: 'telemetry_ingest-2021.12',
     body: {
-      "query": {
-        "constant_score": {
-          "filter": {
-            "term": {
-              "userdata.Date.keyword": day
-            }
-          }
-        }
-      }
-    }
+      query: {
+        constant_score: {
+          filter: {
+            term: {
+              'userdata.Date.keyword': day,
+            },
+          },
+        },
+      },
+    },
   }).then(function (resp) {
     res.status(200).json({
-      "data": resp
+      data: resp,
     })
-  }, function (err) {
-    console.trace(err.message);
-  });
+  }).catch(() => {
+  })
 })
-
 
 proxiesV8.post('/upload/*', (req, res) => {
   if (req.files && req.files.data) {
@@ -108,9 +104,6 @@ proxiesV8.post('/upload/*', (req, res) => {
     res.send('File not found')
   }
 })
-
-
-
 
 proxiesV8.post('/private/upload/*', (_req, _res) => {
   if (_req.files && _req.files.data) {
