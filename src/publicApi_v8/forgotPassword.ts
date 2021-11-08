@@ -25,9 +25,15 @@ forgotPassword.post('/reset/proxy/password', async (req, res) => {
             url: API_END_POINTS.searchSb,
         })
         if (searchresponse.data.result.response.count > 0) {
-            res.status(200).send({userId :searchresponse.data.result.response.content.userId, message : "success"})
-            return
+            logInfo("User found with user id : ", searchresponse.data.result.response.content.userId)
+            res.status(200).send(searchresponse.data.result.response.content)
         }
+        else
+        {
+            logInfo("Couldnot find the user : ", searchresponse.data.result.response)
+            res.status(302).send(searchresponse.data.result.response.count)
+        }
+        return
 
     } catch (err) {
         logError('ERROR CREATING USER REGISTRY > ' + err)
