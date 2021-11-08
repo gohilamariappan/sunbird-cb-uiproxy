@@ -48,10 +48,10 @@ const getFormatedResponse = (data: any) => {
     "Response of questions in formated method JSON :",
     JSON.stringify(data.questions)
   );
-  let assessmentInfo = {
+  const assessmentInfo = {
     isAssessment: _.get(data, "isAssessment"),
-    timeLimit: _.get(data, "timeLimit"),
     questions: [],
+    timeLimit: _.get(data, "timeLimit"),
   };
 
   const formtedAssessmentInfo = _.forEach(data.questions, (qkey) => {
