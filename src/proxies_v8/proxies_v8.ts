@@ -42,7 +42,6 @@ proxiesV8.get('/', (_req, res) => {
 proxiesV8.get('/learning-analytics', (req, res) => {
   const day = req.body.event// Should be in this format "24-12-2021"
   client.search({
-    index: 'telemetry_ingest-2021.12',
     body: {
       query: {
         constant_score: {
@@ -54,6 +53,7 @@ proxiesV8.get('/learning-analytics', (req, res) => {
         },
       },
     },
+    index: 'telemetry_ingest-2021.12'
   }).then((resp) => {
     res.status(200).json({
       data: resp,
