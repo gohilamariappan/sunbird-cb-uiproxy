@@ -54,11 +54,10 @@ proxiesV8.get('/learning-analytics', (req, res) => {
         },
       },
     },
-  }).then(function (resp) {
+  }).then((resp) => {
     res.status(200).json({
       data: resp,
     })
-  }).catch(() => {
   })
 })
 
