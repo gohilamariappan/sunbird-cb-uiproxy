@@ -49,8 +49,8 @@ const getFormatedResponse = (data: any) => {
     JSON.stringify(data.questions)
   );
   const assessmentInfo = {
-    timeLimit: _.get(data, "timeLimit"),
     isAssessment: _.get(data, "isAssessment"),
+    timeLimit: _.get(data, "timeLimit"),
   };
   const formtedAssessmentInfo = _.forEach(data.questions, (qkey) => {
     logInfo("inside for each");
