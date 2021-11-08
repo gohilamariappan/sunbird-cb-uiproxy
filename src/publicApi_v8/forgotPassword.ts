@@ -19,11 +19,11 @@ export const forgotPassword = Router()
 forgotPassword.post('/verify', async (req, res) => {
     logInfo('Entered into forgot password')
     try {
-        const { sbemail_ } = req.body.email
-        logInfo('URL Passing : ', JSON.stringify(req.body.email))
+        const { sbemail } = req.body
+        logInfo('URL Passing : ', JSON.stringify(req.body))
         const searchresponse = await axios({
             ...axiosRequestConfig,
-            data: { request: { query: '', filters: { email: sbemail_.toLowerCase() } } },
+            data: { request: { query: '', filters: { email: sbemail.toLowerCase() } } },
             headers: {
                 Authorization: CONSTANTS.SB_API_KEY,
                 // tslint:disable-next-line: all
