@@ -20,7 +20,7 @@ forgotPassword.post('/verify', async (req, res) => {
     logInfo('Entered into forgot password')
     try {
         const { sbemail_ } = req.body
-        logInfo('URL Passing : ', req.body)
+        logInfo('URL Passing : ', JSON.stringify(req.body))
         const searchresponse = await axios({
             ...axiosRequestConfig,
             data: { request: { query: '', filters: { email: sbemail_.toLowerCase() } } },
