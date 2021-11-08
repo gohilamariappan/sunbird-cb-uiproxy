@@ -17,25 +17,25 @@ const emailAdressExist = 'Email address already exist'
 export const forgotPassword = Router()
 
 forgotPassword.post('/verify', async (req, res) => {
-    logInfo('Entered into forgot password')
+    logInfo('Entered into forgot password as')
+    
     try {
         const  sbemail  = req.body.email
-        logInfo('URL Passing : ', sbemail)
+        logInfo('URL Passing : ', JSON.stringify(sbemail))
+
         const searchresponse = await axios({
             ...axiosRequestConfig,
             data: { request: { query: '', filters: { email: sbemail.toLowerCase() } } },
             headers: {
                 Authorization: CONSTANTS.SB_API_KEY,
                 // tslint:disable-next-line: all
-                'x-authenticated-user-token': extractUserToken(req)
+                'x-authenticated-user-token': extractUserToken(req),
             },
             method: 'POST',
             url: API_END_POINTS.kongSearchUser,
         })
-
-        if (searchresponse.data.result.response.count > 0) {
-            logInfo('Entered into Search Response')
-            res.status(200).send(
+        logInfo("After hit received response is : " + searchresponse)
+        res.status(400).send(
             {
                 id: 'api.error.createUser',
                 ver: '1.0',
@@ -53,35 +53,9 @@ forgotPassword.post('/verify', async (req, res) => {
                 responseCode: 'USR_EMAIL_EXISTS',
                 result: {},
             })
-            res.status(200).send('User search successful')
             return
-        } else {
-            const sbUserId = searchresponse.data.result.userId
-            const passwordResetRequest = {
-                key: 'email',
-                type: 'email',
-                userId: sbUserId,
-            }
-
-            logInfo('Sending Password reset request -> ' + passwordResetRequest)
-            logInfo('User id -> ' + sbUserId)
-            const passwordResetResponse = await axios({
-                ...axiosRequestConfig,
-                data: { request: passwordResetRequest },
-                headers: {
-                    Authorization: CONSTANTS.SB_API_KEY,
-                },
-                method: 'POST',
-                url: API_END_POINTS.kongUserResetPassword,
-            })
-            logInfo('Received response from password reset -> ' + passwordResetResponse)
-            if (passwordResetResponse.data.params.status === 'success') {
-                logInfo('Reset password', passwordResetResponse.data.params.status)
-                res.status(200).send('User password reset successfully !!')
-            }
-        }
 
     } catch (err) {
-        logError('Error failing the call : ' + err)
+        logError('Hey ! Its Error failing the call : ' + err)
     }
 })
