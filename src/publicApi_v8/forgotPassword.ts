@@ -18,7 +18,7 @@ export const forgotPassword = Router()
 
 forgotPassword.post('/verify', async (req, res) => {
     logInfo('Entered into forgot password as')
-    
+
     try {
         const  sbemail  = req.body.email
         logInfo('URL Passing : ', JSON.stringify(sbemail))
@@ -34,8 +34,8 @@ forgotPassword.post('/verify', async (req, res) => {
             method: 'POST',
             url: API_END_POINTS.kongSearchUser,
         })
-        logInfo("After hit received response is : " + searchresponse)
-        res.status(400).send(
+        logInfo('After hit received response is : ' + searchresponse)
+        res.status(200).send(
             {
                 id: 'api.error.createUser',
                 ver: '1.0',
@@ -53,9 +53,10 @@ forgotPassword.post('/verify', async (req, res) => {
                 responseCode: 'USR_EMAIL_EXISTS',
                 result: {},
             })
-            return
+        return
 
     } catch (err) {
         logError('Hey ! Its Error failing the call : ' + err)
+        res.status(400).send("Error throwing")
     }
 })
