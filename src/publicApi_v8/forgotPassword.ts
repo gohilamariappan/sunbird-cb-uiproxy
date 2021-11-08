@@ -4,16 +4,13 @@ import { axiosRequestConfig } from '../configs/request.config'
 import { CONSTANTS } from '../utils/env'
 import { logError, logInfo } from '../utils/logger'
 
-
 const API_END_POINTS = {
+    fetchUserByEmailId: `${CONSTANTS.KONG_API_BASE}/user/v1/exists/email/`,
     kongSearchUser: `${CONSTANTS.KONG_API_BASE}/user/v1/search`,
     kongUserResetPassword: `${CONSTANTS.KONG_API_BASE}/private/user/v1/password/reset`,
-    fetchUserByEmailId: `${CONSTANTS.KONG_API_BASE}/user/v1/exists/email/`,
   }
 
-
 export const forgotPassword = Router()
-
 
 forgotPassword.post('/verify', async (req, _res) => {
     const sbemail = req.body.personalDetails.email
@@ -36,6 +33,6 @@ forgotPassword.post('/verify', async (req, _res) => {
             return _.get(res, 'data.result.exists')
         }
     } catch (err) {
-        logError( 'fetchUserByEmailId failed : '+ err)
+        logError( 'fetchUserByEmailId failed : ' + err)
     }
 })
