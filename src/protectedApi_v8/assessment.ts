@@ -16,7 +16,9 @@ assessmentApi.post("/submit/v2", async (req, res) => {
       const { artifactUrl } = req.body;
       const assessmentData = await fetchAssessment(artifactUrl);
     }
-  } catch {}
+  } catch {
+    logError("submitassessment  failed");
+  }
 });
 assessmentApi.post("/get", async (req, res) => {
   try {
