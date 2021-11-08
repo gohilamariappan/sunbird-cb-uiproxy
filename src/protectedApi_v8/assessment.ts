@@ -102,14 +102,16 @@ const getFormatedRequest = (data: any, requestBody: any) => {
   );
   _.forEach(data.questions, (qkey) => {
     _.forEach(requestBody.questions, (reqKey) => {
-      if (qkey.questionType === "mcq-sca" && qkey.options.length > 0) {
-        if (reqKey.questionId === qkey.questionId) {
-          _.forEach(qkey.options, (qoptKey) => {
-            _.forEach(reqKey.options, (optKey) => {
-              _.set(optKey, "isCorrect", _.get(qoptKey, "isCorrect"));
-            });
+      if (
+        qkey.questionType === "mcq-sca" &&
+        qkey.options.length > 0 &&
+        reqKey.questionId === qkey.questionId
+      ) {
+        _.forEach(qkey.options, (qoptKey) => {
+          _.forEach(reqKey.options, (optKey) => {
+            _.set(optKey, "isCorrect", _.get(qoptKey, "isCorrect"));
           });
-        }
+        });
       }
     });
   });
