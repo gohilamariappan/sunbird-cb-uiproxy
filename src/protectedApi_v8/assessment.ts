@@ -93,6 +93,7 @@ const getFormatedRequest = (questions: any) => {
   );
   _.forEach(questions, (qkey) => {
     if (qkey.questionType === "mcq-sca" && qkey.options.length > 0) {
+      logInfo("inside mcq ", qkey.questionType);
     }
   });
 };
