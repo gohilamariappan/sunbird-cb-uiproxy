@@ -16,7 +16,7 @@ assessmentApi.post("/get", async (req, res) => {
     const { artifactUrl } = req.body;
     const assessmentData = await fetchAssessment(artifactUrl);
     const formatedData = getFormatedResponse(assessmentData);
-    res.status(200).json({ questions: formatedData });
+    res.status(200).json(formatedData);
     logInfo("formatedData Data in JSON :", JSON.stringify(formatedData));
   } catch (err) {
     res.status(401).send({
@@ -48,12 +48,13 @@ const getFormatedResponse = (data: any) => {
     "Response of questions in formated method JSON :",
     JSON.stringify(data.questions)
   );
-  const assessmentInfo = {};
+  let assessmentInfo = {
+    isAssessment: _.get(data, "isAssessment"),
+    timeLimit: _.get(data, "timeLimit"),
+    questions: [],
+  };
+
   const formtedAssessmentInfo = _.forEach(data.questions, (qkey) => {
-    logInfo("inside for each");
-    (assessmentInfo["isAssessment"] = _.get(data, "isAssessment")),
-      (assessmentInfo["timeLimit"] = _.get(data, "timeLimit")),
-      logInfo("inside qkey ", qkey.questionType);
     if (qkey.questionType === "mcq-sca" && qkey.options.length > 0) {
       _.forEach(qkey.options, (optKey) => {
         _.set(optKey, "isCorrect", "false");
@@ -71,5 +72,6 @@ const getFormatedResponse = (data: any) => {
       });
     }
   });
-  return formtedAssessmentInfo;
+  assessmentInfo.questions = formtedAssessmentInfo;
+  return assessmentInfo;
 };
