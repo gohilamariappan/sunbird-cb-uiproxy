@@ -17,6 +17,31 @@ forgotPassword.post('/verify', async (req, _res) => {
     const sbemail = req.body.personalDetails.email
     logInfo('Entered into forgot password and email is : ', sbemail)
     logInfo('Checking Fetch email id value : ', API_END_POINTS.fetchUserByEmailId + sbemail)
+    logInfo('Google auth callback called' )
+    try {
+     
+        logInfo('Entering into forgot password section : ', sbemail )
+        const isUserExist = await fetchUserByEmailId(sbemail)
+        if (isUserExist) {
+            logInfo('Email already exists.')
+            _res.status(400).json({ status: 'error' , status_code: 400, msg: 'Email already exists.' })
+        } else {
+            logInfo('Check !! User doesnot exists !! ')
+            
+                _res.status(200).json({ status: 'success', status_code: 200, msg: 'User doesnot exist!!'})
+           
+        }
+        return
+    } catch (err) {
+        _res.status(401).send('Token Expired !!')
+        logError('ERROR CREATING USER' + err )
+    }
+
+})
+
+
+const fetchUserByEmailId = async (emailId: string) => {
+    logInfo('Checking Fetch email id value : ', API_END_POINTS.fetchUserByEmailId + emailId)
     try {
         const response = await axios( {
             ...axiosRequestConfig,
@@ -24,7 +49,7 @@ forgotPassword.post('/verify', async (req, _res) => {
                 Authorization: CONSTANTS.SB_API_KEY,
             },
             method: 'GET',
-            url: API_END_POINTS.fetchUserByEmailId + sbemail,
+            url: API_END_POINTS.fetchUserByEmailId + emailId,
 
         })
         logInfo( 'Response Data in JSON :', JSON.stringify(response.data))
@@ -36,4 +61,5 @@ forgotPassword.post('/verify', async (req, _res) => {
     } catch (err) {
         logError( 'fetchUserByEmailId failed')
     }
-})
+
+  }
