@@ -83,7 +83,7 @@ const getFormatedResponse = (questions: any) => {
     }
   });
 };
-
+// tslint:disable-next-line: no-any
 const getFormatedRequest = (questions: any) => {
   logInfo(
     "Response of questions in in getFormated method JSON :",
