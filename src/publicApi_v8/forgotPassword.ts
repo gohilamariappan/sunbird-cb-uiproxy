@@ -1,4 +1,3 @@
-
 import axios from 'axios'
 import { Router } from 'express'
 import { axiosRequestConfig } from '../configs/request.config'
@@ -25,9 +24,10 @@ forgotPassword.post('/reset/proxy/password', async (req, res) => {
             method: 'POST',
             url: API_END_POINTS.searchSb,
         })
-        logInfo('Entered into reset password ' + JSON.stringify(searchresponse))
-        res.status(200).send('Success in search User !! ')
-        return
+        if (searchresponse.data.result.response.count > 0) {
+            res.status(200).send(searchresponse.data.result.response)
+            return
+        }
 
     } catch (err) {
         logError('ERROR CREATING USER REGISTRY > ' + err)
