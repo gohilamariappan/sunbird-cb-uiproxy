@@ -25,7 +25,7 @@ forgotPassword.post('/reset/proxy/password', async (req, res) => {
             method: 'POST',
             url: API_END_POINTS.searchSb,
         })
-        logInfo('Entered into reset password ' + searchresponse)
+        logInfo('Entered into reset password ' + JSON.stringify(searchresponse))
         res.status(200).send('Success in search User !! ')
         return
 
