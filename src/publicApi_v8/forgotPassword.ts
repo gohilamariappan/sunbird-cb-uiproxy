@@ -32,7 +32,6 @@ forgotPassword.post('/verify', async (req, res) => {
             method: 'POST',
             url: API_END_POINTS.kongSearchUser,
         })
-        logInfo('Email Data : ', req.body.personalDetails.email)
 
         if (searchresponse.data.result.response.count > 0) {
             logInfo('Entered into Search Response')
