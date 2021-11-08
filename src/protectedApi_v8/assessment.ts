@@ -4,6 +4,25 @@ import _ from 'lodash'
 import { axiosRequestConfig } from '../configs/request.config'
 import { logError, logInfo } from '../utils/logger'
 export const assessmentApi = Router()
+
+assessmentApi.post('/submit/v2', async (req, res) => {
+  try {
+    if (!req.body.artifactUrl) {
+      res.status(400).json({
+        msg: 'artifact Url can not be empty',
+        status: 'error',
+        status_code: 400,
+      })
+      const { artifactUrl } = req.body
+      const assessmentData = await fetchAssessment(artifactUrl)
+      if (assessmentData) {
+        getFormatedRequest(assessmentData, req.body)
+      }
+    }
+  } catch {
+    logError('submitassessment  failed')
+  }
+})
 assessmentApi.post('/get', async (req, res) => {
   try {
     if (!req.body.artifactUrl) {
@@ -74,4 +93,27 @@ const getFormatedResponse = (data: any) => {
   })
   assessmentInfo.questions = formtedAssessmentInfo
   return assessmentInfo
+}
+// tslint:disable-next-line: no-any
+const getFormatedRequest = (data: any, requestBody: any) => {
+  logInfo(
+    'Response of questions in in getFormated method JSON :',
+    JSON.stringify(data.questions)
+  )
+  _.forEach(data.questions, (qkey) => {
+    _.forEach(requestBody.questions, (reqKey) => {
+      if (
+        qkey.questionType === 'mcq-sca' &&
+        qkey.options.length > 0 &&
+        reqKey.questionId === qkey.questionId
+      ) {
+        _.forEach(qkey.options, (qoptKey) => {
+          _.forEach(reqKey.options, (optKey) => {
+            _.set(optKey, 'isCorrect', _.get(qoptKey, 'isCorrect'))
+          })
+        })
+      }
+    })
+  })
+  logInfo(JSON.stringify(requestBody))
 }

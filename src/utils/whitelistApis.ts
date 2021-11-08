@@ -920,6 +920,11 @@ export const API_LIST = {
       // tslint:disable-next-line: object-literal-sort-keys
       ROLE_CHECK: [ROLE.PUBLIC],
     },
+    '/protected/v8/assessment/submit/v2': {
+      checksNeeded: [CHECK.ROLE],
+      // tslint:disable-next-line: object-literal-sort-keys
+      ROLE_CHECK: [ROLE.PUBLIC],
+    },
     '/protected/v8/assessment/get': {
       checksNeeded: [CHECK.ROLE],
       // tslint:disable-next-line: object-literal-sort-keys
@@ -1186,6 +1191,7 @@ export const API_LIST = {
     '/reset',
     '/protected/v8/user/evaluate/assessment/submit/v2',
     '/protected/v8/assessment/get',
+    '/protected/v8/assessment/submit/v2',
     '/protected/v8/connections/v2/connections/recommended/userDepartment',
     '/protected/v8/connections/v2/connections/recommended',
     '/protected/v8/connections/v2/connections/requests/received',
