@@ -7,7 +7,8 @@ import { logError, logInfo } from '../utils/logger'
 import {  getUser, resetKCPassword, verifyOTP } from './customSignup'
 
 const API_END_POINTS = {
-                        generateOtp: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/otp/v1/generate`,
+                        generateOtp: `https://aastrika-sb.idc.tarento.com/api/otp/v1/generate`,
+                        //generateOtp: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/otp/v1/generate`,
                         resendOTP: `${CONSTANTS.MSG91BASE}/api/v5/otp/retry`,
                         searchSb: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/private/user/v1/search`,
                         verifyOtp: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/otp/v1/verify`,
@@ -45,7 +46,7 @@ forgotPassword.post('/reset/proxy/password', async (req, res) => {
                 method: 'POST',
                 url: API_END_POINTS.generateOtp,
             })
-            logInfo('Sending Response : ' + sendResponse)
+            logInfo('Sending Responses : ' + sendResponse)
             res.status(200).send(userUUId)
            // res.status(200).send({message: 'Success ! Please verify the OTP .'})
             return
@@ -56,7 +57,7 @@ forgotPassword.post('/reset/proxy/password', async (req, res) => {
         return
 
     } catch (err) {
-        logError('ERROR in Searching User ' + err)
+        logError('ERROR in Searching Users ' + err)
         res.status(500).send('Error ' + err)
     }
 })
