@@ -1,22 +1,20 @@
 import axios from 'axios'
 import { Router } from 'express'
 import _ from 'lodash'
+import { token } from 'morgan'
 import { axiosRequestConfig } from '../configs/request.config'
 import { CONSTANTS } from '../utils/env'
 import { logError, logInfo } from '../utils/logger'
-import { emailactionKC } from './customSignup'
+import {  getUser, resetKCPassword, verifyOTP } from './customSignup'
 
 const API_END_POINTS = {
                         resendOTP: `${CONSTANTS.MSG91BASE}/api/v5/otp/retry`,
                         searchSb: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/private/user/v1/search`,
-                        sendOTP: `${CONSTANTS.MSG91BASE}/api/v5/otp`,
-                        verifyOTP: `${CONSTANTS.MSG91BASE}/api/v5/otp/verify`,
+                        generateOtp: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/otp/v1/generate`,
+                        verifyOtp: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/otp/v1/verify`,
                         }
 
-const msgKey = CONSTANTS.MSG91KEY
-// Routes
-// create account
-const MSGERROR = 'MSG91 ERROR'
+
 
 export const forgotPassword = Router()
 
@@ -46,11 +44,35 @@ forgotPassword.post('/reset/proxy/password', async (req, res) => {
             logInfo('UserName : ', sbUsername)
 
             if (userType === 'phone') {
-                await sendOTP(sbUsername)
-                res.status(200).json({message: 'Success ! Please verify the OTP.'})
-              } else if (userType === 'email') {
+                const sendResponse = await axios({
+                    ...axiosRequestConfig,
+                    data: { request: {   userId: userId, key  :sbUsername , type: userType } },
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                    method: 'POST',
+                    url: API_END_POINTS.generateOtp,
+                })
+                logInfo("Sending Response : "+ sendResponse)  
+
+                res.status(200).json({message: 'Success ! Please verify the OTP .'})
+              
+            } else if (userType === 'email') {
                 // triger email rest password
-                await emailactionKC(userId, 'resetPassword')
+               
+                const sendResponse = await axios({
+                    ...axiosRequestConfig,
+                    data: { request: {   userId: userId, key  :sbUsername , type: userType } },
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                    method: 'POST',
+                    url: API_END_POINTS.generateOtp,
+                })
+                logInfo("Sending Response : "+ sendResponse)  
+
                 res.status(200).json({message: 'Success ! Please verify the OTP .'})
               } else {
                 res.status(401).send(
@@ -76,6 +98,33 @@ forgotPassword.post('/reset/proxy/password', async (req, res) => {
     }
 })
 
+
+forgotPassword.post('/setPasswordWithOTP', async (req, res) => {
+    const username = req.body.username
+    const password = req.body.password
+    const otp = req.body.otp
+    const userData = await getUser(username)
+    if (userData) {
+      const verification = await verifyOTP(username, otp)
+      if (verification.type === 'success') {
+        try {
+          const userId = userData[0].id
+  
+          const status = resetKCPassword(userId, password)
+          res.status(200).json({ message: status })
+        } catch (e) {
+          res.status(500).send({
+            error: e.response,
+          })
+        }
+      } else {
+        res.status(401).send({
+          error: 'Invalid Otp',
+        })
+      }
+    }
+  })
+
 export function emailOrMobile(value: string) {
     const isValidEmail = emailValidator(value)
     if (isValidEmail) {
@@ -96,15 +145,4 @@ export function emailValidator(value: string) {
 
 const mobileValidator = (value: string) => {
     return /^([7-9][0-9]{9})$/.test(value)
-  }
-
-export async function sendOTP(mobileNumber: string) {
-    try {
-      mobileNumber = '91' + mobileNumber
-      const url = `${API_END_POINTS.sendOTP}?authkey=${msgKey}&template_id=${CONSTANTS.MSG91TEMPLATEID}&mobile=${mobileNumber}&invisible=1`
-      return await axios.get(url, axiosRequestConfig)
-    } catch (err) {
-      logError(MSGERROR, err)
-      return 'Error'
-    }
   }
