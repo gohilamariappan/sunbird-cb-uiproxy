@@ -8,13 +8,11 @@ import { logError, logInfo } from '../utils/logger'
 import {  getUser, resetKCPassword, verifyOTP } from './customSignup'
 
 const API_END_POINTS = {
+                        generateOtp: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/otp/v1/generate`,
                         resendOTP: `${CONSTANTS.MSG91BASE}/api/v5/otp/retry`,
                         searchSb: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/private/user/v1/search`,
-                        generateOtp: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/otp/v1/generate`,
                         verifyOtp: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/otp/v1/verify`,
                         }
-
-
 
 export const forgotPassword = Router()
 
@@ -43,10 +41,10 @@ forgotPassword.post('/reset/proxy/password', async (req, res) => {
             logInfo('User Id : ', userId)
             logInfo('UserName : ', sbUsername)
 
-            if (userType === 'phone') {
+            if (userType === 'phone' || userType === 'email') {
                 const sendResponse = await axios({
                     ...axiosRequestConfig,
-                    data: { request: {   userId: userId, key  :sbUsername , type: userType } },
+                    data: { request: {   userId, key  : sbUsername , type: userType } },
                     headers: {
                         Authorization: `Bearer ${token}`,
                         'Content-Type': 'application/json',
@@ -54,27 +52,12 @@ forgotPassword.post('/reset/proxy/password', async (req, res) => {
                     method: 'POST',
                     url: API_END_POINTS.generateOtp,
                 })
-                logInfo("Sending Response : "+ sendResponse)  
+                logInfo('Sending Response : ' + sendResponse)
 
                 res.status(200).json({message: 'Success ! Please verify the OTP .'})
-              
-            } else if (userType === 'email') {
-                // triger email rest password
-               
-                const sendResponse = await axios({
-                    ...axiosRequestConfig,
-                    data: { request: {   userId: userId, key  :sbUsername , type: userType } },
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        'Content-Type': 'application/json',
-                    },
-                    method: 'POST',
-                    url: API_END_POINTS.generateOtp,
-                })
-                logInfo("Sending Response : "+ sendResponse)  
 
-                res.status(200).json({message: 'Success ! Please verify the OTP .'})
-              } else {
+            }
+               else {
                 res.status(401).send(
                   {
                     error: 'Invalid Email/Mobile Number',
@@ -98,7 +81,6 @@ forgotPassword.post('/reset/proxy/password', async (req, res) => {
     }
 })
 
-
 forgotPassword.post('/setPasswordWithOTP', async (req, res) => {
     const username = req.body.username
     const password = req.body.password
@@ -109,7 +91,7 @@ forgotPassword.post('/setPasswordWithOTP', async (req, res) => {
       if (verification.type === 'success') {
         try {
           const userId = userData[0].id
-  
+
           const status = resetKCPassword(userId, password)
           res.status(200).json({ message: status })
         } catch (e) {
