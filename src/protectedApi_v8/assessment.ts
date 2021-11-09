@@ -159,6 +159,7 @@ const getFormatedRequest = (data: any, requestBody: any) => {
     "Response of questions in in getFormated method JSON :",
     JSON.stringify(data.questions)
   );
+  // eslint-disable-next-line
   _.forEach(data.questions, (qkey) => {
     _.forEach(requestBody.questions, (reqKey) => {
       if (
@@ -169,6 +170,7 @@ const getFormatedRequest = (data: any, requestBody: any) => {
         // eslint-disable-next-line
         _.forEach(qkey.options, (qoptKey) => {
           _.forEach(reqKey.options, (optKey) => {
+            // eslint-disable-next-line
             if (optKey.optionId === qoptKey.optionId) {
               _.set(optKey, "isCorrect", _.get(qoptKey, "isCorrect"));
               _.set(optKey, "text", _.get(qoptKey, "text"));
@@ -183,7 +185,9 @@ const getFormatedRequest = (data: any, requestBody: any) => {
       ) {
         // eslint-disable-next-line
         _.forEach(qkey.options, (qoptKey) => {
+          // eslint-disable-next-line
           _.forEach(reqKey.options, (optKey) => {
+            // eslint-disable-next-line
             if (optKey.optionId === qoptKey.optionId) {
               _.set(optKey, "isCorrect", _.get(qoptKey, "isCorrect"));
               _.set(optKey, "text", _.get(qoptKey, "text"));
@@ -200,6 +204,7 @@ const getFormatedRequest = (data: any, requestBody: any) => {
         _.forEach(qkey.options, (qoptKey) => {
           // eslint-disable-next-line
           _.forEach(reqKey.options, (optKey) => {
+            // eslint-disable-next-line
             if (optKey.optionId === qoptKey.optionId) {
               _.set(optKey, "isCorrect", _.get(qoptKey, "isCorrect"));
               _.set(optKey, "text", _.get(qoptKey, "text"));
