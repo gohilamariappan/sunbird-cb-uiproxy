@@ -4,10 +4,11 @@ import { proxyCreatorRoute } from '../utils/proxyCreator'
 import { customSignUp } from './customSignup'
 import {emailOrMobileLogin} from './emailOrMobileLoginSignIn'
 import { forgotPassword } from './forgotPassword'
-import {googleAuth} from './googleSignInRoutes'
+import { googleAuth } from './googleSignInRoutes'
 import { homePage } from './home'
 import { signup } from './signup'
 import { publicTnc } from './tnc'
+
 export const publicApiV8 = express.Router()
 
 publicApiV8.get('/', (_req, res) => {
