@@ -4,6 +4,7 @@ import _ from 'lodash'
 import { axiosRequestConfig } from '../configs/request.config'
 import { CONSTANTS } from '../utils/env'
 import { logError, logInfo } from '../utils/logger'
+import { emailactionKC } from './customSignup'
 
 const API_END_POINTS = {
                         resendOTP: `${CONSTANTS.MSG91BASE}/api/v5/otp/retry`,
@@ -36,14 +37,30 @@ forgotPassword.post('/reset/proxy/password', async (req, res) => {
         if (searchresponse.data.result.response.count > 0) {
             logInfo('User found with user id : ', searchresponse.data.result.response.content.userId)
             const userId =  _.get(_.find(searchresponse.data.result.response.content, 'userId'), 'userId')
-          // const mobileNumber = req.body.mobileNumber
+         
            // generate otp
             const userType = await emailOrMobile(sbUsername)
-           // await sendOTP(mobileNumber)
+
             logInfo('User type : ', userType)
             logInfo('User Id : ', userId)
             logInfo('UserName : ', sbUsername)
-            res.status(200).send(userId)
+
+            if (userType === 'phone') {
+                await sendOTP(sbUsername)
+                res.status(200).json({message: 'Success ! Please verify the OTP.'})
+              } else if (userType === 'email') {
+                // triger email rest password
+                await emailactionKC(userId, 'resetPassword')
+                res.status(200).json({message: 'Success ! Please verify the OTP .'})
+              } else {
+                res.status(401).send(
+                  {
+                    error: 'Invalid Email/Mobile Number',
+                  }
+                )
+              }
+
+            //res.status(200).send(userId)
            // res.status(200).json({message: 'Success'})
             return
             // res.status(200).send(userId)
@@ -92,3 +109,5 @@ export async function sendOTP(mobileNumber: string) {
     }
 
   }
+
+  
