@@ -301,5 +301,6 @@ export function apiWhiteListLogger() {
                 validateAPI(req, res, next)
             }
         } else { next() }
+
     }
 }

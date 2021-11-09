@@ -20,6 +20,7 @@ forgotPassword.post('/verify', async (req, res) => {
     logInfo('Entered into forgot password')
     try {
         const sbemail_ = req.body.personalDetails.email
+        logInfo('URL Passing : ', req.body.personalDetails.email)
         const searchresponse = await axios({
             ...axiosRequestConfig,
             data: { request: { query: '', filters: { email: sbemail_.toLowerCase() } } },
@@ -31,10 +32,11 @@ forgotPassword.post('/verify', async (req, res) => {
             method: 'POST',
             url: API_END_POINTS.kongSearchUser,
         })
+        logInfo('Email Data : ', req.body.personalDetails.email)
 
         if (searchresponse.data.result.response.count > 0) {
             logInfo('Entered into Search Response')
-            res.status(400).send(
+            res.status(200).send(
             {
                 id: 'api.error.createUser',
                 ver: '1.0',
@@ -52,6 +54,7 @@ forgotPassword.post('/verify', async (req, res) => {
                 responseCode: 'USR_EMAIL_EXISTS',
                 result: {},
             })
+            res.status(200).send('User search successful')
             return
         } else {
             const sbUserId = searchresponse.data.result.userId
@@ -62,6 +65,7 @@ forgotPassword.post('/verify', async (req, res) => {
             }
 
             logInfo('Sending Password reset request -> ' + passwordResetRequest)
+            logInfo('User id -> ' + sbUserId)
             const passwordResetResponse = await axios({
                 ...axiosRequestConfig,
                 data: { request: passwordResetRequest },
@@ -79,6 +83,6 @@ forgotPassword.post('/verify', async (req, res) => {
         }
 
     } catch (err) {
-        logError('Error failing the call' + err)
+        logError('Error failing the call : ' + err)
     }
 })

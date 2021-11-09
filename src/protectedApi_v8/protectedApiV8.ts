@@ -1,6 +1,7 @@
 import express from 'express'
 import { CONSTANTS } from '../utils/env'
 import { admin } from './admin/admin'
+import { assessmentApi } from './assessment'
 import { attendedContentApi } from './attendent-content'
 import { catalogApi } from './catalog'
 import { certificationApi } from './certifications'
@@ -81,3 +82,4 @@ protectedApiV8.use('/roleactivity', roleActivityApi)
 protectedApiV8.use('/resource', userAuthKeyCloakApi)
 protectedApiV8.use('/workallocation', workAllocationApi)
 protectedApiV8.use('/frac', fracApi)
+protectedApiV8.use('/assessment', assessmentApi)
