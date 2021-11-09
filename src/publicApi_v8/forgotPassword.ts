@@ -41,7 +41,7 @@ forgotPassword.post('/reset/proxy/password', async (req, res) => {
            // generate otp
             const sendResponse = await axios({
                 ...axiosRequestConfig,
-                data: { request: { userId, key  : sbUsername , type: userType } },
+                data: { request: { userId : userId, key  : sbUsername , type: userType } },
                 headers: {
                     Authorization: req.header('Authorization'),
                     'Content-Type': 'application/json',
