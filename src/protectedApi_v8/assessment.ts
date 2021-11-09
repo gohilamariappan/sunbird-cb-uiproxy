@@ -1,3 +1,4 @@
+/* eslint no-use-before-define: 0 */
 import axios from "axios";
 import { Router } from "express";
 import _ from "lodash";
