@@ -93,7 +93,7 @@ export function emailValidator(value: string) {
     // tslint:disable-next-line: max-line-length
     return /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(value)
   }
-  
+
 const mobileValidator = (value: string) => {
     return /^([7-9][0-9]{9})$/.test(value)
   }
