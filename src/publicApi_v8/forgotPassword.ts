@@ -1,7 +1,6 @@
 import axios from 'axios'
 import { Router } from 'express'
 import _ from 'lodash'
-import { token } from 'morgan'
 import { axiosRequestConfig } from '../configs/request.config'
 import { CONSTANTS } from '../utils/env'
 import { logError, logInfo } from '../utils/logger'
