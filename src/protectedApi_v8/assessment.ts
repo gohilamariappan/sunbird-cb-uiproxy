@@ -2,13 +2,13 @@ import axios from "axios";
 import { Router } from "express";
 import _ from "lodash";
 import { axiosRequestConfig } from "../configs/request.config";
+import { CONSTANTS } from "../utils/env";
 import { logError, logInfo } from "../utils/logger";
+import { ERROR } from "../utils/message";
 import {
   extractUserIdFromRequest,
   extractUserToken,
 } from "../utils/requestExtract";
-import { ERROR } from "../utils/message";
-import { CONSTANTS } from "../utils/env";
 export const assessmentApi = Router();
 const API_END_POINTS = {
   assessmentSubmitV2: `${CONSTANTS.KONG_API_BASE}/v2/user`,
@@ -174,6 +174,7 @@ const getFormatedRequest = (data: any, requestBody: any) => {
             }
           });
         });
+        // eslint-disable-next-line
       } else if (
         qkey.questionType === "mtf" &&
         qkey.options.length > 0 &&
