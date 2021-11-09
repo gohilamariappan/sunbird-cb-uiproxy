@@ -8,17 +8,20 @@ export const assessmentApi = Router()
 assessmentApi.post('/submit/v2', async (req, res) => {
   logInfo('>>>>>>>>>>>>inside submit v2')
   try {
+    logInfo('Check Submit V2 : ', req.body.artifactUrl)
     if (!req.body.artifactUrl) {
       res.status(400).json({
         msg: 'artifact Url can not be empty',
         status: 'error',
         status_code: 400,
       })
-      const { artifactUrl } = req.body
-      const assessmentData = await fetchAssessment(artifactUrl)
-      if (assessmentData) {
-        getFormatedRequest(assessmentData, req.body)
-      }
+    }
+    const { artifactUrl } = req.body
+    const assessmentData = await fetchAssessment(artifactUrl)
+    logInfo('Assessment data Submit V2 : ', assessmentData)
+    res.status(200).json(assessmentData)
+    if (assessmentData) {
+      getFormatedRequest(assessmentData, req.body)
     }
   } catch {
     logError('submitassessment  failed')
