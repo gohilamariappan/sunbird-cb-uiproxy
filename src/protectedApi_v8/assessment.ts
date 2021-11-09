@@ -167,17 +167,16 @@ const getFormatedRequest = (data: any, requestBody: any) => {
         qkey.options.length > 0 &&
         reqKey.questionId === qkey.questionId
       ) {
-        // eslint-disable-next-line
+        /*eslint-disable */
         _.forEach(qkey.options, (qoptKey) => {
           _.forEach(reqKey.options, (optKey) => {
-            // eslint-disable-next-line
             if (optKey.optionId === qoptKey.optionId) {
               _.set(optKey, "isCorrect", _.get(qoptKey, "isCorrect"));
               _.set(optKey, "text", _.get(qoptKey, "text"));
             }
           });
         });
-        // eslint-disable-next-line
+        /*eslint-disable */
       } else if (
         qkey.questionType === "mtf" &&
         qkey.options.length > 0 &&
