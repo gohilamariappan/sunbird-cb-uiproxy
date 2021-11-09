@@ -159,7 +159,7 @@ const getFormatedRequest = (data: any, requestBody: any) => {
     "Response of questions in in getFormated method JSON :",
     JSON.stringify(data.questions)
   );
-  // eslint-disable-next-line
+  /*eslint-disable */
   _.forEach(data.questions, (qkey) => {
     _.forEach(requestBody.questions, (reqKey) => {
       if (
@@ -184,6 +184,7 @@ const getFormatedRequest = (data: any, requestBody: any) => {
         reqKey.questionId === qkey.questionId
       ) {
         // eslint-disable-next-line
+
         _.forEach(qkey.options, (qoptKey) => {
           // eslint-disable-next-line
           _.forEach(reqKey.options, (optKey) => {
@@ -214,6 +215,7 @@ const getFormatedRequest = (data: any, requestBody: any) => {
       }
     });
   });
+  /*eslint-disable */
 
   logInfo("requestBody", JSON.stringify(requestBody));
   return requestBody;
