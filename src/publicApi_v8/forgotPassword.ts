@@ -31,17 +31,17 @@ forgotPassword.post('/reset/proxy/password', async (req, res) => {
         })
         if (searchresponse.data.result.response.count > 0) {
 
-            const userId =  _.get(_.find(searchresponse.data.result.response.content, 'userId'), 'userId')
+            const userUUId =  _.get(_.find(searchresponse.data.result.response.content, 'userId'), 'userId')
             const userType = await emailOrMobile(sbUsername)
 
             logInfo('User type : ', userType)
-            logInfo('User Id : ', userId)
+            logInfo('User Id : ', userUUId)
             logInfo('UserName : ', sbUsername)
 
            // generate otp
             const sendResponse = await axios({
                 ...axiosRequestConfig,
-                data: { request: { userId : userId, key  : sbUsername , type: userType } },
+                data: { request: { userId : userUUId, key  : sbUsername , type: userType } },
                 headers: {
                     Authorization: req.header('Authorization'),
                     'Content-Type': 'application/json',
@@ -50,7 +50,7 @@ forgotPassword.post('/reset/proxy/password', async (req, res) => {
                 url: API_END_POINTS.generateOtp,
             })
             logInfo('Sending Response : ' + sendResponse)
-            res.status(200).send(userId)
+            res.status(200).send(userUUId)
            // res.status(200).send({message: 'Success ! Please verify the OTP .'})
             return
         } else {
