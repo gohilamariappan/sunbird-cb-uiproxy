@@ -16,6 +16,7 @@ assessmentApi.post("/submit/v2", async (req, res) => {
       });
       const { artifactUrl } = req.body;
       const assessmentData = await fetchAssessment(artifactUrl);
+      res.status(200).json(assessmentData);
       if (assessmentData) {
         getFormatedRequest(assessmentData, req.body);
       }
