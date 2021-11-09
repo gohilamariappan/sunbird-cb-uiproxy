@@ -30,19 +30,18 @@ forgotPassword.post('/reset/proxy/password', async (req, res) => {
             url: API_END_POINTS.searchSb,
         })
         if (searchresponse.data.result.response.count > 0) {
-            logInfo('User found with user id : ', searchresponse.data.result.response.content.userId)
-            const userId =  _.get(_.find(searchresponse.data.result.response.content, 'userId'), 'userId')
 
-           // generate otp
+            const userId =  _.get(_.find(searchresponse.data.result.response.content, 'userId'), 'userId')
             const userType = await emailOrMobile(sbUsername)
 
             logInfo('User type : ', userType)
             logInfo('User Id : ', userId)
             logInfo('UserName : ', sbUsername)
-
+            
+           // generate otp
             const sendResponse = await axios({
                 ...axiosRequestConfig,
-                data: { request: {   userId, key  : sbUsername , type: userType } },
+                data: { request: { userId:  userId, key  : sbUsername , type: userType } },
                 headers: {
                     Authorization: req.header('Authorization'),
                     'Content-Type': 'application/json',
@@ -61,7 +60,7 @@ forgotPassword.post('/reset/proxy/password', async (req, res) => {
         return
 
     } catch (err) {
-        logError('ERROR CREATING USER REGISTRY > ' + err)
+        logError('ERROR in Searching User ' + err)
         res.status(500).send('Error ' + err)
     }
 })
@@ -113,3 +112,4 @@ export function emailValidator(value: string) {
 const mobileValidator = (value: string) => {
     return /^([7-9][0-9]{9})$/.test(value)
   }
+
