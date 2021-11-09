@@ -126,6 +126,7 @@ const getFormatedResponse = (data: any) => {
   return assessmentInfo;
 };
 // eslint-disable-next-line
+// tslint:disable-next-line: no-any
 const getFormatedRequest = (data: any, requestBody: any) => {
   logInfo(
     "Response of questions in in getFormated method JSON :",
@@ -134,7 +135,7 @@ const getFormatedRequest = (data: any, requestBody: any) => {
 
   _.forEach(data.questions, (qkey) => {
     _.forEach(requestBody.questions, (reqKey) => {
-      if (qkey.questionType === "mcq-sca") {
+      if (qkey.questionType === "mcq-sca" || qkey.questionType === "fitb") {
         _.forEach(qkey.options, (qoptKey) => {
           _.forEach(reqKey.options, (optKey) => {
             if (optKey.optionId === qoptKey.optionId) {
@@ -148,16 +149,7 @@ const getFormatedRequest = (data: any, requestBody: any) => {
           _.forEach(reqKey.options, (optKey) => {
             if (optKey.optionId === qoptKey.optionId) {
               _.set(optKey, "isCorrect", _.get(qoptKey, "isCorrect"));
-              _.set(optKey, "text", _.get(qoptKey, "text"));
-            }
-          });
-        });
-      } else if (qkey.questionType === "fitb") {
-        _.forEach(qkey.options, (qoptKey) => {
-          _.forEach(reqKey.options, (optKey) => {
-            if (optKey.optionId === qoptKey.optionId) {
-              _.set(optKey, "isCorrect", _.get(qoptKey, "isCorrect"));
-              _.set(optKey, "text", _.get(qoptKey, "text"));
+              _.set(optKey, "match", _.get(qoptKey, "match"));
             }
           });
         });
