@@ -37,11 +37,11 @@ forgotPassword.post('/reset/proxy/password', async (req, res) => {
             logInfo('User type : ', userType)
             logInfo('User Id : ', userId)
             logInfo('UserName : ', sbUsername)
-            
+
            // generate otp
             const sendResponse = await axios({
                 ...axiosRequestConfig,
-                data: { request: { userId:  userId, key  : sbUsername , type: userType } },
+                data: { request: { userId, key  : sbUsername , type: userType } },
                 headers: {
                     Authorization: req.header('Authorization'),
                     'Content-Type': 'application/json',
@@ -112,4 +112,3 @@ export function emailValidator(value: string) {
 const mobileValidator = (value: string) => {
     return /^([7-9][0-9]{9})$/.test(value)
   }
-
