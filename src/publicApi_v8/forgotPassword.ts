@@ -37,7 +37,7 @@ forgotPassword.post('/reset/proxy/password', async (req, res) => {
         if (searchresponse.data.result.response.count > 0) {
             logInfo('User found with user id : ', searchresponse.data.result.response.content.userId)
             const userId =  _.get(_.find(searchresponse.data.result.response.content, 'userId'), 'userId')
-         
+
            // generate otp
             const userType = await emailOrMobile(sbUsername)
 
@@ -60,7 +60,6 @@ forgotPassword.post('/reset/proxy/password', async (req, res) => {
                 )
               }
 
-            //res.status(200).send(userId)
            // res.status(200).json({message: 'Success'})
             return
             // res.status(200).send(userId)
@@ -110,4 +109,3 @@ export async function sendOTP(mobileNumber: string) {
 
   }
 
-  
