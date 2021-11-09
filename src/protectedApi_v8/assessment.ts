@@ -139,17 +139,16 @@ const getFormatedRequest = (data: any, requestBody: any) => {
         _.forEach(qkey.options, (qoptKey) => {
           _.forEach(reqKey.options, (optKey) => {
             if (optKey.optionId === qoptKey.optionId) {
-              _.set(optKey, "isCorrect", _.get(qoptKey, "isCorrect"));
-              _.set(optKey, "text", _.get(qoptKey, "text"));
-            }
-          });
-        });
-      } else if (qkey.questionType === "mtf") {
-        _.forEach(qkey.options, (qoptKey) => {
-          _.forEach(reqKey.options, (optKey) => {
-            if (optKey.optionId === qoptKey.optionId) {
-              _.set(optKey, "isCorrect", _.get(qoptKey, "isCorrect"));
-              _.set(optKey, "match", _.get(qoptKey, "match"));
+              if (
+                qkey.questionType === "mcq-sca" ||
+                qkey.questionType === "fitb"
+              ) {
+                _.set(optKey, "isCorrect", _.get(qoptKey, "isCorrect"));
+                _.set(optKey, "text", _.get(qoptKey, "text"));
+              } else if (qkey.questionType === "mtf") {
+                _.set(optKey, "isCorrect", _.get(qoptKey, "isCorrect"));
+                _.set(optKey, "match", _.get(qoptKey, "match"));
+              }
             }
           });
         });
