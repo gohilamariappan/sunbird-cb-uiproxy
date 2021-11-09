@@ -166,6 +166,7 @@ const getFormatedRequest = (data: any, requestBody: any) => {
         qkey.options.length > 0 &&
         reqKey.questionId === qkey.questionId
       ) {
+        // eslint-disable-next-line
         _.forEach(qkey.options, (qoptKey) => {
           _.forEach(reqKey.options, (optKey) => {
             if (optKey.optionId === qoptKey.optionId) {
@@ -197,6 +198,7 @@ const getFormatedRequest = (data: any, requestBody: any) => {
       ) {
         // eslint-disable-next-line
         _.forEach(qkey.options, (qoptKey) => {
+          // eslint-disable-next-line
           _.forEach(reqKey.options, (optKey) => {
             if (optKey.optionId === qoptKey.optionId) {
               _.set(optKey, "isCorrect", _.get(qoptKey, "isCorrect"));
