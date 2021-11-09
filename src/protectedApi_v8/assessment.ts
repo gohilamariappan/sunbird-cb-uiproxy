@@ -20,8 +20,8 @@ assessmentApi.post("/submit/v2", async (req, res) => {
     if (assessmentData) {
       const formatedRequest = getFormatedRequest(assessmentData, req.body);
       logInfo("formatedRequest", formatedRequest);
+      res.status(200).json(formatedRequest);
     }
-    res.status(200).json(assessmentData);
   } catch {
     logError("submitassessment  failed");
   }
@@ -112,13 +112,15 @@ const getFormatedRequest = (data: any, requestBody: any) => {
       ) {
         _.forEach(qkey.options, (qoptKey) => {
           _.forEach(reqKey.options, (optKey) => {
-            _.set(optKey, "isCorrect", _.get(qoptKey, "isCorrect"));
+            if (optKey.optionId === qoptKey.optionId) {
+              _.set(optKey, "isCorrect", _.get(qoptKey, "isCorrect"));
+            }
           });
         });
       }
     });
   });
 
-  logInfo(JSON.stringify(requestBody));
+  logInfo("requestBody", JSON.stringify(requestBody));
   return requestBody;
 };
