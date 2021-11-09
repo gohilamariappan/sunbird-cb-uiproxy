@@ -41,34 +41,20 @@ forgotPassword.post('/reset/proxy/password', async (req, res) => {
             logInfo('User Id : ', userId)
             logInfo('UserName : ', sbUsername)
 
-            if (userType === 'phone' || userType === 'email') {
-                const sendResponse = await axios({
-                    ...axiosRequestConfig,
-                    data: { request: {   userId, key  : sbUsername , type: userType } },
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        'Content-Type': 'application/json',
-                    },
-                    method: 'POST',
-                    url: API_END_POINTS.generateOtp,
-                })
-                logInfo('Sending Response : ' + sendResponse)
-
-                res.status(200).json({message: 'Success ! Please verify the OTP .'})
-
-            }
-               else {
-                res.status(401).send(
-                  {
-                    error: 'Invalid Email/Mobile Number',
-                  }
-                )
-              }
-
-           // res.status(200).json({message: 'Success'})
+            const sendResponse = await axios({
+                ...axiosRequestConfig,
+                data: { request: {   userId, key  : sbUsername , type: userType } },
+                headers: {
+                    Authorization: req.header('Authorization'),
+                    'Content-Type': 'application/json',
+                },
+                method: 'POST',
+                url: API_END_POINTS.generateOtp,
+            })
+            logInfo('Sending Response : ' + sendResponse)
+            res.status(200).send(userId)
+           // res.status(200).send({message: 'Success ! Please verify the OTP .'})
             return
-            // res.status(200).send(userId)
-
         } else {
             logInfo('Couldnot find the user : ', searchresponse.data.result.response)
             res.status(302).send(searchresponse.data.result.response.count)
