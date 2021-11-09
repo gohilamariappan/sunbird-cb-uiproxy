@@ -1,4 +1,3 @@
-/* eslint no-use-before-define: 0 */
 import axios from "axios";
 import { Router } from "express";
 import _ from "lodash";
@@ -76,34 +75,6 @@ assessmentApi.post("/get", async (req, res) => {
     });
   }
 });
-// tslint:disable-next-line: no-any
-const submitassessment = async (req: any, res: any, body: any) => {
-  const org = req.header("org");
-  const rootOrg = req.header("rootOrg");
-  if (!org || !rootOrg) {
-    res.status(400).send(ERROR.ERROR_NO_ORG_DATA);
-    return;
-  }
-  const userId = extractUserIdFromRequest(req);
-  const url = `${API_END_POINTS.assessmentSubmitV2}/assessment/submit`;
-  const requestBody = {
-    ...req.body,
-  };
-  const response = await axios({
-    ...axiosRequestConfig,
-    data: requestBody,
-    headers: {
-      Authorization: CONSTANTS.SB_API_KEY,
-      rootOrg,
-      userId,
-      "x-authenticated-user-token": extractUserToken(req),
-    },
-    method: "POST",
-    url,
-  });
-  res.status(response.status).send(response.data);
-};
-
 const fetchAssessment = async (artifactUrl: string) => {
   logInfo("Checking fetchAssessment : ", artifactUrl);
   try {
@@ -154,21 +125,16 @@ const getFormatedResponse = (data: any) => {
   assessmentInfo.questions = formtedAssessmentInfo;
   return assessmentInfo;
 };
-// tslint:disable-next-line: no-any
+// eslint-disable-next-line
 const getFormatedRequest = (data: any, requestBody: any) => {
   logInfo(
     "Response of questions in in getFormated method JSON :",
     JSON.stringify(data.questions)
   );
-  /*eslint-disable */
+
   _.forEach(data.questions, (qkey) => {
     _.forEach(requestBody.questions, (reqKey) => {
-      if (
-        qkey.questionType === "mcq-sca" &&
-        qkey.options.length > 0 &&
-        reqKey.questionId === qkey.questionId
-      ) {
-        /*eslint-disable */
+      if (qkey.questionType === "mcq-sca") {
         _.forEach(qkey.options, (qoptKey) => {
           _.forEach(reqKey.options, (optKey) => {
             if (optKey.optionId === qoptKey.optionId) {
@@ -177,47 +143,27 @@ const getFormatedRequest = (data: any, requestBody: any) => {
             }
           });
         });
-        /*eslint-disable */
-      } else if (
-        qkey.questionType === "mtf" &&
-        qkey.options.length > 0 &&
-        reqKey.questionId === qkey.questionId
-      ) {
-        /*eslint-disable */
+      } else if (qkey.questionType === "mtf") {
         _.forEach(qkey.options, (qoptKey) => {
-          /*eslint-disable */
           _.forEach(reqKey.options, (optKey) => {
-            /*eslint-disable */
             if (optKey.optionId === qoptKey.optionId) {
               _.set(optKey, "isCorrect", _.get(qoptKey, "isCorrect"));
               _.set(optKey, "text", _.get(qoptKey, "text"));
             }
           });
         });
-        /*eslint-disable */
-      } else if (
-        qkey.questionType === "fitb" &&
-        qkey.options.length > 0 &&
-        reqKey.questionId === qkey.questionId
-      ) {
-        /*eslint-disable */
+      } else if (qkey.questionType === "fitb") {
         _.forEach(qkey.options, (qoptKey) => {
-          /*eslint-disable */
           _.forEach(reqKey.options, (optKey) => {
-            /*eslint-disable */
             if (optKey.optionId === qoptKey.optionId) {
-              /*eslint-disable */
               _.set(optKey, "isCorrect", _.get(qoptKey, "isCorrect"));
               _.set(optKey, "text", _.get(qoptKey, "text"));
-              /*eslint-disable */
             }
           });
         });
       }
     });
   });
-  /*eslint-disable */
-
   logInfo("requestBody", JSON.stringify(requestBody));
   return requestBody;
 };
