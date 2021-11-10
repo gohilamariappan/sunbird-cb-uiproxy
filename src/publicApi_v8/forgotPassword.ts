@@ -6,10 +6,10 @@ import { CONSTANTS } from '../utils/env'
 import { logError, logInfo } from '../utils/logger'
 
 const API_END_POINTS = {
-                        generateOtp: `${CONSTANTS.KONG_API_BASE}/otp/v1/generate`,
-                        recoverPassword: `${CONSTANTS.KONG_API_BASE}/private/user/v1/password/reset`,
-                        resendOTP: `${CONSTANTS.KONG_API_BASE}/api/v5/otp/retry`,
-                        searchSb: `${CONSTANTS.KONG_API_BASE}/private/user/v1/search`,
+                        generateOtp: `https://aastrika-sb.idc.tarento.com/api/otp/v1/generate`,
+                        recoverPassword: `https://aastrika-sb.idc.tarento.com/api/private/user/v1/password/reset`,
+                        resendOTP: `https://aastrika-sb.idc.tarento.com/api/api/v5/otp/retry`,
+                        searchSb: `https://aastrika-sb.idc.tarento.com/api/private/user/v1/search`,
                         verifyOtp: `${CONSTANTS.KONG_API_BASE}/otp/v1/verify`,
                         }
 
@@ -26,6 +26,7 @@ forgotPassword.post('/reset/proxy/password', async (req, res) => {
         logInfo('UserName : ', sbUsername)
         logInfo('Entered into try block userName : ', sbUsername)
         if (userType === 'email') {
+            logInfo("Entered into email ")
             const searchresponse = await axios({
                 ...axiosRequestConfig,
                 data: { request: { query: '', filters: { email: sbUsername.toLowerCase() } } },
@@ -34,7 +35,7 @@ forgotPassword.post('/reset/proxy/password', async (req, res) => {
             })
 
             if (searchresponse.data.result.response.count > 0) {
-                logInfo("Inside phone type checking..") 
+                logInfo('Inside phone type checking..')
                 const userUUId =  _.get(_.find(searchresponse.data.result.response.content, 'userId'), 'userId')
                 logInfo('User Id : ', userUUId)
 
@@ -61,7 +62,7 @@ forgotPassword.post('/reset/proxy/password', async (req, res) => {
                 method: 'POST',
                 url: API_END_POINTS.searchSb,
             })
-            logInfo("Inside phone type checking..")
+            logInfo('Inside phone type checking..')
             if (searchresponse.data.result.response.count > 0) {
 
                 const userUUId =  _.get(_.find(searchresponse.data.result.response.content, 'userId'), 'userId')
