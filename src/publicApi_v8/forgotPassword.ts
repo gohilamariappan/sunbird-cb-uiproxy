@@ -47,7 +47,7 @@ forgotPassword.post('/reset/proxy/password', async (req, res) => {
                     method: 'POST',
                     url: API_END_POINTS.generateOtp,
                 })
-                logInfo('Sending Responses in email : ' + JSON.stringify(sendResponse))
+                logInfo('Sending Responses in email : ' + sendResponse)
                 // res.status(200).send(userUUId)
                 res.status(200).send({message: 'Success ! Please verify the OTP .'})
                 return
@@ -76,7 +76,7 @@ forgotPassword.post('/reset/proxy/password', async (req, res) => {
                     method: 'POST',
                     url: API_END_POINTS.generateOtp,
                 })
-                logInfo('Sending Responses in phone part : ' + JSON.stringify(sendResponse))
+                logInfo('Sending Responses in phone part : ' + sendResponse)
                 res.status(200).send({message: 'Success ! Please verify the OTP .'})
                 return
             } else {
@@ -117,8 +117,8 @@ forgotPassword.post('/verifyOtp', async (req, res) => {
                     method: 'POST',
                     url: API_END_POINTS.recoverPassword,
                 })
-                logInfo('Sending Responses in phone : ' + JSON.stringify(sendResponse))
-                res.status(200).send(JSON.stringify(sendResponse))
+                logInfo('Sending Responses in phone : ' + sendResponse)
+                res.status(200).send(sendResponse)
             }
             } else if ( userType === 'phone') {
                 const searchresponse = await axios({
@@ -138,8 +138,8 @@ forgotPassword.post('/verifyOtp', async (req, res) => {
                         method: 'POST',
                         url: API_END_POINTS.recoverPassword,
                     })
-                    logInfo('Sending Responses in phone : ' + JSON.stringify(sendResponse))
-                    res.status(200).send(JSON.stringify(sendResponse))
+                    logInfo('Sending Responses in phone : ' + sendResponse)
+                    res.status(200).send(sendResponse)
                 }
             } else {
                 logError('Error in Usertype : Neither validated email nor phone ')
