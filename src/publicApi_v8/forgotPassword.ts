@@ -8,7 +8,6 @@ import { logError, logInfo } from '../utils/logger'
 const API_END_POINTS = {
                         generateOtp: `https://aastrika-sb.idc.tarento.com/api/otp/v1/generate`,
                         recoverPassword: `https://aastrika-sb.idc.tarento.com/api/private/user/v1/password/reset`,
-                        resendOTP: `https://aastrika-sb.idc.tarento.com/api/api/v5/otp/retry`,
                         searchSb: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/private/user/v1/search`,
                         verifyOtp: `${CONSTANTS.KONG_API_BASE}/otp/v1/verify`,
                         }
@@ -35,7 +34,7 @@ forgotPassword.post('/reset/proxy/password', async (req, res) => {
             })
 
             if (searchresponse.data.result.response.count > 0) {
-                logInfo('Inside phone type checking..')
+                logInfo('Inside email type checking..')
                 const userUUId =  _.get(_.find(searchresponse.data.result.response.content, 'userId'), 'userId')
                 logInfo('User Id : ', userUUId)
 
