@@ -75,8 +75,7 @@ forgotPassword.post('/reset/proxy/password', async (req, res) => {
                     method: 'POST',
                     url: API_END_POINTS.generateOtp,
                 })
-                logInfo('Sending Responses in phone : ' + JSON.stringify(sendResponse))
-                // res.status(200).send(userUUId)
+                logInfo('Sending Responses in phone part : ' + JSON.stringify(sendResponse))
                 res.status(200).send({message: 'Success ! Please verify the OTP .'})
                 return
             } else {
