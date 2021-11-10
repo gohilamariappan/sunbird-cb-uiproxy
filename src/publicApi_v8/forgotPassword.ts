@@ -4,88 +4,151 @@ import _ from 'lodash'
 import { axiosRequestConfig } from '../configs/request.config'
 import { CONSTANTS } from '../utils/env'
 import { logError, logInfo } from '../utils/logger'
-import {  getUser, resetKCPassword, verifyOTP } from './customSignup'
 
 const API_END_POINTS = {
                         generateOtp: `https://aastrika-sb.idc.tarento.com/api/otp/v1/generate`,
-                        // generateOtp: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/otp/v1/generate`,
-                        resendOTP: `${CONSTANTS.MSG91BASE}/api/v5/otp/retry`,
+                        recoverPassword: `https://aastrika-sb.idc.tarento.com/api/private/user/v1/password/reset`,
+                        resendOTP: `https://aastrika-sb.idc.tarento.com/api/api/v5/otp/retry`,
                         searchSb: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/private/user/v1/search`,
-                        verifyOtp: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/otp/v1/verify`,
+                        verifyOtp: `${CONSTANTS.KONG_API_BASE}/otp/v1/verify`,
                         }
 
 export const forgotPassword = Router()
 
 forgotPassword.post('/reset/proxy/password', async (req, res) => {
-    logInfo('Entered into reset password ')
+    logInfo('Entered into /reset/proxy/password ')
     try {
         logInfo('Entered into try block ')
         const sbUsername = req.body.userName
+        const userType = await emailOrMobile(sbUsername)
 
+        logInfo('User type : ', userType)
+        logInfo('UserName : ', sbUsername)
         logInfo('Entered into try block userName : ', sbUsername)
-
-        const searchresponse = await axios({
-            ...axiosRequestConfig,
-            data: { request: { query: '', filters: { email: sbUsername.toLowerCase() } } },
-            method: 'POST',
-            url: API_END_POINTS.searchSb,
-        })
-        if (searchresponse.data.result.response.count > 0) {
-
-            const userUUId =  _.get(_.find(searchresponse.data.result.response.content, 'userId'), 'userId')
-            const userType = await emailOrMobile(sbUsername)
-
-            logInfo('User type : ', userType)
-            logInfo('User Id : ', userUUId)
-            logInfo('UserName : ', sbUsername)
-
-           // generate otp
-            const sendResponse = await axios({
+        if (userType === 'email') {
+            logInfo('Entered into email ')
+            const searchresponse = await axios({
                 ...axiosRequestConfig,
-                data: { request: { userId : userUUId, key  : sbUsername , type: userType } },
-                headers: { Authorization:  req.header('Authorization') },
+                data: { request: { query: '', filters: { email: sbUsername.toLowerCase() } } },
                 method: 'POST',
-                url: API_END_POINTS.generateOtp,
+                url: API_END_POINTS.searchSb,
             })
-            logInfo('Sending Responses : ' + JSON.stringify(sendResponse))
-            //res.status(200).send(userUUId)
-           res.status(200).send({message: 'Success ! Please verify the OTP .'})
-            return
+
+            if (searchresponse.data.result.response.count > 0) {
+                logInfo('Inside phone type checking..')
+                const userUUId =  _.get(_.find(searchresponse.data.result.response.content, 'userId'), 'userId')
+                logInfo('User Id : ', userUUId)
+
+               // generate otp
+                const sendResponse = await axios({
+                    ...axiosRequestConfig,
+                    data: { request: { userId : userUUId, key  : sbUsername , type: userType } },
+                    headers: { Authorization:  req.header('Authorization') },
+                    method: 'POST',
+                    url: API_END_POINTS.generateOtp,
+                })
+                logInfo('Sending Responses in email : ' + JSON.stringify(sendResponse))
+                // res.status(200).send(userUUId)
+                res.status(200).send({message: 'Success ! Please verify the OTP .'})
+                return
+            } else {
+                logInfo('Couldnot find the user : ', searchresponse.data.result.response)
+                res.status(302).send(searchresponse.data.result.response.count)
+            }
+        } else if (userType === 'phone') {
+            const searchresponse = await axios({
+                ...axiosRequestConfig,
+                data: { request: { query: '', filters: { phone: sbUsername.toLowerCase() } } },
+                method: 'POST',
+                url: API_END_POINTS.searchSb,
+            })
+            logInfo('Inside phone type checking..')
+            if (searchresponse.data.result.response.count > 0) {
+
+                const userUUId =  _.get(_.find(searchresponse.data.result.response.content, 'userId'), 'userId')
+                logInfo('User Id : ', userUUId)
+
+               // generate otp
+                const sendResponse = await axios({
+                    ...axiosRequestConfig,
+                    data: { request: { userId : userUUId, key  : sbUsername , type: userType } },
+                    headers: { Authorization:  req.header('Authorization') },
+                    method: 'POST',
+                    url: API_END_POINTS.generateOtp,
+                })
+                logInfo('Sending Responses in phone part : ' + JSON.stringify(sendResponse))
+                res.status(200).send({message: 'Success ! Please verify the OTP .'})
+                return
+            } else {
+                logInfo('Couldnot find the user : ', searchresponse.data.result.response)
+                res.status(302).send(searchresponse.data.result.response.count)
+            }
         } else {
-            logInfo('Couldnot find the user : ', searchresponse.data.result.response)
-            res.status(302).send(searchresponse.data.result.response.count)
+            logError('Error in Usertype : Neither validated email nor phone ')
+            res.status(500).send('Error Ocurred ')
         }
         return
-
     } catch (err) {
         logError('ERROR in Searching Users : ' + err)
         res.status(500).send('Error Ocurred : ' + err)
     }
 })
 
-forgotPassword.post('/setPasswordWithOTP', async (req, res) => {
-    const username = req.body.username
-    const password = req.body.password
-    const otp = req.body.otp
-    const userData = await getUser(username)
-    if (userData) {
-      const verification = await verifyOTP(username, otp)
-      if (verification.type === 'success') {
-        try {
-          const userId = userData[0].id
+forgotPassword.post('/verifyOtp', async (req, res) => {
+    const key = req.body.key
+    const userType = req.body.type
+    const validOtp = req.body.otp
+    try {
+        if ( userType === 'email') {
+            const searchresponse = await axios({
+                ...axiosRequestConfig,
+                data: { request: { query: '', filters: { email: key.toLowerCase() } } },
+                method: 'POST',
+                url: API_END_POINTS.searchSb,
+            })
+            if (searchresponse.data.result.response.count > 0) {
+                const userUUId =  _.get(_.find(searchresponse.data.result.response.content, 'userId'), 'userId')
+                logInfo('User Id in Email : ', userUUId)
 
-          const status = resetKCPassword(userId, password)
-          res.status(200).json({ message: status })
-        } catch (e) {
-          res.status(500).send({
-            error: e.response,
-          })
+                const sendResponse = await axios({
+                    ...axiosRequestConfig,
+                    data: { request: { userId : userUUId, key , type: userType, otp : validOtp } },
+                    headers: { Authorization:  req.header('Authorization') },
+                    method: 'POST',
+                    url: API_END_POINTS.recoverPassword,
+                })
+                logInfo('Sending Responses in phone : ' + JSON.stringify(sendResponse))
+                res.status(200).send(JSON.stringify(sendResponse))
+            }
+            } else if ( userType === 'phone') {
+                const searchresponse = await axios({
+                    ...axiosRequestConfig,
+                    data: { request: { query: '', filters: { phone: key.toLowerCase() } } },
+                    method: 'POST',
+                    url: API_END_POINTS.recoverPassword,
+                })
+                if (searchresponse.data.result.response.count > 0) {
+                    const userUUId =  _.get(_.find(searchresponse.data.result.response.content, 'userId'), 'userId')
+                    logInfo('User Id in phone : ', userUUId)
+
+                    const sendResponse = await axios({
+                        ...axiosRequestConfig,
+                        data: { request: { userId : userUUId, key , type: userType, otp : validOtp } },
+                        headers: { Authorization:  req.header('Authorization') },
+                        method: 'POST',
+                        url: API_END_POINTS.recoverPassword,
+                    })
+                    logInfo('Sending Responses in phone : ' + JSON.stringify(sendResponse))
+                    res.status(200).send(JSON.stringify(sendResponse))
+                }
+            } else {
+                logError('Error in Usertype : Neither validated email nor phone ')
+                res.status(500).send('Error in Usertype : Neither validated email nor phone')
         }
-      } else {
-        res.status(401).send({
-          error: 'Invalid Otp',
-        })
-      }
+        return
+    } catch (err) {
+        logError('ERROR in Searching Users : ' + err)
+        res.status(500).send('Error Ocurred : ' + err)
     }
   })
 
