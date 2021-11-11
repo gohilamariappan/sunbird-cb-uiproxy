@@ -290,8 +290,10 @@ export async function emailactionKC(userId: string, action: string) {
   }
   try {
     const resp = await axios.put(url, body, { headers })
+    logInfo('Email Token Response : ' + resp)
     return resp.data
   } catch (e) {
+    logError('Error : ' + e)
     return e.response
   }
 }
