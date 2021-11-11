@@ -111,6 +111,7 @@ const getFormatedResponse = (data: any) => {
   };
 
   const formtedAssessmentInfo = _.forEach(data.questions, (qkey) => {
+    // eslint-disable-next-line
     if (qkey.questionType === "mcq-sca" && qkey.options.length > 0) {
       _.forEach(qkey.options, (optKey) => {
         _.set(optKey, "isCorrect", false);
@@ -119,6 +120,7 @@ const getFormatedResponse = (data: any) => {
     } else if (qkey.questionType === "mtf" && qkey.options.length > 0) {
       _.forEach(qkey.options, (optKey) => {
         _.set(optKey, "isCorrect", false);
+        _.set(optKey, "match", "");
       });
     } else if (qkey.questionType === "fitb" && qkey.options.length > 0) {
       _.forEach(qkey.options, (optKey) => {
