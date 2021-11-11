@@ -113,17 +113,17 @@ const getFormatedResponse = (data: any) => {
   const formtedAssessmentInfo = _.forEach(data.questions, (qkey) => {
     if (qkey.questionType === "mcq-sca" && qkey.options.length > 0) {
       _.forEach(qkey.options, (optKey) => {
-        _.set(optKey, "isCorrect", "false");
+        _.set(optKey, "isCorrect", false);
       });
       // eslint-disable-next-line
     } else if (qkey.questionType === "mtf" && qkey.options.length > 0) {
       _.forEach(qkey.options, (optKey) => {
-        _.set(optKey, "isCorrect", "false");
+        _.set(optKey, "isCorrect", false);
         _.set(optKey, "match", "");
       });
     } else if (qkey.questionType === "fitb" && qkey.options.length > 0) {
       _.forEach(qkey.options, (optKey) => {
-        _.set(optKey, "isCorrect", "false");
+        _.set(optKey, "isCorrect", false);
         _.set(optKey, "text", "");
       });
     }
