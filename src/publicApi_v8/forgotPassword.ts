@@ -9,7 +9,7 @@ const API_END_POINTS = {
                         generateOtp: `https://aastrika-sb.idc.tarento.com/api/otp/v1/generate`,
                         recoverPassword: `https://aastrika-sb.idc.tarento.com/api/private/user/v1/password/reset`,
                         searchSb: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/private/user/v1/search`,
-                        verifyOtp: `${CONSTANTS.KONG_API_BASE}/otp/v1/verify`,
+                        verifyOtp: `https://aastrika-sb.idc.tarento.com/api/otp/v1/verify`,
                         }
 
 export const forgotPassword = Router()
@@ -94,14 +94,14 @@ forgotPassword.post('/reset/proxy/password', async (req, res) => {
 })
 
 forgotPassword.post('/verifyOtp', async (req, res) => {
-    const key = req.body.key
+    let userkey = req.body.key
     const userType = req.body.type
     const validOtp = req.body.otp
     try {
         if ( userType === 'email') {
             const searchresponse = await axios({
                 ...axiosRequestConfig,
-                data: { request: { query: '', filters: { email: key.toLowerCase() } } },
+                data: { request: { query: '', filters: { email: userkey.toLowerCase() } } },
                 method: 'POST',
                 url: API_END_POINTS.searchSb,
             })
@@ -111,7 +111,7 @@ forgotPassword.post('/verifyOtp', async (req, res) => {
 
                 const sendResponse = await axios({
                     ...axiosRequestConfig,
-                    data: { request: { userId : userUUId, key , type: userType, otp : validOtp } },
+                    data: { request: { userId : userUUId, key:userkey , type: userType, otp : validOtp } },
                     headers: { Authorization:  req.header('Authorization') },
                     method: 'POST',
                     url: API_END_POINTS.recoverPassword,
@@ -122,7 +122,7 @@ forgotPassword.post('/verifyOtp', async (req, res) => {
             } else if ( userType === 'phone') {
                 const searchresponse = await axios({
                     ...axiosRequestConfig,
-                    data: { request: { query: '', filters: { phone: key.toLowerCase() } } },
+                    data: { request: { query: '', filters: { phone: userkey.toLowerCase() } } },
                     method: 'POST',
                     url: API_END_POINTS.recoverPassword,
                 })
@@ -132,7 +132,7 @@ forgotPassword.post('/verifyOtp', async (req, res) => {
 
                     const sendResponse = await axios({
                         ...axiosRequestConfig,
-                        data: { request: { userId : userUUId, key , type: userType, otp : validOtp } },
+                        data: { request: { userId : userUUId, userkey , type: userType, otp : validOtp } },
                         headers: { Authorization:  req.header('Authorization') },
                         method: 'POST',
                         url: API_END_POINTS.recoverPassword,
