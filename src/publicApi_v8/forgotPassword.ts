@@ -6,10 +6,10 @@ import { CONSTANTS } from '../utils/env'
 import { logError, logInfo } from '../utils/logger'
 
 const API_END_POINTS = {
-  generateOtp: `https://aastrika-sb.idc.tarento.com/api/otp/v1/generate`,
-  recoverPassword: `https://aastrika-sb.idc.tarento.com/api/private/user/v1/password/reset`,
+  generateOtp: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/otp/v1/generate`,
+  recoverPassword: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/private/user/v1/password/reset`,
   searchSb: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/private/user/v1/search`,
-  verifyOtp: `${CONSTANTS.KONG_API_BASE}/otp/v1/verify`,
+  verifyOtp: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/otp/v1/verify`,
 }
 
 export const forgotPassword = Router()
