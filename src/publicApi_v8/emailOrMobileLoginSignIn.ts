@@ -39,7 +39,7 @@ emailOrMobileLogin.post("/signup", async (req, res) => {
         fname: firstName,
         lname: lastName,
         mobile: phone,
-        password,
+        psw: password,
       };
       newUserDetails = await createuserWithmobileOrEmail(profile).catch(
         handleCreateUserError
@@ -124,7 +124,7 @@ const createuserWithmobileOrEmail = async (accountDetails: any) => {
         request: {
           firstName: accountDetails.fname,
           lastName: accountDetails.lname,
-          password: accountDetails.password,
+          password: accountDetails.psw,
           phone: accountDetails.mobile,
         },
       },
