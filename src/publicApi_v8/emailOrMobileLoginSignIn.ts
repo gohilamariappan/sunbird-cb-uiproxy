@@ -114,7 +114,7 @@ const fetchUserBymobileorEmail = async (
 };
 // tslint:disable-next-line: no-any
 const createuserWithmobileOrEmail = async (accountDetails: any) => {
-  if (!accountDetails.fname || accountDetails.name === "") {
+  if (!accountDetails.fname || accountDetails.fname === "") {
     throw new Error("USER_NAME_NOT_PRESENT");
   }
   try {
