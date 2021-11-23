@@ -81,7 +81,7 @@ const handleCreateUserError = (error: any) => {
 
 const fetchUserBymobileorEmail = async (
   searchValue: string,
-  searchType: any
+  searchType: string
 ) => {
   logInfo(
     "Checking Fetch Mobile no : ",
