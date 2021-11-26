@@ -27,6 +27,11 @@ const ROLE = {
 // All api list validations
 export const API_LIST = {
   URL: {
+    '/authApi/action/content/hierarchy/:do_id': {
+      checksNeeded: [CHECK.ROLE],
+      // tslint:disable-next-line: object-literal-sort-keys
+      ROLE_CHECK: [ROLE.PUBLIC],
+    },
     '/authApi/action/content/parent/hierarchy': {
       checksNeeded: [CHECK.ROLE],
       // tslint:disable-next-line: object-literal-sort-keys
@@ -1008,6 +1013,7 @@ export const API_LIST = {
     },
   },
   URL_PATTERN: [
+    '/authApi/action/content/hierarchy/:do_id',
     '/authApi/action/content/parent/hierarchy',
     '/authApi/action/content/parent/hierarchy/:do_id',
     '/authApi/content/v3/create',
