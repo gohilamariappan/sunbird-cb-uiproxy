@@ -2,7 +2,7 @@ import axios from 'axios'
 import { Request, Response, Router } from 'express'
 import { AxiosRequestConfig } from '../../models/axios-request-config.model'
 import { returnData } from '../../utils/dataAlterer'
-import { logError } from '../../utils/logger'
+import { logError, logInfo } from '../../utils/logger'
 import { ERROR } from '../constants/error'
 import { IUploadS3Request, IUploadS3Response } from '../models/response/custom-s3-upload'
 import { decoder } from '../utils/decode'
@@ -31,6 +31,7 @@ authApi.get('/hierarchy/:id', async (req: Request, res: Response) => {
     const org = getOrg(req)
     const rootOrg = getRootOrg(req)
     const data = await getHierarchy(req.params.id, org, rootOrg, req)
+    logInfo("Checking logs for authapi : "+ data)
     res.status(200).send(data)
   } catch (ex) {
     logError(ex)
