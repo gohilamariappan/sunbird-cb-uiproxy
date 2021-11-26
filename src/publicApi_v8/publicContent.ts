@@ -9,7 +9,7 @@ import { logError } from "../utils/logger";
 const API_END_POINTS = {
   searchv1: `${CONSTANTS.CONTENT_API_BASE}/v1/search`,
 };
-
+const GENERAL_ERROR_MSG = "Failed due to unknown reason";
 export const publicContentApi = Router();
 publicContentApi.post("/v1/search", async (req, res) => {
   try {
