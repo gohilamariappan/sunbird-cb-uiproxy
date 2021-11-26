@@ -7,7 +7,7 @@ import { CONSTANTS } from "../utils/env";
 import { logError } from "../utils/logger";
 
 const API_END_POINTS = {
-  searchv1: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/content/v1/search`,
+  searchv1: `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/content/v1/search`,
 };
 const GENERAL_ERROR_MSG = "Failed due to unknown reason";
 export const publicContentApi = Router();
