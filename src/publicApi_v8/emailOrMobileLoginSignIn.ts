@@ -9,8 +9,8 @@ const API_END_POINTS = {
   fetchUserByEmail: `${CONSTANTS.KONG_API_BASE}/user/v1/exists/email/`,
   fetchUserByMobileNo: `${CONSTANTS.KONG_API_BASE}/user/v1/exists/phone/`,
   generateOtp: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/otp/v1/generate`,
-  verifyOtp: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/otp/v1/verify`,
   searchSb: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/private/user/v1/search`,
+  verifyOtp: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/otp/v1/verify`,
 };
 export const emailOrMobileLogin = Router();
 emailOrMobileLogin.post("/signup", async (req, res) => {
@@ -135,7 +135,7 @@ emailOrMobileLogin.post("/registerUserWithMobile", async (req, res) => {
           userId: userUUId,
           type: "mobile",
           key: mobileNumber,
-          otp: otp,
+          otp,
         },
       },
       headers: { Authorization: req.header("Authorization") },
