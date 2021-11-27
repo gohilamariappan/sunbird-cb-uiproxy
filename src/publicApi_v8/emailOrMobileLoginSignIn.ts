@@ -1,38 +1,41 @@
-import axios from 'axios'
-import { Router } from 'express'
-import _ from 'lodash'
-import { axiosRequestConfig } from '../configs/request.config'
-import { CONSTANTS } from '../utils/env'
-import { logError, logInfo } from '../utils/logger'
+import axios from "axios";
+import { Router } from "express";
+import _ from "lodash";
+import { axiosRequestConfig } from "../configs/request.config";
+import { CONSTANTS } from "../utils/env";
+import { logError, logInfo } from "../utils/logger";
 const API_END_POINTS = {
   createUserWithMobileNo: `${CONSTANTS.KONG_API_BASE}/user/v3/create`,
   fetchUserByEmail: `${CONSTANTS.KONG_API_BASE}/user/v1/exists/email/`,
   fetchUserByMobileNo: `${CONSTANTS.KONG_API_BASE}/user/v1/exists/phone/`,
-}
-export const emailOrMobileLogin = Router()
-emailOrMobileLogin.post('/signup', async (req, res) => {
+  generateOtp: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/otp/v1/generate`,
+  verifyOtp: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/otp/v1/verify`,
+  searchSb: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/private/user/v1/search`,
+};
+export const emailOrMobileLogin = Router();
+emailOrMobileLogin.post("/signup", async (req, res) => {
   try {
-    if (!req.body.phone) {
+    if (!req.body.phone || !req.body.email) {
       res.status(400).json({
-        msg: 'Mobile no. can not be empty',
-        status: 'error',
+        msg: "Mobile no.or email. can not be empty",
+        status: "error",
         status_code: 400,
-      })
+      });
     }
-    const { phone, firstName, email, lastName, password } = req.body
+    const { phone, firstName, email, lastName, password } = req.body;
     // tslint:disable-next-line: no-any
-    let profile: any = {}
-    let isUserExist = {}
-    let newUserDetails = {}
-    logInfo('Req body', req.body)
-    logInfo('Phone : ', phone)
+    let profile: any = {};
+    let isUserExist = {};
+    let newUserDetails = {};
+    logInfo("Req body", req.body);
+    logInfo("Phone : ", phone);
     if (phone) {
-      isUserExist = await fetchUserBymobileorEmail(phone, 'phone')
+      isUserExist = await fetchUserBymobileorEmail(phone, "phone");
     } else {
-      isUserExist = await fetchUserBymobileorEmail(email, 'email')
+      isUserExist = await fetchUserBymobileorEmail(email, "email");
     }
     if (!isUserExist) {
-      logInfo('creating new  user')
+      logInfo("creating new  user");
       // tslint:disable-next-line: no-any
       profile = {
         emailId: email,
@@ -40,44 +43,140 @@ emailOrMobileLogin.post('/signup', async (req, res) => {
         lname: lastName,
         mobile: phone,
         psw: password,
-        type: phone ? 'phone' : 'email',
-      }
+        type: phone ? "phone" : "email",
+      };
       newUserDetails = await createuserWithmobileOrEmail(profile).catch(
         handleCreateUserError
-      )
+      );
       if (newUserDetails) {
         res.status(200).json({
-          msg: 'user created successfully',
-          status: 'success',
+          msg: "user created successfully",
+          status: "success",
           status_code: 200,
-        })
+        });
       }
     } else {
-      logInfo('Mobile already exists.')
+      logInfo("Mobile already exists.");
       res.status(400).json({
-        msg: 'Mobile Number already exists.',
-        status: 'error',
+        msg: "Mobile Number already exists.",
+        status: "error",
         status_code: 400,
-      })
-      return
+      });
+      return;
     }
   } catch (error) {
     res.status(401).send({
-      error: 'error while creating user !!',
-    })
+      error: "error while creating user !!",
+    });
   }
-})
+});
+
+// generate otp to register the user
+emailOrMobileLogin.post("/generateOtp", async (req, res) => {
+  if (!req.body.mobileNumber) {
+    res.status(400).json({
+      msg: "Mobile no.or email. can not be empty",
+      status: "error",
+      status_code: 400,
+    });
+  }
+  logInfo("Entered into /generateOtp ");
+  const mobileNumber = req.body.mobileNumber;
+  const userSearch = await axios({
+    ...axiosRequestConfig,
+    data: {
+      request: { query: "", filters: { phone: mobileNumber.toLowerCase() } },
+    },
+    method: "POST",
+    url: API_END_POINTS.searchSb,
+  });
+  if (userSearch.data.result.response.count > 0) {
+    const userUUId = _.get(
+      _.find(userSearch.data.result.response.content, "userId"),
+      "userId"
+    );
+    logInfo("User Id : ", userUUId);
+    const sendResponse = await axios({
+      ...axiosRequestConfig,
+      data: {
+        request: { userId: userUUId, key: mobileNumber, type: "mobile" },
+      },
+      headers: { Authorization: req.header("Authorization") },
+      method: "POST",
+      url: API_END_POINTS.generateOtp,
+    });
+    logInfo("Sending Responses in phone part : " + sendResponse);
+    res.status(200).send({ message: "Success ! Please verify the OTP ." });
+  }
+});
+
+emailOrMobileLogin.post("/registerUserWithMobile", async (req, res) => {
+  const otp = req.body.data.otp;
+  const mobileNumber = req.body.mobileNumber;
+  let profile: any = {};
+  let newUserDetails = {};
+  const userSearch = await axios({
+    ...axiosRequestConfig,
+    data: {
+      request: { query: "", filters: { phone: mobileNumber.toLowerCase() } },
+    },
+    method: "POST",
+    url: API_END_POINTS.searchSb,
+  });
+  if (userSearch.data.result.response.count > 0) {
+    const userUUId = _.get(
+      _.find(userSearch.data.result.response.content, "userId"),
+      "userId"
+    );
+    const verifyOtpResponse = await axios({
+      ...axiosRequestConfig,
+      data: {
+        request: {
+          userId: userUUId,
+          type: "mobile",
+          key: mobileNumber,
+          otp: otp,
+        },
+      },
+      headers: { Authorization: req.header("Authorization") },
+      method: "POST",
+      url: API_END_POINTS.verifyOtp,
+    });
+    if (verifyOtpResponse.data.result === "SUCCESS") {
+      const { phone, firstName, lastName, password } = req.body;
+      profile = {
+        fname: firstName,
+        lname: lastName,
+        mobile: phone,
+        psw: password,
+        type: "phone",
+      };
+      newUserDetails = await createuserWithmobileOrEmail(profile).catch(
+        handleCreateUserError
+      );
+      logInfo("Sending Responses in phone part : " + newUserDetails);
+      if (newUserDetails) {
+        res.status(200).json({
+          msg: "user created successfully",
+          status: "success",
+          status_code: 200,
+        });
+      }
+    }
+  }
+});
+
 // tslint:disable-next-line: no-any
 const handleCreateUserError = (error: any) => {
-  logInfo('Error ocurred while creating user' + error)
-  if (_.get(error, 'error.params')) {
-    throw error.error.params
+  logInfo("Error ocurred while creating user" + error);
+  if (_.get(error, "error.params")) {
+    throw error.error.params;
   } else if (error instanceof Error) {
-    throw error.message
+    throw error.message;
   } else {
-    throw new Error('unhandled exception while getting userDetails')
+    throw new Error("unhandled exception while getting userDetails");
   }
-}
+};
 // tslint:disable-next-line: no-any
 
 const fetchUserBymobileorEmail = async (
@@ -85,38 +184,38 @@ const fetchUserBymobileorEmail = async (
   searchType: string
 ) => {
   logInfo(
-    'Checking Fetch Mobile no : ',
+    "Checking Fetch Mobile no : ",
     API_END_POINTS.fetchUserByMobileNo + searchValue
-  )
+  );
   try {
     const response = await axios({
       ...axiosRequestConfig,
       headers: {
         Authorization: CONSTANTS.SB_API_KEY,
       },
-      method: 'GET',
+      method: "GET",
       url:
-        searchType === 'email'
+        searchType === "email"
           ? API_END_POINTS.fetchUserByEmail + searchValue
           : API_END_POINTS.fetchUserByMobileNo + searchValue,
-    })
-    logInfo('Response Data in JSON :', JSON.stringify(response.data))
-    logInfo('Response Data in Success :', response.data.responseCode)
-    if (response.data.responseCode === 'OK') {
+    });
+    logInfo("Response Data in JSON :", JSON.stringify(response.data));
+    logInfo("Response Data in Success :", response.data.responseCode);
+    if (response.data.responseCode === "OK") {
       logInfo(
-        'Response result.exists :',
-        _.get(response, 'data.result.exists')
-      )
-      return _.get(response, 'data.result.exists')
+        "Response result.exists :",
+        _.get(response, "data.result.exists")
+      );
+      return _.get(response, "data.result.exists");
     }
   } catch (err) {
-    logError('fetchUserByMobile  failed')
+    logError("fetchUserByMobile  failed");
   }
-}
+};
 // tslint:disable-next-line: no-any
 const createuserWithmobileOrEmail = async (accountDetails: any) => {
-  if (!accountDetails.fname || accountDetails.fname === '') {
-    throw new Error('USER_NAME_NOT_PRESENT')
+  if (!accountDetails.fname || accountDetails.fname === "") {
+    throw new Error("USER_NAME_NOT_PRESENT");
   }
 
   try {
@@ -135,19 +234,19 @@ const createuserWithmobileOrEmail = async (accountDetails: any) => {
       headers: {
         Authorization: CONSTANTS.SB_API_KEY,
       },
-      method: 'POST',
+      method: "POST",
       url: API_END_POINTS.createUserWithMobileNo,
-    })
-    if (response.data.responseCode === 'OK') {
-      logInfo('Log of createuser if OK :')
-      return response.data
+    });
+    if (response.data.responseCode === "OK") {
+      logInfo("Log of createuser if OK :");
+      return response.data;
     } else {
       throw new Error(
-        _.get(response.data, 'params.errmsg') ||
-          _.get(response.data, 'params.err')
-      )
+        _.get(response.data, "params.errmsg") ||
+          _.get(response.data, "params.err")
+      );
     }
   } catch (err) {
-    logError('createuserwithmobile failed')
+    logError("createuserwithmobile failed");
   }
-}
+};
