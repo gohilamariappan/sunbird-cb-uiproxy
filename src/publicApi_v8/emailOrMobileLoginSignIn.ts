@@ -111,7 +111,7 @@ emailOrMobileLogin.post("/generateOtp", async (req, res) => {
 });
 
 emailOrMobileLogin.post("/registerUserWithMobile", async (req, res) => {
-  const otp = req.body.data.otp;
+  const validOtp = req.body.data.otp;
   const mobileNumber = req.body.mobileNumber;
   // tslint:disable-next-line: no-any
   let profile: any = {};
@@ -136,7 +136,7 @@ emailOrMobileLogin.post("/registerUserWithMobile", async (req, res) => {
           userId: userUUId,
           type: "mobile",
           key: mobileNumber,
-          otp,
+          otp: validOtp,
         },
       },
       headers: { Authorization: req.header("Authorization") },
