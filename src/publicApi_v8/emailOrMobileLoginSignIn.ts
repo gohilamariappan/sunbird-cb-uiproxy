@@ -113,6 +113,7 @@ emailOrMobileLogin.post("/generateOtp", async (req, res) => {
 emailOrMobileLogin.post("/registerUserWithMobile", async (req, res) => {
   const otp = req.body.data.otp;
   const mobileNumber = req.body.mobileNumber;
+  // tslint:disable-next-line: no-any
   let profile: any = {};
   let newUserDetails = {};
   const userSearch = await axios({
