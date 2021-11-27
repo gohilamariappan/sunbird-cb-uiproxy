@@ -133,10 +133,10 @@ emailOrMobileLogin.post("/registerUserWithMobile", async (req, res) => {
       ...axiosRequestConfig,
       data: {
         request: {
-          userId: userUUId,
-          type: "mobile",
           key: mobileNumber,
           otp: validOtp,
+          type: "mobile",
+          userId: userUUId,
         },
       },
       headers: { Authorization: req.header("Authorization") },
