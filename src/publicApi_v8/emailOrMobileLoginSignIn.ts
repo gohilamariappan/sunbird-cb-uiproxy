@@ -112,61 +112,67 @@ emailOrMobileLogin.post("/generateOtp", async (req, res) => {
 });
 
 emailOrMobileLogin.post("/registerUserWithMobile", async (req, res) => {
-  const validOtp = req.body.data.otp;
-  const mobileNumber = req.body.mobileNumber;
-  // tslint:disable-next-line: no-any
-  let profile: any = {};
-  let newUserDetails = {};
-  const userSearch = await axios({
-    ...axiosRequestConfig,
-    data: {
-      request: { query: "", filters: { phone: mobileNumber.toLowerCase() } },
-    },
-    method: "POST",
-    url: API_END_POINTS.searchSb,
-  });
-  if (userSearch.data.result.response.count > 0) {
-    const userUUId = _.get(
-      _.find(userSearch.data.result.response.content, "userId"),
-      "userId"
-    );
-    logInfo("User Id : ", userUUId);
-    const verifyOtpResponse = await axios({
+  try {
+    const validOtp = req.body.data.otp;
+    const mobileNumber = req.body.mobileNumber;
+    // tslint:disable-next-line: no-any
+    let profile: any = {};
+    let newUserDetails = {};
+    const userSearch = await axios({
       ...axiosRequestConfig,
       data: {
-        request: {
-          key: mobileNumber,
-          otp: validOtp,
-          type: "mobile",
-          userId: userUUId,
-        },
+        request: { query: "", filters: { phone: mobileNumber.toLowerCase() } },
       },
-      headers: { Authorization: req.header("Authorization") },
       method: "POST",
-      url: API_END_POINTS.verifyOtp,
+      url: API_END_POINTS.searchSb,
     });
-    if (verifyOtpResponse.data.result === "SUCCESS") {
-      logInfo("opt verify : ");
-      const { phone, firstName, lastName, password } = req.body;
-      profile = {
-        fname: firstName,
-        lname: lastName,
-        mobile: phone,
-        psw: password,
-        type: "phone",
-      };
-      newUserDetails = await createuserWithmobileOrEmail(profile).catch(
-        handleCreateUserError
+    if (userSearch.data.result.response.count > 0) {
+      const userUUId = _.get(
+        _.find(userSearch.data.result.response.content, "userId"),
+        "userId"
       );
-      logInfo("Sending Responses in phone part : " + newUserDetails);
-      if (newUserDetails) {
-        res.status(200).json({
-          msg: "user created successfully",
-          status: "success",
-          status_code: 200,
-        });
+      logInfo("User Id : ", userUUId);
+      const verifyOtpResponse = await axios({
+        ...axiosRequestConfig,
+        data: {
+          request: {
+            key: mobileNumber,
+            otp: validOtp,
+            type: "mobile",
+            userId: userUUId,
+          },
+        },
+        headers: { Authorization: CONSTANTS.SB_API_KEY },
+        method: "POST",
+        url: API_END_POINTS.verifyOtp,
+      });
+      if (verifyOtpResponse.data.result === "SUCCESS") {
+        logInfo("opt verify : ");
+        const { phone, firstName, lastName, password } = req.body;
+        profile = {
+          fname: firstName,
+          lname: lastName,
+          mobile: phone,
+          psw: password,
+          type: "phone",
+        };
+        newUserDetails = await createuserWithmobileOrEmail(profile).catch(
+          handleCreateUserError
+        );
+        logInfo("Sending Responses in phone part : " + newUserDetails);
+        if (newUserDetails) {
+          res.status(200).json({
+            msg: "user created successfully",
+            status: "success",
+            status_code: 200,
+          });
+        }
       }
     }
+  } catch (error) {
+    res.status(500).send({
+      error: "Failed due to unknown reason",
+    });
   }
 });
 
