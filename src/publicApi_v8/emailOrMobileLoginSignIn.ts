@@ -15,25 +15,20 @@ const API_END_POINTS = {
 export const emailOrMobileLogin = Router();
 emailOrMobileLogin.post("/signup", async (req, res) => {
   try {
-    if (!req.body.phone || !req.body.email) {
+    if (!req.body.email) {
       res.status(400).json({
-        msg: "Mobile no.or email. can not be empty",
+        msg: "Email id. can not be empty",
         status: "error",
         status_code: 400,
       });
     }
-    const { phone, firstName, email, lastName, password } = req.body;
+    const { firstName, email, lastName, password } = req.body;
     // tslint:disable-next-line: no-any
     let profile: any = {};
     let isUserExist = {};
     let newUserDetails = {};
     logInfo("Req body", req.body);
-    logInfo("Phone : ", phone);
-    if (phone) {
-      isUserExist = await fetchUserBymobileorEmail(phone, "phone");
-    } else {
-      isUserExist = await fetchUserBymobileorEmail(email, "email");
-    }
+    isUserExist = await fetchUserBymobileorEmail(email, "email");
     if (!isUserExist) {
       logInfo("creating new  user");
       // tslint:disable-next-line: no-any
@@ -41,9 +36,8 @@ emailOrMobileLogin.post("/signup", async (req, res) => {
         emailId: email,
         fname: firstName,
         lname: lastName,
-        mobile: phone,
         psw: password,
-        type: phone ? "phone" : "email",
+        type: "email",
       };
       newUserDetails = await createuserWithmobileOrEmail(profile).catch(
         handleCreateUserError
@@ -129,6 +123,7 @@ emailOrMobileLogin.post("/registerUserWithMobile", async (req, res) => {
       _.find(userSearch.data.result.response.content, "userId"),
       "userId"
     );
+    logInfo("User Id : ", userUUId);
     const verifyOtpResponse = await axios({
       ...axiosRequestConfig,
       data: {
@@ -144,6 +139,7 @@ emailOrMobileLogin.post("/registerUserWithMobile", async (req, res) => {
       url: API_END_POINTS.verifyOtp,
     });
     if (verifyOtpResponse.data.result === "SUCCESS") {
+      logInfo("opt verify : ");
       const { phone, firstName, lastName, password } = req.body;
       profile = {
         fname: firstName,
