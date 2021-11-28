@@ -10,8 +10,9 @@ const API_END_POINTS = {
   fetchUserByMobileNo: `${CONSTANTS.KONG_API_BASE}/user/v1/exists/phone/`,
   generateOtp: `${CONSTANTS.KONG_API_BASE}/otp/v1/generate`,
   leanerOtp: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/otp/v1/generate`,
-  sunbirdOtp: `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/otp/v1/generate`,
+
   searchSb: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/private/user/v1/search`,
+  sunbirdOtp: `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/otp/v1/generate`,
   verifyOtp: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/otp/v1/verify`,
 };
 export const emailOrMobileLogin = Router();
