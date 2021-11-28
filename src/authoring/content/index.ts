@@ -31,7 +31,7 @@ authApi.get('/hierarchy/:id', async (req: Request, res: Response) => {
     const org = getOrg(req)
     const rootOrg = getRootOrg(req)
     const data = await getHierarchy(req.params.id, org, rootOrg, req)
-    logInfo("Checking logs for authapi : "+ data)
+    logInfo('Checking logs for authapi : ' + data)
     res.status(200).send(data)
   } catch (ex) {
     logError(ex)

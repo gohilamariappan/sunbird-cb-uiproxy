@@ -35,7 +35,7 @@ export async function getHierarchy(
   req: Request
 ): Promise<IContent> {
   const data = await axios.get(hierarchyApi.v1(id, org, rootOrg), getHeaders(req))
-  logInfo('1. Checking logs of Hierarchy Api : '+ data)
+  logInfo('1. Checking logs of Hierarchy Api : ' + data)
   logInfo('2. ' + id + ' = Org: ' + org + ' = Root ORG :' + rootOrg)
   return data.data as IContent
 }
