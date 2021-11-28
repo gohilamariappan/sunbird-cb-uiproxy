@@ -8,7 +8,7 @@ const API_END_POINTS = {
   createUserWithMobileNo: `${CONSTANTS.KONG_API_BASE}/user/v3/create`,
   fetchUserByEmail: `${CONSTANTS.KONG_API_BASE}/user/v1/exists/email/`,
   fetchUserByMobileNo: `${CONSTANTS.KONG_API_BASE}/user/v1/exists/phone/`,
-  generateOtp: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/otp/v1/generate`,
+  generateOtp: `${CONSTANTS.KONG_API_BASE}/otp/v1/generate`,
   searchSb: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/private/user/v1/search`,
   verifyOtp: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/otp/v1/verify`,
 };
@@ -50,9 +50,9 @@ emailOrMobileLogin.post("/signup", async (req, res) => {
         });
       }
     } else {
-      logInfo("Mobile already exists.");
+      logInfo("Email already exists.");
       res.status(400).json({
-        msg: "Mobile Number already exists.",
+        msg: "Email id  already exists.",
         status: "error",
         status_code: 400,
       });
@@ -67,40 +67,46 @@ emailOrMobileLogin.post("/signup", async (req, res) => {
 
 // generate otp to register the user
 emailOrMobileLogin.post("/generateOtp", async (req, res) => {
-  if (!req.body.mobileNumber) {
-    res.status(400).json({
-      msg: "Mobile no.or email. can not be empty",
-      status: "error",
-      status_code: 400,
-    });
-  }
-  logInfo("Entered into /generateOtp ");
-  const mobileNumber = req.body.mobileNumber;
-  const userSearch = await axios({
-    ...axiosRequestConfig,
-    data: {
-      request: { query: "", filters: { phone: mobileNumber.toLowerCase() } },
-    },
-    method: "POST",
-    url: API_END_POINTS.searchSb,
-  });
-  if (userSearch.data.result.response.count > 0) {
-    const userUUId = _.get(
-      _.find(userSearch.data.result.response.content, "userId"),
-      "userId"
-    );
-    logInfo("User Id : ", userUUId);
-    const sendResponse = await axios({
+  try {
+    if (!req.body.mobileNumber) {
+      res.status(400).json({
+        msg: "Mobile no.or email. can not be empty",
+        status: "error",
+        status_code: 400,
+      });
+    }
+    logInfo("Entered into /generateOtp ");
+    const mobileNumber = req.body.mobileNumber;
+    const userSearch = await axios({
       ...axiosRequestConfig,
       data: {
-        request: { userId: userUUId, key: mobileNumber, type: "mobile" },
+        request: { query: "", filters: { phone: mobileNumber.toLowerCase() } },
       },
-      headers: { Authorization: req.header("Authorization") },
       method: "POST",
-      url: API_END_POINTS.generateOtp,
+      url: API_END_POINTS.searchSb,
     });
-    logInfo("Sending Responses in phone part : " + sendResponse);
-    res.status(200).send({ message: "Success ! Please verify the OTP ." });
+    if (userSearch.data.result.response.count > 0) {
+      const userUUId = _.get(
+        _.find(userSearch.data.result.response.content, "userId"),
+        "userId"
+      );
+      logInfo("User Id : ", userUUId);
+      const sendResponse = await axios({
+        ...axiosRequestConfig,
+        data: {
+          request: { userId: userUUId, key: mobileNumber, type: "mobile" },
+        },
+        headers: { Authorization: CONSTANTS.SB_API_KEY },
+        method: "POST",
+        url: API_END_POINTS.generateOtp,
+      });
+      logInfo("Sending Responses in phone part : " + sendResponse);
+      res.status(200).send({ message: "Success ! Please verify the OTP ." });
+    }
+  } catch (error) {
+    res.status(500).send({
+      error: "Failed due to unknown reason",
+    });
   }
 });
 
