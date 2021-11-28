@@ -95,7 +95,7 @@ emailOrMobileLogin.post("/generateOtp", async (req, res) => {
       const sendResponse = await axios({
         ...axiosRequestConfig,
         data: {
-          request: { userId: userUUId, key: mobileNumber, type: "mobile" },
+          request: { userId: userUUId, key: mobileNumber, type: "phone" },
         },
         headers: { Authorization: CONSTANTS.SB_API_KEY },
         method: "POST",
