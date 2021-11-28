@@ -8,11 +8,8 @@ const API_END_POINTS = {
   createUserWithMobileNo: `${CONSTANTS.KONG_API_BASE}/user/v3/create`,
   fetchUserByEmail: `${CONSTANTS.KONG_API_BASE}/user/v1/exists/email/`,
   fetchUserByMobileNo: `${CONSTANTS.KONG_API_BASE}/user/v1/exists/phone/`,
-  generateOtp: `${CONSTANTS.KONG_API_BASE}/otp/v1/generate`,
-  leanerOtp: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/otp/v1/generate`,
-
+  generateOtp: `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/otp/v1/generate`,
   searchSb: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/private/user/v1/search`,
-  sunbirdOtp: `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/otp/v1/generate`,
   verifyOtp: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/otp/v1/verify`,
 };
 export const emailOrMobileLogin = Router();
@@ -95,8 +92,6 @@ emailOrMobileLogin.post("/generateOtp", async (req, res) => {
       );
       logInfo("User Id : ", userUUId);
       logInfo("generate otp endpoints for kong", API_END_POINTS.generateOtp);
-      logInfo("generate otp endpoints for sunbird", API_END_POINTS.sunbirdOtp);
-      logInfo("generate otp endpoints for learber", API_END_POINTS.leanerOtp);
       const sendResponse = await axios({
         ...axiosRequestConfig,
         data: {
