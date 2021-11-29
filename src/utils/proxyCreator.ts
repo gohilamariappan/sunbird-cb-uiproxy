@@ -194,7 +194,8 @@ export function proxyCreatorSunbirdSearch(route: Router, targetUrl: string, _tim
 
     // tslint:disable-next-line: no-console
     console.log('REQ_URL_ORIGINAL proxyCreatorSunbirdSearch', req.originalUrl)
-
+    // tslint:disable-next-line: no-console
+    console.log('TARGET_URL proxyCreatorSunbirdSearch', targetUrl)
     proxy.web(req, res, {
       changeOrigin: true,
       ignorePath: true,
