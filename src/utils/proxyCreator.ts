@@ -191,7 +191,7 @@ function removePrefix(prefix: string, s: string) {
 
 export function proxyCreatorSunbirdSearch(route: Router, targetUrl: string, _timeout = 10000): Router {
   route.all('/*', (req, res) => {
-
+    
     // tslint:disable-next-line: no-console
     console.log('REQ_URL_ORIGINAL proxyCreatorSunbirdSearch', req.originalUrl)
     // tslint:disable-next-line: no-console
@@ -266,15 +266,17 @@ export function proxyContentLearnerVM(route: Router, targetUrl: string, _timeout
 
 export function proxyCreatorDownloadCertificate(route: Router, targetUrl: string, _timeout = 10000): Router {
   route.all('/*', (req, res) => {
-
+    const id = req.params
+     // tslint:disable-next-line: no-console
+     console.log("HEllo id : ", id)
     // tslint:disable-next-line: no-console
-    console.log('REQ_URL_ORIGINAL proxyCreatorDownloadCertificate', req.originalUrl)
-    const url = removePrefix(`${PROXY_SLUG}/downloadCertificate`, req.originalUrl)
-    logInfo('Final URL: ', targetUrl + url)
+    console.log('REQ_URL_ORIGINAL proxyCreatorSunbirdSearch', req.originalUrl)
+    // tslint:disable-next-line: no-console
+    console.log('TARGET_URL proxyCreatorSunbirdSearch', targetUrl)
     proxy.web(req, res, {
       changeOrigin: true,
       ignorePath: true,
-      target: targetUrl + url,
+      target: targetUrl+id,
     })
   })
   return route
