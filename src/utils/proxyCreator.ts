@@ -264,17 +264,16 @@ export function proxyContentLearnerVM(route: Router, targetUrl: string, _timeout
 }
 
 export function proxyCreatorDownloadCertificate(route: Router, targeturl: string, _timeout = 10000): Router {
-  logInfo('Entered into proxies .. ' + targeturl)
   route.all('/*', (req, res) => {
-    // tslint:disable-next-line: max-line-length
-    const url = `https://aastrika-sb.idc.tarento.com/api/certreg/v2/certs/download/2ad57acb-faf7-40e1-8355-9a46eae51d17`
+    console.log("Entered into certificate : ", req)
     // tslint:disable-next-line: no-console
-
-    logInfo('REQ_URL_ORIGINAL : proxyCreatorDownloadCertificate', url)
+    console.log('REQ_URL_ORIGINAL proxyCreatorDownloadCertificate', req.originalUrl)
+    const url = removePrefix(`${PROXY_SLUG}`, req.originalUrl)
+    console.log("URL : ", url  )
     proxy.web(req, res, {
       changeOrigin: true,
       ignorePath: true,
-      target: url,
+      target: targeturl + url,
     })
   })
   return route
