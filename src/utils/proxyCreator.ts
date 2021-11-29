@@ -266,9 +266,11 @@ export function proxyContentLearnerVM(route: Router, targetUrl: string, _timeout
 
 export function proxyCreatorDownloadCertificate(route: Router, targetUrl: string, _timeout = 10000): Router {
   route.all('/*', (req, res) => {
-    const id = req.params
+    const originalUrl = req.originalUrl
+    const lastIndex = originalUrl.lastIndexOf('/')
+    const subStr = originalUrl.substr(lastIndex).substr(1)
      // tslint:disable-next-line: no-console
-    console.log('HEllo id : ', id)
+    console.log('HEllo target : ', targetUrl+subStr)
     // tslint:disable-next-line: no-console
     console.log('REQ_URL_ORIGINAL proxyCreatorSunbirdSearch', req.originalUrl)
     // tslint:disable-next-line: no-console
@@ -276,8 +278,9 @@ export function proxyCreatorDownloadCertificate(route: Router, targetUrl: string
     proxy.web(req, res, {
       changeOrigin: true,
       ignorePath: true,
-      target: targetUrl + id,
+      target: targetUrl + subStr,
     })
   })
   return route
 }
+
