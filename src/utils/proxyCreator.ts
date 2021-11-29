@@ -263,7 +263,7 @@ export function proxyContentLearnerVM(route: Router, targetUrl: string, _timeout
   return route
 }
 
-export function proxyCreatorDownloadCertificate(route: Router,  _timeout = 10000): Router {
+export function proxyCreatorDownloadCertificate(route: Router, url: string, _timeout = 10000): Router {
   logInfo('Entered into proxies .. ')
   route.all('/*', (req, res) => {
     // tslint:disable-next-line: max-line-length
