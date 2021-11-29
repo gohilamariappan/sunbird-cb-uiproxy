@@ -233,7 +233,7 @@ proxiesV8.use('/certreg/v2/certs/download/*',
 )
 proxiesV8.use('/downloadCertificate/*',
 // tslint:disable-next-line: max-line-length
-  proxyCreatorDownloadCertificate(express.Router(), `${CONSTANTS.KONG_API_BASE}`)
+  proxyCreatorDownloadCertificate(express.Router(), `${CONSTANTS.KONG_API_BASE}/certreg/v2/certs/download/`)
 )
 // proxiesV8.use('/api/framework/*',
 //   // tslint:disable-next-line: max-line-length
