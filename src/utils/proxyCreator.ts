@@ -267,12 +267,13 @@ export function proxyCreatorDownloadCertificate(route: Router, targetUrl: string
   route.all('/*', (req, res) => {
 
     // tslint:disable-next-line: no-console
-    console.log('REQ_URL_ORIGINAL proxyCreatorDownload', req.originalUrl)
-
+    console.log('REQ_URL_ORIGINAL proxyCreatorDownloadCertificate', req.originalUrl)
+    const url = removePrefix(`${PROXY_SLUG}/downloadCertificate`, req.originalUrl)
+    logInfo('Final URL: ', targetUrl + url)
     proxy.web(req, res, {
       changeOrigin: true,
       ignorePath: true,
-      target: targetUrl,
+      target: targetUrl + url,
     })
   })
   return route
