@@ -267,13 +267,13 @@ export function proxyCreatorDownloadCertificate(route: Router, targetUrl: string
   logInfo('Entered into proxies .. ')
   route.all('/*', (req, res) => {
     // tslint:disable-next-line: max-line-length
-    const url = removePrefix(`https://aastrika-sb.idc.tarento.com/api/certreg/v2/certs/download/2ad57acb-faf7-40e1-8355-9a46eae51d17`, req.originalUrl)
+    const url = `https://aastrika-sb.idc.tarento.com/api/certreg/v2/certs/download/2ad57acb-faf7-40e1-8355-9a46eae51d17`
     // tslint:disable-next-line: no-console
     logInfo('REQ_URL_ORIGINAL : proxyCreatorDownloadCertificate', targetUrl)
     proxy.web(req, res, {
       changeOrigin: true,
       ignorePath: true,
-      target: targetUrl + url,
+      target: url,
     })
   })
   return route
