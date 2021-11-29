@@ -262,21 +262,3 @@ export function proxyContentLearnerVM(route: Router, targetUrl: string, _timeout
   })
   return route
 }
-
-export function proxyCreatorDownloadCertificate(route: Router, targeturl: string, _timeout = 10000): Router {
-  route.all('/*', (req, res) => {
-    // tslint:disable-next-line: no-console
-    console.log('Entered into certificate : ', req)
-     // tslint:disable-next-line: no-console
-    console.log('REQ_URL_ORIGINAL proxyCreatorDownloadCertificate', req.originalUrl)
-    const url = removePrefix(`${PROXY_SLUG}`, req.originalUrl)
-    // tslint:disable-next-line: no-console
-    console.log('URL : ', url  )
-    proxy.web(req, res, {
-      changeOrigin: true,
-      ignorePath: true,
-      target: targeturl + url,
-    })
-  })
-  return route
-}
