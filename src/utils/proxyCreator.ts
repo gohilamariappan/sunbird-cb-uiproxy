@@ -270,7 +270,7 @@ export function proxyCreatorDownloadCertificate(route: Router, targetUrl: string
     const lastIndex = originalUrl.lastIndexOf('/')
     const subStr = originalUrl.substr(lastIndex).substr(1)
      // tslint:disable-next-line: no-console
-    console.log('HEllo target : ', targetUrl+subStr)
+    console.log('HEllo target : ', targetUrl + subStr)
     // tslint:disable-next-line: no-console
     console.log('REQ_URL_ORIGINAL proxyCreatorSunbirdSearch', req.originalUrl)
     // tslint:disable-next-line: no-console
@@ -283,4 +283,4 @@ export function proxyCreatorDownloadCertificate(route: Router, targetUrl: string
   })
   return route
 }
-
+
