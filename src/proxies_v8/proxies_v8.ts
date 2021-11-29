@@ -229,7 +229,7 @@ proxiesV8.use('/user/*',
 
 proxiesV8.use('/certreg/v2/certs/download/*',
 // tslint:disable-next-line: max-line-length
-  proxyCreatorSunbirdSearch(express.Router(), `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/certreg/v2/certs/download/`)
+proxyCreatorDownloadCertificate(express.Router(), `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/certreg/v2/certs/download/`)
 )
 // proxiesV8.use('/api/framework/*',
 //   // tslint:disable-next-line: max-line-length
