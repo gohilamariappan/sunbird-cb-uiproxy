@@ -88,7 +88,7 @@ export const API_LIST = {
       // tslint:disable-next-line: object-literal-sort-keys
       ROLE_CHECK: [ROLE.PUBLIC],
     },
-    '/proxies/v8/certreg/v2/certs/download/:id': {
+    '/proxies/v8/certreg/v2/certs/download': {
       checksNeeded: [CHECK.ROLE],
       // tslint:disable-next-line: object-literal-sort-keys
       ROLE_CHECK: [ROLE.PUBLIC],
@@ -1028,7 +1028,7 @@ export const API_LIST = {
     '/public/v8/google/callback',
     '/proxies/v8/api/user/v2/read',
     '/proxies/v8/api/user/v2/read/:id',
-    '/proxies/v8/certreg/v2/certs/download/:id',
+    '/proxies/v8/certreg/v2/certs/download',
     '/proxies/v8/learner/course/v1/batch/create',
     '/proxies/v8/learner/course/v1/batch/list',
     '/proxies/v8/user/v1/read/:id',
