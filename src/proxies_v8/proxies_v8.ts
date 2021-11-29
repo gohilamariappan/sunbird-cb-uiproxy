@@ -10,7 +10,6 @@ import {
   // proxyCreatorDiscussion,
   proxyContent,
   proxyContentLearnerVM,
-  proxyCreatorDownloadCertificate,
   proxyCreatorKnowledge,
   proxyCreatorLearner,
   proxyCreatorQML,
