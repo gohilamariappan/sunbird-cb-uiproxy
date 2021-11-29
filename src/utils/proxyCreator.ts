@@ -263,12 +263,13 @@ export function proxyContentLearnerVM(route: Router, targetUrl: string, _timeout
   return route
 }
 
-export function proxyCreatorDownloadCertificate(route: Router, url: string, _timeout = 10000): Router {
-  logInfo('Entered into proxies .. ')
+export function proxyCreatorDownloadCertificate(route: Router, targeturl: string, _timeout = 10000): Router {
+  logInfo('Entered into proxies .. '+targeturl)
   route.all('/*', (req, res) => {
     // tslint:disable-next-line: max-line-length
     const url = `https://aastrika-sb.idc.tarento.com/api/certreg/v2/certs/download/2ad57acb-faf7-40e1-8355-9a46eae51d17`
     // tslint:disable-next-line: no-console
+
     logInfo('REQ_URL_ORIGINAL : proxyCreatorDownloadCertificate', url)
     proxy.web(req, res, {
       changeOrigin: true,
