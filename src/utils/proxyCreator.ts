@@ -267,6 +267,7 @@ export function proxyCreatorDownloadCertificate(route: Router, targeturl: string
   route.all('/*', (req, res) => {
     // tslint:disable-next-line: no-console
     console.log('Entered into certificate : ', req)
+     // tslint:disable-next-line: no-console
     console.log('REQ_URL_ORIGINAL proxyCreatorDownloadCertificate', req.originalUrl)
     const url = removePrefix(`${PROXY_SLUG}`, req.originalUrl)
     // tslint:disable-next-line: no-console
