@@ -12,6 +12,7 @@ const API_END_POINTS = {
   searchSb: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/private/user/v1/search`,
   verifyOtp: `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/otp/v1/verify`,
 };
+const GENERAL_ERROR_MSG = "Failed due to unknown reason";
 export const emailOrMobileLogin = Router();
 emailOrMobileLogin.post("/signup", async (req, res) => {
   try {
@@ -106,7 +107,7 @@ emailOrMobileLogin.post("/generateOtp", async (req, res) => {
     }
   } catch (error) {
     res.status(500).send({
-      error: "Failed due to unknown reason",
+      error: GENERAL_ERROR_MSG,
     });
   }
 });
@@ -167,7 +168,7 @@ emailOrMobileLogin.post("/validateOtp", async (req, res) => {
     }
   } catch (error) {
     res.status(500).send({
-      error: "Failed due to unknown reason",
+      error: GENERAL_ERROR_MSG,
     });
   }
 });
@@ -210,7 +211,7 @@ emailOrMobileLogin.post("/registerUserWithMobile", async (req, res) => {
     }
   } catch (error) {
     res.status(500).send({
-      error: "Failed due to unknown reason",
+      error: GENERAL_ERROR_MSG,
     });
   }
 });
