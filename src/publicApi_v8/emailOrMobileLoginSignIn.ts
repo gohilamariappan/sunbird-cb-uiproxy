@@ -13,6 +13,7 @@ const API_END_POINTS = {
   verifyOtp: `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/otp/v1/verify`,
 };
 const GENERAL_ERROR_MSG = "Failed due to unknown reason";
+const MOBILE_ERROR_MSG = "Mobile no. can not be empty";
 export const emailOrMobileLogin = Router();
 emailOrMobileLogin.post("/signup", async (req, res) => {
   try {
@@ -71,7 +72,7 @@ emailOrMobileLogin.post("/generateOtp", async (req, res) => {
   try {
     if (!req.body.mobileNumber) {
       res.status(400).json({
-        msg: "Mobile no. can not be empty",
+        msg: MOBILE_ERROR_MSG,
         status: "error",
         status_code: 400,
       });
@@ -116,7 +117,7 @@ emailOrMobileLogin.post("/validateOtp", async (req, res) => {
   try {
     if (!req.body.mobileNumber) {
       res.status(400).json({
-        msg: "Mobile no. can not be empty",
+        msg: MOBILE_ERROR_MSG,
         status: "error",
         status_code: 400,
       });
@@ -176,7 +177,7 @@ emailOrMobileLogin.post("/registerUserWithMobile", async (req, res) => {
   try {
     if (!req.body.phone) {
       res.status(400).json({
-        msg: "Mobile no. can not be empty",
+        msg: MOBILE_ERROR_MSG,
         status: "error",
         status_code: 400,
       });
