@@ -161,7 +161,7 @@ emailOrMobileLogin.post("/validateOtp", async (req, res) => {
         method: "POST",
         url: API_END_POINTS.verifyOtp,
       });
-      if (verifyOtpResponse.data.result === "SUCCESS") {
+      if (verifyOtpResponse.data.result.response === "SUCCESS") {
         logInfo("opt verify : ");
         res.status(200).send({ message: "Success !OTP is verified ." });
       }
