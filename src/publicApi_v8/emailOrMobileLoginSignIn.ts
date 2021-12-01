@@ -153,7 +153,7 @@ emailOrMobileLogin.post("/validateOtp", async (req, res) => {
           request: {
             key: mobileNumber,
             otp: validOtp,
-            type: "mobile",
+            type: "phone",
             userId: userUUId,
           },
         },
