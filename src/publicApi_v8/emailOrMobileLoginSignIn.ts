@@ -209,6 +209,14 @@ emailOrMobileLogin.post("/registerUserWithMobile", async (req, res) => {
           status_code: 200,
         });
       }
+    } else {
+      logInfo("Mobile no. already exists.");
+      res.status(400).json({
+        msg: "Mobile no.  already exists.",
+        status: "error",
+        status_code: 400,
+      });
+      return;
     }
   } catch (error) {
     res.status(500).send({
