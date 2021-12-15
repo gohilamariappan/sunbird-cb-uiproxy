@@ -558,6 +558,11 @@ export const API_LIST = {
       // tslint:disable-next-line: object-literal-sort-keys
       ROLE_CHECK: [ROLE.PUBLIC],
     },
+    '/protected/v8/user/evaluate/assessment/submit/v2': {
+      checksNeeded: [CHECK.ROLE],
+      // tslint:disable-next-line: object-literal-sort-keys
+      ROLE_CHECK: [ROLE.PUBLIC],
+    },
     '/protected/v8/portal/spv/deptAction/userrole': {
       checksNeeded: [CHECK.ROLE],
       // tslint:disable-next-line: object-literal-sort-keys
@@ -1130,6 +1135,7 @@ export const API_LIST = {
     '/protected/v8/portal/deptAction',
     '/protected/v8/workflowhandler/historyByApplicationId/:applicationId',
     '/protected/v8/user/autocomplete/:query',
+    '/protected/v8/user/evaluate/assessment/submit/v2',
     '/protected/v8/portal/spv/deptAction/userrole',
     '/protected/v8/training/content/:do_id/trainings/count',
     '/protected/v8/user/playlist',
