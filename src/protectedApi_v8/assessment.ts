@@ -89,7 +89,7 @@ const fetchAssessment = async (artifactUrl: string) => {
       method: 'GET',
       url: artifactUrl,
     })
-    logInfo('Response Data in JSON :', JSON.stringify(response.data))
+    logInfo('Response Data in JSON :', response.data)
     if (response.data.questions) {
       logInfo('Response questions :', _.get(response, 'data'))
       return _.get(response, 'data')
