@@ -573,6 +573,11 @@ export const API_LIST = {
       // tslint:disable-next-line: object-literal-sort-keys
       ROLE_CHECK: [ROLE.PUBLIC],
     },
+    '/protected/v8/v2/user/assessment/submit': {
+      checksNeeded: [CHECK.ROLE],
+      // tslint:disable-next-line: object-literal-sort-keys
+      ROLE_CHECK: [ROLE.PUBLIC],
+    },
     '/protected/v8/workflowhandler/applicationsSearch': {
       checksNeeded: [CHECK.ROLE],
       // tslint:disable-next-line: object-literal-sort-keys
@@ -1141,6 +1146,7 @@ export const API_LIST = {
     '/protected/v8/user/playlist',
     '/protected/v8/user/playlist/create',
     '/protected/v8/user/preference',
+    '/protected/v8/v2/user/assessment/submit',
     '/protected/v8/workflowhandler/applicationsSearch',
     '/protected/v8/workallocation/getWorkOrders',
     '/protected/v8/workallocation/add/workorder',
