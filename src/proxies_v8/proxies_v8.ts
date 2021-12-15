@@ -55,7 +55,7 @@ proxiesV8.get('/learning-analytics', (req, res) => {
       },
     },
     index: 'telemetry_ingest-2021.12',
-  }).then((resp) => {
+  }).then((resp: any) => {
     res.status(200).json({
       data: resp,
     })
