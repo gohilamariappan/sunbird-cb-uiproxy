@@ -1,5 +1,4 @@
 import axios from 'axios'
-import elasticsearch from 'elasticsearch'
 import express from 'express'
 import { UploadedFile } from 'express-fileupload'
 import FormData from 'form-data'
@@ -12,7 +11,6 @@ import {
   proxyContent,
   proxyContentLearnerVM,
   proxyCreatorDownloadCertificate,
-  proxyCreatorIssueCertificate,
   proxyCreatorKnowledge,
   proxyCreatorLearner,
   proxyCreatorQML,
@@ -28,10 +26,6 @@ import { extractUserIdFromRequest, extractUserToken } from '../utils/requestExtr
 const API_END_POINTS = {
   contentNotificationEmail: `${CONSTANTS.NOTIFICATION_SERVIC_API_BASE}/v1/notification/send/sync`,
 }
-
-const client = new elasticsearch.Client({
-  hosts: ['http://10.1.2.138:9200'],
-})
 
 export const proxiesV8 = express.Router()
 
@@ -55,7 +49,7 @@ proxiesV8.get('/learning-analytics', (req, res) => {
         },
       },
     },
-    index: 'telemetry_ingest-2021.12'
+    index: 'telemetry_ingest-2021.12',
   }).then((resp) => {
     res.status(200).json({
       data: resp,
