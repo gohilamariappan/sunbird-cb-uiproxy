@@ -1044,7 +1044,7 @@ export const API_LIST = {
     '/proxies/v8/api/user/v2/read',
     '/proxies/v8/api/user/v2/read/:id',
     '/proxies/v8/certreg/v2/certs/download/:id',
-    '/proxies/course/batch/cert/v1/issue',
+    '/proxies/v8/course/batch/cert/v1/issue',
     '/proxies/v8/downloadCertificate/:id',
     '/proxies/v8/learner/course/v1/batch/create',
     '/proxies/v8/learner/course/v1/batch/list',
