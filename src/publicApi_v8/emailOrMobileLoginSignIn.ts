@@ -73,7 +73,7 @@ emailOrMobileLogin.post("/signup", async (req, res) => {
 // generate otp for  register's user
 emailOrMobileLogin.post("/generateOtp", async (req, res) => {
   try {
-    if (!req.body.mobileNumber || req.body.email) {
+    if (!req.body.mobileNumber || !req.body.email) {
       res.status(400).json({
         msg: EMAIL_OR_MOBILE_ERROR_MSG,
         status: "error",
