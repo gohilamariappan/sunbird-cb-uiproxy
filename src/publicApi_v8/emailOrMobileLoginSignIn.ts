@@ -122,7 +122,7 @@ emailOrMobileLogin.post("/validateOtp", async (req, res) => {
   try {
     if (!req.body.mobileNumber) {
       res.status(400).json({
-        msg: MOBILE_ERROR_MSG,
+        msg: EMAIL_OR_MOBILE_ERROR_MSG,
         status: "error",
         status_code: 400,
       });
