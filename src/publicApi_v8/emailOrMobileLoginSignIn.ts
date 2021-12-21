@@ -78,7 +78,7 @@ emailOrMobileLogin.post("/generateOtp", async (req, res) => {
       const mobileNumber = req.body.mobileNumber;
       const email = req.body.email;
       // tslint:disable-next-line: no-any
-      let userSearch: any;
+      let userSearch: any = {};
       if (mobileNumber) {
         await fetchUser(mobileNumber, "phone");
       } else {
