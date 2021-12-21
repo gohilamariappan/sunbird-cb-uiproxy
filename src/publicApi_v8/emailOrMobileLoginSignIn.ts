@@ -182,7 +182,7 @@ emailOrMobileLogin.post("/registerUserWithMobile", async (req, res) => {
   try {
     if (!req.body.phone) {
       res.status(400).json({
-        msg: MOBILE_ERROR_MSG,
+        msg: EMAIL_OR_MOBILE_ERROR_MSG,
         status: "error",
         status_code: 400,
       });
