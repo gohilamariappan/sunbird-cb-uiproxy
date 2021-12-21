@@ -6,10 +6,10 @@ import { CONSTANTS } from '../utils/env'
 import { logError, logInfo } from '../utils/logger'
 
 const API_END_POINTS = {
-  generateOtp: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/otp/v1/generate`,
+  generateOtp: `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/otp/v1/generate`,
   recoverPassword: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/private/user/v1/password/reset`,
   searchSb: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/private/user/v1/search`,
-  verifyOtp: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/otp/v1/verify`,
+  verifyOtp: `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/otp/v1/verify`,
 }
 
 export const forgotPassword = Router()
@@ -49,7 +49,7 @@ forgotPassword.post('/reset/proxy/password', async (req, res) => {
           data: {
             request: { userId: userUUId, key: sbUsername, type: userType },
           },
-          headers: { Authorization: req.header('Authorization') },
+          headers: { Authorization: CONSTANTS.SB_API_KEY },
           method: 'POST',
           url: API_END_POINTS.generateOtp,
         })
@@ -87,7 +87,7 @@ forgotPassword.post('/reset/proxy/password', async (req, res) => {
           data: {
             request: { userId: userUUId, key: sbUsername, type: userType },
           },
-          headers: { Authorization: req.header('Authorization') },
+          headers: { Authorization: CONSTANTS.SB_API_KEY },
           method: 'POST',
           url: API_END_POINTS.generateOtp,
         })
@@ -162,7 +162,7 @@ forgotPassword.post('/verifyOtp', async (req, res) => {
           data: {
             request: { userId: userUUId, key, type: userType, otp: validOtp },
           },
-          headers: { Authorization: req.header('Authorization') },
+          headers: { Authorization: CONSTANTS.SB_API_KEY },
           method: 'POST',
           url: API_END_POINTS.recoverPassword,
         })
