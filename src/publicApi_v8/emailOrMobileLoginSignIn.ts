@@ -77,12 +77,12 @@ emailOrMobileLogin.post("/generateOtp", async (req, res) => {
       logInfo("Entered into /generateOtp ");
       const mobileNumber = req.body.mobileNumber;
       const email = req.body.email;
-      //tslint:disable-next-line: no-any
+      // tslint:disable-next-line: no-any
       let userSearch: any;
       if (mobileNumber) {
-        userSearch = await fetchUser(mobileNumber, "phone");
+        await fetchUser(mobileNumber, "phone");
       } else {
-        userSearch = await fetchUser(email, "email");
+        await fetchUser(email, "email");
       }
       if (userSearch.data.result.response.count > 0) {
         const userUUId = _.get(
