@@ -12,6 +12,7 @@ export const fetchUser = async (searchValue: string, searchType: string) => {
   logInfo('Search User endpoint proxy 11 : ', API_END_POINTS.searchSb)
 
   logInfo('Search User - Entered in phone and value is : ', searchValue)
+  logInfo('Search User - Entered in phone and type is : ', searchType)
   const userSearchResponse = await axios({
     ...axiosRequestConfig,
     data: {
@@ -23,6 +24,6 @@ export const fetchUser = async (searchValue: string, searchType: string) => {
     method: 'POST',
     url: API_END_POINTS.searchSb,
   })
-  logInfo('genreate otp response' + JSON.stringify(userSearchResponse))
+  logInfo('Fetch User Response : ' + JSON.stringify(userSearchResponse))
   return userSearchResponse
 }
