@@ -73,43 +73,44 @@ emailOrMobileLogin.post("/signup", async (req, res) => {
 // generate otp for  register's user
 emailOrMobileLogin.post("/generateOtp", async (req, res) => {
   try {
-    if (!req.body.mobileNumber || !req.body.email) {
+    if (req.body.mobileNumber || req.body.email) {
+      logInfo("Entered into /generateOtp ");
+      const mobileNumber = req.body.mobileNumber;
+      const email = req.body.email;
+      const userSearch = mobileNumber
+        ? await fetchUser(mobileNumber, "phone")
+        : await fetchUser(email, "email");
+      if (userSearch.data.result.response.count > 0) {
+        const userUUId = _.get(
+          _.find(userSearch.data.result.response.content, "userId"),
+          "userId"
+        );
+        logInfo("User Id : ", userUUId);
+        try {
+          const response = await getOTP(userUUId, mobileNumber, "phone");
+          logInfo("response form getOTP : " + response);
+          if (response.data.result.response === "SUCCESS") {
+            res
+              .status(200)
+              .send({ message: "Success ! Please verify the OTP ." });
+          }
+          // tslint:disable-next-line: no-any
+        } catch (error) {
+          res
+            .status((error && error.response && error.response.status) || 400)
+            .send(
+              (error && error.response && error.response.data) || {
+                error: GENERAL_ERROR_MSG,
+              }
+            );
+        }
+      }
+    } else if (!req.body.mobileNumber || !req.body.email) {
       res.status(400).json({
         msg: EMAIL_OR_MOBILE_ERROR_MSG,
         status: "error",
         status_code: 400,
       });
-    }
-    logInfo("Entered into /generateOtp ");
-    const mobileNumber = req.body.mobileNumber;
-    const email = req.body.email;
-    const userSearch = mobileNumber
-      ? await fetchUser(mobileNumber, "phone")
-      : await fetchUser(email, "email");
-    if (userSearch.data.result.response.count > 0) {
-      const userUUId = _.get(
-        _.find(userSearch.data.result.response.content, "userId"),
-        "userId"
-      );
-      logInfo("User Id : ", userUUId);
-      try {
-        const response = await getOTP(userUUId, mobileNumber, "phone");
-        logInfo("response form getOTP : " + response);
-        if (response.data.result.response === "SUCCESS") {
-          res
-            .status(200)
-            .send({ message: "Success ! Please verify the OTP ." });
-        }
-        // tslint:disable-next-line: no-any
-      } catch (error) {
-        res
-          .status((error && error.response && error.response.status) || 400)
-          .send(
-            (error && error.response && error.response.data) || {
-              error: GENERAL_ERROR_MSG,
-            }
-          );
-      }
     }
   } catch (error) {
     res.status(500).send({
