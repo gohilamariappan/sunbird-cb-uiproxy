@@ -27,6 +27,11 @@ const ROLE = {
 // All api list validations
 export const API_LIST = {
   URL: {
+    '/authApi/action/content/hierarchy/:do_id': {
+      checksNeeded: [CHECK.ROLE],
+      // tslint:disable-next-line: object-literal-sort-keys
+      ROLE_CHECK: [ROLE.PUBLIC],
+    },
     '/authApi/action/content/parent/hierarchy': {
       checksNeeded: [CHECK.ROLE],
       // tslint:disable-next-line: object-literal-sort-keys
@@ -79,6 +84,21 @@ export const API_LIST = {
       ROLE_CHECK: [ROLE.PUBLIC],
     },
     '/protected/v8/user/iconBadge/unseenNotificationCount': {
+      checksNeeded: [CHECK.ROLE],
+      // tslint:disable-next-line: object-literal-sort-keys
+      ROLE_CHECK: [ROLE.PUBLIC],
+    },
+    '/proxies/v8/certreg/v2/certs/download/:id': {
+      checksNeeded: [CHECK.ROLE],
+      // tslint:disable-next-line: object-literal-sort-keys
+      ROLE_CHECK: [ROLE.PUBLIC],
+    },
+    '/proxies/v8/course/batch/cert/v1/issue': {
+      checksNeeded: [CHECK.ROLE],
+      // tslint:disable-next-line: object-literal-sort-keys
+      ROLE_CHECK: [ROLE.PUBLIC],
+    },
+    '/proxies/v8/downloadCertificate/:id': {
       checksNeeded: [CHECK.ROLE],
       // tslint:disable-next-line: object-literal-sort-keys
       ROLE_CHECK: [ROLE.PUBLIC],
@@ -538,12 +558,22 @@ export const API_LIST = {
       // tslint:disable-next-line: object-literal-sort-keys
       ROLE_CHECK: [ROLE.PUBLIC],
     },
+    '/protected/v8/user/evaluate/assessment/submit/v2': {
+      checksNeeded: [CHECK.ROLE],
+      // tslint:disable-next-line: object-literal-sort-keys
+      ROLE_CHECK: [ROLE.PUBLIC],
+    },
     '/protected/v8/portal/spv/deptAction/userrole': {
       checksNeeded: [CHECK.ROLE],
       // tslint:disable-next-line: object-literal-sort-keys
       ROLE_CHECK: [ROLE.PUBLIC],
     },
     '/protected/v8/user/preference': {
+      checksNeeded: [CHECK.ROLE],
+      // tslint:disable-next-line: object-literal-sort-keys
+      ROLE_CHECK: [ROLE.PUBLIC],
+    },
+    '/protected/v8/v2/user/assessment/submit': {
       checksNeeded: [CHECK.ROLE],
       // tslint:disable-next-line: object-literal-sort-keys
       ROLE_CHECK: [ROLE.PUBLIC],
@@ -1008,6 +1038,7 @@ export const API_LIST = {
     },
   },
   URL_PATTERN: [
+    '/authApi/action/content/hierarchy/:do_id',
     '/authApi/action/content/parent/hierarchy',
     '/authApi/action/content/parent/hierarchy/:do_id',
     '/authApi/content/v3/create',
@@ -1017,6 +1048,9 @@ export const API_LIST = {
     '/public/v8/google/callback',
     '/proxies/v8/api/user/v2/read',
     '/proxies/v8/api/user/v2/read/:id',
+    '/proxies/v8/certreg/v2/certs/download/:id',
+    '/proxies/v8/course/batch/cert/v1/issue',
+    '/proxies/v8/downloadCertificate/:id',
     '/proxies/v8/learner/course/v1/batch/create',
     '/proxies/v8/learner/course/v1/batch/list',
     '/proxies/v8/user/v1/read/:id',
@@ -1106,11 +1140,13 @@ export const API_LIST = {
     '/protected/v8/portal/deptAction',
     '/protected/v8/workflowhandler/historyByApplicationId/:applicationId',
     '/protected/v8/user/autocomplete/:query',
+    '/protected/v8/user/evaluate/assessment/submit/v2',
     '/protected/v8/portal/spv/deptAction/userrole',
     '/protected/v8/training/content/:do_id/trainings/count',
     '/protected/v8/user/playlist',
     '/protected/v8/user/playlist/create',
     '/protected/v8/user/preference',
+    '/protected/v8/v2/user/assessment/submit',
     '/protected/v8/workflowhandler/applicationsSearch',
     '/protected/v8/workallocation/getWorkOrders',
     '/protected/v8/workallocation/add/workorder',

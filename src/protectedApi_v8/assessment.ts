@@ -12,7 +12,7 @@ import {
 export const assessmentApi = Router()
 const GENERAL_ERR_MSG = 'Failed due to unknown reason'
 const API_END_POINTS = {
-  assessmentSubmitV2: `${CONSTANTS.KONG_API_BASE}/v2/user`,
+  assessmentSubmitV2: `${CONSTANTS.SB_EXT_API_BASE_2}/v2/user`,
 }
 assessmentApi.post('/submit/v2', async (req, res) => {
   logInfo('>>>>>>>>>>>>inside submit v2')
@@ -89,7 +89,7 @@ const fetchAssessment = async (artifactUrl: string) => {
       method: 'GET',
       url: artifactUrl,
     })
-    logInfo('Response Data in JSON :', JSON.stringify(response.data))
+    logInfo('Response Data in JSON :', response.data)
     if (response.data.questions) {
       logInfo('Response questions :', _.get(response, 'data'))
       return _.get(response, 'data')
