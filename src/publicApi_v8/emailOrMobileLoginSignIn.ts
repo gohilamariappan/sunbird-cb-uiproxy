@@ -102,6 +102,7 @@ emailOrMobileLogin.post("/generateOtp", async (req, res) => {
             .status(200)
             .send({ message: "Success ! Please verify the OTP ." });
         }
+        // tslint:disable-next-line: no-any
       } catch (error: any) {
         res
           .status((error && error.response && error.response.status) || 400)
