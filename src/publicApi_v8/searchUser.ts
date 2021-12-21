@@ -16,8 +16,8 @@ export const fetchUser = async (searchValue: string, searchType: string) => {
     ...axiosRequestConfig,
     data: {
       request: {
-        query: "",
         filters: { [searchType]: searchValue.toLowerCase() },
+        query: "",
       },
     },
     method: "POST",
