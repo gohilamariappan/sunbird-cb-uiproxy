@@ -5,7 +5,6 @@ import { axiosRequestConfig } from "../configs/request.config";
 import { CONSTANTS } from "../utils/env";
 import { logError, logInfo } from "../utils/logger";
 import { getOTP } from "./otp";
-import { fetchUser } from "./searchUser";
 const API_END_POINTS = {
   createUserWithMobileNo: `${CONSTANTS.KONG_API_BASE}/user/v3/create`,
   fetchUserByEmail: `${CONSTANTS.KONG_API_BASE}/user/v1/exists/email/`,
@@ -80,12 +79,28 @@ emailOrMobileLogin.post("/generateOtp", async (req, res) => {
       // tslint:disable-next-line: no-any
       let userSearch: any = {};
       if (mobileNumber) {
-        userSearch = await fetchUser(mobileNumber, "phone");
+        userSearch = await axios({
+          ...axiosRequestConfig,
+          data: {
+            request: {
+              query: "",
+              filters: { phone: mobileNumber.toLowerCase() },
+            },
+          },
+          method: "POST",
+          url: API_END_POINTS.searchSb,
+        });
       } else {
-        userSearch = await fetchUser(email, "email");
+        userSearch = await axios({
+          ...axiosRequestConfig,
+          data: {
+            request: { query: "", filters: { email: email.toLowerCase() } },
+          },
+          method: "POST",
+          url: API_END_POINTS.searchSb,
+        });
       }
-      logInfo("user search ", JSON.stringify(userSearch));
-      logInfo("user search ", userSearch.data.result);
+      logInfo("userSearch response", JSON.stringify(userSearch));
       if (userSearch.data.result.response.count > 0) {
         const userUUId = _.get(
           _.find(userSearch.data.result.response.content, "userId"),
@@ -119,6 +134,7 @@ emailOrMobileLogin.post("/generateOtp", async (req, res) => {
       });
     }
   } catch (error) {
+    logInfo("error" + error);
     res.status(500).send({
       error: GENERAL_ERROR_MSG,
     });
