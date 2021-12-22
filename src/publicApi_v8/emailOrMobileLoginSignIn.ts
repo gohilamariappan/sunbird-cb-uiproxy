@@ -83,8 +83,8 @@ emailOrMobileLogin.post("/generateOtp", async (req, res) => {
           ...axiosRequestConfig,
           data: {
             request: {
-              query: "",
               filters: { phone: mobileNumber.toLowerCase() },
+              query: "",
             },
           },
           method: "POST",
