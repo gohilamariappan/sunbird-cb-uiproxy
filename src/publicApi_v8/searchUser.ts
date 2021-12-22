@@ -5,7 +5,7 @@ import { CONSTANTS } from '../utils/env'
 import { logInfo } from '../utils/logger'
 
 const API_END_POINTS = {
-  searchSb: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/user/v1/search`,
+  searchSb: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/private/user/v1/search`,
 }
 
 export const fetchUser = async (searchValue: string, searchType: string) => {
@@ -15,6 +15,9 @@ export const fetchUser = async (searchValue: string, searchType: string) => {
   logInfo('Search User - Entered in phone and type is : ', searchType)
   const userSearchResponse = await axios({
     ...axiosRequestConfig,
+    headers: {
+        Authorization: CONSTANTS.SB_API_KEY,
+    },
     data: {
       request: {
         filters: { [searchType]: searchValue.toLowerCase() },
