@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Router } from "express";
+import { json, Router } from "express";
 import _ from "lodash";
 import { axiosRequestConfig } from "../configs/request.config";
 import { CONSTANTS } from "../utils/env";
@@ -75,14 +75,16 @@ emailOrMobileLogin.post("/generateOtp", async (req, res) => {
     if (req.body.mobileNumber || req.body.email) {
       logInfo("Entered into /generateOtp ");
       const mobileNumber = req.body.mobileNumber;
-      // const email = req.body.email
+      const email = req.body.email;
       // tslint:disable-next-line: no-any
       // let userSearch: any = {}
       const userSearch = await axios({
         ...axiosRequestConfig,
         data: {
           request: {
-            filters: { phone: mobileNumber.toLowerCase() },
+            filters: mobileNumber
+              ? { phone: mobileNumber.toLowerCase() }
+              : { email: email.toLowerCase() },
             query: "",
           },
         },
