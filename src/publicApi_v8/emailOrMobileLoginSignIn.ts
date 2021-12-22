@@ -99,7 +99,11 @@ emailOrMobileLogin.post("/generateOtp", async (req, res) => {
         );
         logInfo("User Id : ", userUUId);
         try {
-          const response = await getOTP(userUUId, mobileNumber, "phone");
+          const response = await getOTP(
+            userUUId,
+            email ? email : mobileNumber,
+            email ? "email" : "phone"
+          );
           logInfo("response form getOTP : " + response);
           if (response.data.result.response === "SUCCESS") {
             res
