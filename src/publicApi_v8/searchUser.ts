@@ -27,6 +27,7 @@ export const fetchUser = async (searchValue: string, searchType: string) => {
         query: "",
       },
     },
+    headers: { Authorization: CONSTANTS.SB_API_KEY },
     method: "POST",
     url: API_END_POINTS.searchSb,
   });
