@@ -12,25 +12,23 @@ export const fetchUser = async (searchValue: string, searchType: string) => {
   logInfo("Search User endpoint proxy 11 : ", API_END_POINTS.searchSb);
   logInfo("Search User - searchType : ", searchType);
   logInfo("Search User - Entered in phone and value is : ", searchValue);
-  const r = {
-    request: {
-      filters: { [searchType]: searchValue.toLowerCase() },
-      query: "",
-    },
-  };
-  logInfo("request" + JSON.stringify(r));
-  const userSearchResponse = await axios({
-    ...axiosRequestConfig,
-    data: {
-      request: {
-        filters: { [searchType]: searchValue.toLowerCase() },
-        query: "",
+  let userSearchResponse: any = {};
+  try {
+    userSearchResponse = await axios({
+      ...axiosRequestConfig,
+      data: {
+        request: {
+          filters: { [searchType]: searchValue.toLowerCase() },
+          query: "",
+        },
       },
-    },
-    headers: { Authorization: CONSTANTS.SB_API_KEY },
-    method: "POST",
-    url: API_END_POINTS.searchSb,
-  });
-  logInfo("user search response" + JSON.stringify(userSearchResponse));
-  return userSearchResponse;
+      headers: { Authorization: CONSTANTS.SB_API_KEY },
+      method: "POST",
+      url: API_END_POINTS.searchSb,
+    });
+    logInfo("Search response  : ", userSearchResponse.data);
+    return userSearchResponse;
+  } catch (error) {
+    logInfo("error of user search" + error);
+  }
 };
