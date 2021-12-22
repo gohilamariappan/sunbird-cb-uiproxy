@@ -75,32 +75,21 @@ emailOrMobileLogin.post("/generateOtp", async (req, res) => {
     if (req.body.mobileNumber || req.body.email) {
       logInfo("Entered into /generateOtp ");
       const mobileNumber = req.body.mobileNumber;
-      const email = req.body.email;
+      //const email = req.body.email
       // tslint:disable-next-line: no-any
-      let userSearch: any = {};
-      if (mobileNumber) {
-        userSearch = await axios({
-          ...axiosRequestConfig,
-          data: {
-            request: {
-              filters: { phone: mobileNumber.toLowerCase() },
-              query: "",
-            },
+      //let userSearch: any = {}
+      const userSearch = await axios({
+        ...axiosRequestConfig,
+        data: {
+          request: {
+            query: "",
+            filters: { phone: mobileNumber.toLowerCase() },
           },
-          method: "POST",
-          url: API_END_POINTS.searchSb,
-        });
-      } else {
-        userSearch = await axios({
-          ...axiosRequestConfig,
-          data: {
-            request: { query: "", filters: { email: email.toLowerCase() } },
-          },
-          method: "POST",
-          url: API_END_POINTS.searchSb,
-        });
-      }
-      logInfo("userSearch response", JSON.stringify(userSearch));
+        },
+        method: "POST",
+        url: API_END_POINTS.searchSb,
+      });
+      logInfo("userSearch response" + userSearch);
       if (userSearch.data.result.response.count > 0) {
         const userUUId = _.get(
           _.find(userSearch.data.result.response.content, "userId"),
