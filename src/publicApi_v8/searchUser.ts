@@ -12,6 +12,7 @@ export const fetchUser = async (searchValue: string, searchType: string) => {
   logInfo("Search User endpoint proxy 11 : ", API_END_POINTS.searchSb);
   logInfo("Search User - searchType : ", searchType);
   logInfo("Search User - Entered in phone and value is : ", searchValue);
+  // tslint:disable-next-line: no-any
   let userSearchResponse: any = {};
   try {
     userSearchResponse = await axios({
