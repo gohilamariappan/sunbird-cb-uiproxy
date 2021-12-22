@@ -27,7 +27,7 @@ export const fetchUser = async (searchValue: string, searchType: string) => {
       method: "POST",
       url: API_END_POINTS.searchSb,
     });
-    logInfo("Search response  : ", userSearchResponse.data);
+    logInfo("Search response  : ", userSearchResponse.data.result);
     return userSearchResponse;
   } catch (error) {
     logInfo("error of user search" + error);
