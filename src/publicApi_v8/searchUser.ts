@@ -9,20 +9,18 @@ const API_END_POINTS = {
 }
 
 export const fetchUser = async (searchValue: string, searchType: string) => {
-  logInfo('Search User endpoint proxy 11 : ', API_END_POINTS.searchSb)
-
   logInfo('Search User - Entered in phone and value is : ', searchValue)
-  logInfo('Search User - Entered in phone and type is : ', searchType)
+  logInfo('Search Type - Entered in phone and type is : ', searchType)
   const userSearchResponse = await axios({
     ...axiosRequestConfig,
-    headers: {
-        Authorization: CONSTANTS.SB_API_KEY,
-    },
     data: {
       request: {
         filters: { [searchType]: searchValue.toLowerCase() },
         query: '',
       },
+    },
+    headers: {
+        Authorization: CONSTANTS.SB_API_KEY,
     },
     method: 'POST',
     url: API_END_POINTS.searchSb,
