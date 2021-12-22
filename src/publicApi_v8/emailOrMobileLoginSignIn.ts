@@ -80,9 +80,9 @@ emailOrMobileLogin.post("/generateOtp", async (req, res) => {
       // tslint:disable-next-line: no-any
       let userSearch: any = {};
       if (mobileNumber) {
-        await fetchUser(mobileNumber, "phone");
+        userSearch = await fetchUser(mobileNumber, "phone");
       } else {
-        await fetchUser(email, "email");
+        userSearch = await fetchUser(email, "email");
       }
       if (userSearch.data.result.response.count > 0) {
         const userUUId = _.get(
