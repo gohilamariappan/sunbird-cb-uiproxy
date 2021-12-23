@@ -145,7 +145,52 @@ emailOrMobileLogin.post("/generateOtp", async (req, res) => {
 // validate  otp for  register's the user
 emailOrMobileLogin.post("/validateOtp", async (req, res) => {
   try {
-    if (!req.body.mobileNumber) {
+    if (req.body.mobileNumber || req.body.email) {
+      logInfo("Entered into /validateOtp ");
+      const mobileNumber = req.body.mobileNumber;
+      const email = req.body.email;
+      const validOtp = req.body.otp;
+      const userSearch = await axios({
+        ...axiosRequestConfig,
+        data: {
+          request: {
+            filters: mobileNumber
+              ? { phone: mobileNumber.toLowerCase() }
+              : { email: email.toLowerCase() },
+            query: "",
+          },
+        },
+        method: "POST",
+        url: API_END_POINTS.searchSb,
+      });
+      if (userSearch.data.result.response.count > 0) {
+        const userUUId = _.get(
+          _.find(userSearch.data.result.response.content, "userId"),
+          "userId"
+        );
+        logInfo("User Id : ", userUUId);
+        logInfo("validate otp endpoints for kong", API_END_POINTS.generateOtp);
+        const verifyOtpResponse = await axios({
+          ...axiosRequestConfig,
+          data: {
+            request: {
+              key: mobileNumber ? mobileNumber : email,
+              otp: validOtp,
+              type: email ? "email" : "phone",
+              userId: userUUId,
+            },
+          },
+          headers: { Authorization: CONSTANTS.SB_API_KEY },
+          method: "POST",
+          url: API_END_POINTS.verifyOtp,
+        });
+        if (verifyOtpResponse.data.result.response === "SUCCESS") {
+          logInfo("opt verify : ");
+          res.status(200).send({ message: "Success !OTP is verified ." });
+        }
+        logInfo("Sending Responses in phone part : " + verifyOtpResponse);
+      }
+    } else if (!req.body.mobileNumber || !req.body.email) {
       res.status(400).json({
         msg: EMAIL_OR_MOBILE_ERROR_MSG,
         status: "error",
@@ -158,50 +203,6 @@ emailOrMobileLogin.post("/validateOtp", async (req, res) => {
         status: "error",
         status_code: 400,
       });
-    }
-    logInfo("Entered into /validateOtp ");
-    const mobileNumber = req.body.mobileNumber;
-    const email = req.body.email;
-    const validOtp = req.body.otp;
-    const userSearch = await axios({
-      ...axiosRequestConfig,
-      data: {
-        request: {
-          filters: mobileNumber
-            ? { phone: mobileNumber.toLowerCase() }
-            : { email: email.toLowerCase() },
-          query: "",
-        },
-      },
-      method: "POST",
-      url: API_END_POINTS.searchSb,
-    });
-    if (userSearch.data.result.response.count > 0) {
-      const userUUId = _.get(
-        _.find(userSearch.data.result.response.content, "userId"),
-        "userId"
-      );
-      logInfo("User Id : ", userUUId);
-      logInfo("validate otp endpoints for kong", API_END_POINTS.generateOtp);
-      const verifyOtpResponse = await axios({
-        ...axiosRequestConfig,
-        data: {
-          request: {
-            key: mobileNumber ? mobileNumber : email,
-            otp: validOtp,
-            type: email ? "email" : "phone",
-            userId: userUUId,
-          },
-        },
-        headers: { Authorization: CONSTANTS.SB_API_KEY },
-        method: "POST",
-        url: API_END_POINTS.verifyOtp,
-      });
-      if (verifyOtpResponse.data.result.response === "SUCCESS") {
-        logInfo("opt verify : ");
-        res.status(200).send({ message: "Success !OTP is verified ." });
-      }
-      logInfo("Sending Responses in phone part : " + verifyOtpResponse);
     }
   } catch (error) {
     res.status(500).send({
