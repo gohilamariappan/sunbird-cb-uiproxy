@@ -15,6 +15,7 @@ const API_END_POINTS = {
 };
 const GENERAL_ERROR_MSG = "Failed due to unknown reason";
 const EMAIL_OR_MOBILE_ERROR_MSG = "Mobile no or Email id. can not be empty";
+const NOT_USER_FOUND = "User not found.";
 
 export const emailOrMobileLogin = Router();
 emailOrMobileLogin.post("/signup", async (req, res) => {
@@ -120,6 +121,12 @@ emailOrMobileLogin.post("/generateOtp", async (req, res) => {
               }
             );
         }
+      } else if (userSearch.data.response.count === 0) {
+        res.status(400).json({
+          msg: NOT_USER_FOUND,
+          status: "error",
+          status_code: 400,
+        });
       }
     } else if (!req.body.mobileNumber || !req.body.email) {
       res.status(400).json({
