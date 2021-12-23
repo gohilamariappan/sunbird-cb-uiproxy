@@ -98,7 +98,7 @@ emailOrMobileLogin.post('/generateOtp', async (req, res) => {
           _.find(userSearch.data.result.response.content, 'userId'),
           'userId'
         )
-        logInfo('User Id : ', userUUId)
+        
         try {
           const response = await getOTP(
             userUUId,
@@ -126,6 +126,12 @@ emailOrMobileLogin.post('/generateOtp', async (req, res) => {
           msg: NOT_USER_FOUND,
           status: 'error',
           status_code: 400,
+        })
+      }else{
+        res.status(400).json({
+          msg: "Error : There was an error sending OTP. Please check administrator.",
+          status: 'error',
+          status_code: 202,
         })
       }
     } else if (!req.body.mobileNumber || !req.body.email) {
