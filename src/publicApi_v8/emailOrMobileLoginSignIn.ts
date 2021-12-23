@@ -4,7 +4,7 @@ import _ from "lodash";
 import { axiosRequestConfig } from "../configs/request.config";
 import { CONSTANTS } from "../utils/env";
 import { logError, logInfo } from "../utils/logger";
-import { getOTP } from "./otp";
+import { getOTP, validateOTP } from "./otp";
 const API_END_POINTS = {
   createUserWithMobileNo: `${CONSTANTS.KONG_API_BASE}/user/v3/create`,
   fetchUserByEmail: `${CONSTANTS.KONG_API_BASE}/user/v1/exists/email/`,
@@ -170,20 +170,12 @@ emailOrMobileLogin.post("/validateOtp", async (req, res) => {
         );
         logInfo("User Id : ", userUUId);
         logInfo("validate otp endpoints for kong", API_END_POINTS.generateOtp);
-        const verifyOtpResponse = await axios({
-          ...axiosRequestConfig,
-          data: {
-            request: {
-              key: mobileNumber ? mobileNumber : email,
-              otp: validOtp,
-              type: email ? "email" : "phone",
-              userId: userUUId,
-            },
-          },
-          headers: { Authorization: CONSTANTS.SB_API_KEY },
-          method: "POST",
-          url: API_END_POINTS.verifyOtp,
-        });
+        const verifyOtpResponse = await validateOTP(
+          userUUId,
+          mobileNumber ? mobileNumber : email,
+          email ? "email" : "phone",
+          validOtp
+        );
         if (verifyOtpResponse.data.result.response === "SUCCESS") {
           logInfo("opt verify : ");
           res.status(200).send({ message: "Success !OTP is verified ." });
