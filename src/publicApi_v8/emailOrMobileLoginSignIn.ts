@@ -98,7 +98,7 @@ emailOrMobileLogin.post('/generateOtp', async (req, res) => {
           _.find(userSearch.data.result.response.content, 'userId'),
           'userId'
         )
-        
+
         try {
           const response = await getOTP(
             userUUId,
@@ -113,13 +113,11 @@ emailOrMobileLogin.post('/generateOtp', async (req, res) => {
           }
           // tslint:disable-next-line: no-any
         } catch (error) {
-          res
-            .status((error && error.response && error.response.status) || 400)
-            .send(
-              (error && error.response && error.response.data) || {
-                error: GENERAL_ERROR_MSG,
-              }
-            )
+          res.status(400).json({
+            msg: 'Error : There was an error sending OTP. Please check administrator.',
+            status: 'error',
+            status_code: 202,
+          })
         }
       } else if (userSearch.data.response.count === 0) {
         res.status(400).json({
@@ -127,13 +125,7 @@ emailOrMobileLogin.post('/generateOtp', async (req, res) => {
           status: 'error',
           status_code: 400,
         })
-      }else{
-        res.status(400).json({
-          msg: "Error : There was an error sending OTP. Please check administrator.",
-          status: 'error',
-          status_code: 202,
-        })
-      }
+      } 
     } else if (!req.body.mobileNumber || !req.body.email) {
       res.status(400).json({
         msg: EMAIL_OR_MOBILE_ERROR_MSG,
