@@ -146,7 +146,7 @@ emailOrMobileLogin.post("/generateOtp", async (req, res) => {
 emailOrMobileLogin.post("/validateOtp", async (req, res) => {
   try {
     if (req.body.mobileNumber || req.body.email) {
-      logInfo("Entered into /validateOtp ");
+      logInfo("Entered into /validateOtp ", req.body);
       const mobileNumber = req.body.mobileNumber;
       const email = req.body.email;
       const validOtp = req.body.otp;
