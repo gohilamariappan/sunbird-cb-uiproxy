@@ -113,7 +113,7 @@ emailOrMobileLogin.post('/generateOtp', async (req, res) => {
           }
           // tslint:disable-next-line: no-any
         } catch (error) {
-          res.status(400).json({
+          res.status(202).json({
             msg: 'Error : There was an error sending OTP. Please check administrator.',
             status: 'error',
             status_code: 202,
@@ -125,7 +125,7 @@ emailOrMobileLogin.post('/generateOtp', async (req, res) => {
           status: 'error',
           status_code: 400,
         })
-      } 
+      }
     } else if (!req.body.mobileNumber || !req.body.email) {
       res.status(400).json({
         msg: EMAIL_OR_MOBILE_ERROR_MSG,
