@@ -161,11 +161,17 @@ emailOrMobileLogin.post("/validateOtp", async (req, res) => {
     }
     logInfo("Entered into /validateOtp ");
     const mobileNumber = req.body.mobileNumber;
+    const email = req.body.email;
     const validOtp = req.body.otp;
     const userSearch = await axios({
       ...axiosRequestConfig,
       data: {
-        request: { query: "", filters: { phone: mobileNumber.toLowerCase() } },
+        request: {
+          filters: mobileNumber
+            ? { phone: mobileNumber.toLowerCase() }
+            : { email: email.toLowerCase() },
+          query: "",
+        },
       },
       method: "POST",
       url: API_END_POINTS.searchSb,
@@ -181,9 +187,9 @@ emailOrMobileLogin.post("/validateOtp", async (req, res) => {
         ...axiosRequestConfig,
         data: {
           request: {
-            key: mobileNumber,
+            key: mobileNumber ? mobileNumber : email,
             otp: validOtp,
-            type: "phone",
+            type: email ? "email" : "phone",
             userId: userUUId,
           },
         },
