@@ -3,7 +3,6 @@ import connectTimeout from 'connect-timeout'
 import cors from 'cors'
 import express, { NextFunction } from 'express'
 import fileUpload from 'express-fileupload'
-import expressSession from 'express-session'
 import helmet from 'helmet'
 import morgan from 'morgan'
 import { authContent } from './authoring/authContent'
@@ -11,7 +10,7 @@ import { authIapBackend } from './authoring/authIapBackend'
 import { authNotification } from './authoring/authNotification'
 import { authSearch } from './authoring/authSearch'
 import { authApi } from './authoring/content'
-import { getSessionConfig } from './configs/session.config'
+import { getSessionConfig, setSessionConfig } from './configs/session.config'
 import { protectedApiV8 } from './protectedApi_v8/protectedApiV8'
 import { proxiesV8 } from './proxies_v8/proxies_v8'
 import { publicApiV8 } from './publicApi_v8/publicApiV8'
@@ -45,7 +44,7 @@ export class Server {
       this.app.use(cors())
     }
     const sessionConfig = getSessionConfig()
-    this.app.use(expressSession(sessionConfig))
+    this.app.use(setSessionConfig())
     this.app.all('*', apiWhiteListLogger())
     if (CONSTANTS.PORTAL_API_WHITELIST_CHECK === 'true') {
       this.app.all('*', isAllowed())

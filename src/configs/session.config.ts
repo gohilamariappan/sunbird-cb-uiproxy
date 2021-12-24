@@ -50,3 +50,8 @@ export function getSessionConfig(
   }
   return sessionConfig
 }
+
+export function setSessionConfig() {
+  const sessionConfiguration = getSessionConfig()
+  return expressSession(sessionConfiguration)
+}

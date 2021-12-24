@@ -4,6 +4,7 @@ import _ from "lodash";
 import { axiosRequestConfig } from "../configs/request.config";
 import { CONSTANTS } from "../utils/env";
 import { logError, logInfo } from "../utils/logger";
+import { authorizationV2Api } from "./authorizationV2Api";
 import { getOTP, validateOTP } from "./otp";
 const API_END_POINTS = {
   createUserWithMobileNo: `${CONSTANTS.KONG_API_BASE}/user/v3/create`,
@@ -93,7 +94,11 @@ emailOrMobileLogin.post("/generateOtp", async (req, res) => {
         url: API_END_POINTS.searchSb,
       });
       logInfo("userSearch response" + userSearch);
-      if (userSearch.data.result.response.count > 0) {
+      if (
+        userSearch &&
+        userSearch.data &&
+        userSearch.data.result.response.count > 0
+      ) {
         const userUUId = _.get(
           _.find(userSearch.data.result.response.content, "userId"),
           "userId"
@@ -147,6 +152,7 @@ emailOrMobileLogin.post("/validateOtp", async (req, res) => {
       const mobileNumber = req.body.mobileNumber;
       const email = req.body.email;
       const validOtp = req.body.otp;
+      const password = req.body.password;
       const userSearch = await axios({
         ...axiosRequestConfig,
         data: {
@@ -175,7 +181,8 @@ emailOrMobileLogin.post("/validateOtp", async (req, res) => {
         );
         if (verifyOtpResponse.data.result.response === "SUCCESS") {
           logInfo("opt verify : ");
-          res.status(200).send({ message: "Success !OTP is verified ." });
+          res.status(200).send({ message: "Success ! OTP is verified ." });
+          await authorizationV2Api(email ? email : mobileNumber, password);
         }
         logInfo("Sending Responses in phone part : " + verifyOtpResponse);
       }
