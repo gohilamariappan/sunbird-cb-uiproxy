@@ -92,7 +92,7 @@ emailOrMobileLogin.post("/generateOtp", async (req, res) => {
         method: "POST",
         url: API_END_POINTS.searchSb,
       });
-      logInfo("userSearch response" + JSON.stringify(userSearch));
+      logInfo("userSearch response" + userSearch);
       if (userSearch.data.result.response.count > 0) {
         const userUUId = _.get(
           _.find(userSearch.data.result.response.content, "userId"),
