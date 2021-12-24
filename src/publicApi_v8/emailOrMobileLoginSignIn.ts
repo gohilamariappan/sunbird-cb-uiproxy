@@ -92,7 +92,7 @@ emailOrMobileLogin.post("/generateOtp", async (req, res) => {
         method: "POST",
         url: API_END_POINTS.searchSb,
       });
-      logInfo("userSearch response" + userSearch);
+      logInfo("userSearch response" + JSON.stringify(userSearch));
       if (userSearch.data.result.response.count > 0) {
         const userUUId = _.get(
           _.find(userSearch.data.result.response.content, "userId"),
@@ -119,13 +119,13 @@ emailOrMobileLogin.post("/generateOtp", async (req, res) => {
             status_code: 202,
           });
         }
-      } else if (userSearch.data.response.count === 0) {
-        res.status(400).json({
-          msg: NOT_USER_FOUND,
-          status: "error",
-          status_code: 400,
-        });
-      }
+      // } else if (userSearch.data.response.count === 0) {
+      //   res.status(400).json({
+      //     msg: NOT_USER_FOUND,
+      //     status: "error",
+      //     status_code: 400,
+      //   });
+      // }
     } else if (!req.body.mobileNumber || !req.body.email) {
       res.status(400).json({
         msg: EMAIL_OR_MOBILE_ERROR_MSG,
