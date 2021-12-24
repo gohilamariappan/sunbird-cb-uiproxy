@@ -1,7 +1,6 @@
 import express from 'express'
 import { CONSTANTS } from '../utils/env'
 import { proxyCreatorRoute } from '../utils/proxyCreator'
-import { authorizationV2Api } from './authorizationV2Api'
 import { customSignUp } from './customSignup'
 import { emailOrMobileLogin } from './emailOrMobileLoginSignIn'
 import { forgotPassword } from './forgotPassword'
@@ -34,4 +33,3 @@ publicApiV8.use('/emailMobile/', emailOrMobileLogin)
 publicApiV8.use('/google/', googleAuth)
 publicApiV8.use('/forgot-password/', forgotPassword)
 publicApiV8.use('/publicContent/', publicContentApi)
-publicApiV8.use('/authorizationV2/', authorizationV2Api)

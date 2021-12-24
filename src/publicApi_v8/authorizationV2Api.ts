@@ -10,7 +10,7 @@ const API_END_POINTS = {
   generateToken : `https://aastrika-sb.idc.tarento.com/auth/realms/sunbird/protocol/openid-connect/token`,
   verfifyToken  : `https://aastrika-sb.idc.tarento.com/auth/realms/sunbird/protocol/openid-connect/userinfo`,
 }
-export const authorizationV2Api = async (username: string, password: string) => {
+export const getAuthToken = async (username: string, password: string) => {
   logInfo('Entered into authorization part.')
 
   const encodedData = qs.stringify({
@@ -54,5 +54,5 @@ export const authorizationV2Api = async (username: string, password: string) => 
         }
         return userTokenResponse
     }
-  return authorizationV2Api
+  return getAuthToken
 }
