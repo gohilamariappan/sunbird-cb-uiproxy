@@ -20,7 +20,7 @@ export const authorizationV2Api = async (username: string, password: string) => 
         password,
         username,
         })
-   logInfo('Entered into authorization part.', encodedData)
+  logInfo('Entered into authorization part.', encodedData)
   const authTokenResponse = await axios({
         ...axiosRequestConfig,
         data: encodedData,
