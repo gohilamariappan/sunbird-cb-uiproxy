@@ -119,7 +119,7 @@ emailOrMobileLogin.post("/generateOtp", async (req, res) => {
             status_code: 202,
           });
         }
-      } else if (userSearch.data.response.count === 0) {
+      } else if (_.isEmpty(userSearch.data.result)) {
         res.status(400).json({
           msg: NOT_USER_FOUND,
           status: "error",
