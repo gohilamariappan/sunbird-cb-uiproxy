@@ -35,7 +35,6 @@ export const CONSTANTS = {
   HTTPS_HOST,
   IAP_BACKEND_AUTH: env.IAP_BACKEND_AUTH || '',
   IAP_CLIENT_SECRET: env.IAP_CLIENT_SECRET,
-  KEYCLOAK_CLIENT_SECRET: env.client_secret,
   IAP_CODE_API_BASE: env.IAP_CODE_API_BASE || '',
   IAP_PROFILE_API_BASE: env.IAP_PROFILE_API_BASE || '',
   ILP_FP_PROXY: env.ILP_FP_PROXY || 'http://localhost:port',
@@ -49,6 +48,7 @@ export const CONSTANTS = {
   KEYCLOAK_ADMIN_USERNAME: env.KEYCLOAK_ADMIN_USERNAME || '',
   // tslint:disable-next-line: object-literal-sort-keys
   KC_NEW_USER_DEFAULT_PWD: env.KC_NEW_USER_DEFAULT_PWD || 'User@123',
+  KEYCLOAK_CLIENT_SECRET: env.client_secret,
   KEYCLOAK_REALM: env.KEYCLOAK_REALM || 'sunbird',
   KEYCLOAK_SESSION_TTL:  24 * 60 * 60 * 1000,
   KHUB_CLIENT_SECRET: env.KHUB_CLIENT_SECRET || 'axc123',
