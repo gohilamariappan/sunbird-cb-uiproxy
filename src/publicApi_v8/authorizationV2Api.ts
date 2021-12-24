@@ -1,54 +1,60 @@
 import axios from 'axios'
-import qs from 'querystring'
 import _ from 'lodash'
-import { CONSTANTS } from '../utils/env'
+import qs from 'querystring'
 import { axiosRequestConfig } from '../configs/request.config'
+import { CONSTANTS } from '../utils/env'
 import { logInfo } from '../utils/logger'
+import { setSessionConfig } from "../configs/session.config"
 
 const API_END_POINTS = {
   generateToken : `https://aastrika-sb.idc.tarento.com/auth/realms/sunbird/protocol/openid-connect/token`,
-  verfifyToken  : `https://aastrika-sb.idc.tarento.com/auth/realms/sunbird/protocol/openid-connect/userinfo`
+  verfifyToken  : `https://aastrika-sb.idc.tarento.com/auth/realms/sunbird/protocol/openid-connect/userinfo`,
 }
-export const authorizationV2Api = async (username:string, password:string) => {
+export const authorizationV2Api = async (username: string, password: string) => {
   logInfo('Entered into authorization part.')
-  let EncodedData = qs.stringify({
-    'client_id': 'portal',
-    'client_secret': `${CONSTANTS.KEYCLOAK_CLIENT_SECRET}`,
-    'grant_type': 'password',
-    'username'  :  username,
-    'password'  :  password,
-    });
 
-  const authTokenResponse = await axios({
-    ...axiosRequestConfig,
-    data: EncodedData,
-    headers: { 
-        'Content-Type': 'application/x-www-form-urlencoded'
-    },
-    method: 'POST',
-    
-    url: API_END_POINTS.generateToken,
-  })
+    const EncodedData = qs.stringify({
+        client_id: 'portal',
+        client_secret: `${CONSTANTS.KEYCLOAK_CLIENT_SECRET}`,
+        grant_type: 'password',
+        password  :  password,
+        username  :  username,
+        })
 
-  const accessToken = authTokenResponse.data.access_token
-
-  logInfo('authTokenResponse :' + JSON.stringify(authTokenResponse))
-  logInfo('accessToken ' + JSON.stringify(accessToken))
-
-  if(authTokenResponse)
-  {
-    const userTokenResponse = await axios({
+    const authTokenResponse = await axios({
         ...axiosRequestConfig,
         data: EncodedData,
-        headers: { 
-             Authorization : `Bearer ${accessToken}`
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
         },
-        method: 'GET',
-        
-        url: API_END_POINTS.verfifyToken,
-      })
-    logInfo("userTokenResponse : ", JSON.stringify(userTokenResponse))  
-    return userTokenResponse
-  }
-  
+        method: 'POST',
+
+        url: API_END_POINTS.generateToken,
+    })
+
+    const accessToken = authTokenResponse.data.access_token
+
+    logInfo('authTokenResponse :' + JSON.stringify(authTokenResponse))
+    logInfo('accessToken ' + JSON.stringify(accessToken))
+
+    if (authTokenResponse) {
+        const userTokenResponse = await axios({
+            ...axiosRequestConfig,
+            data: EncodedData,
+            headers: {
+                Authorization : `Bearer ${accessToken}`,
+            },
+            method: 'GET',
+
+            url: API_END_POINTS.verfifyToken,
+        })
+        logInfo('userTokenResponse : ', JSON.stringify(userTokenResponse))
+        if(userTokenResponse.data.name)
+        {
+            setSessionConfig()
+            return true
+        }
+        return userTokenResponse
+    }
+    return authorizationV2Api
 }
