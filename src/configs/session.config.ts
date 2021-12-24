@@ -51,8 +51,7 @@ export function getSessionConfig(
   return sessionConfig
 }
 
-export function setSessionConfig(){
-  const sessionConfig = getSessionConfig()
-  const session = expressSession(sessionConfig)
-  return session
+export function setSessionConfig() {
+  const sessionConfiguration = getSessionConfig()
+  return expressSession(sessionConfiguration)
 }
