@@ -98,7 +98,6 @@ emailOrMobileLogin.post("/generateOtp", async (req, res) => {
           _.find(userSearch.data.result.response.content, "userId"),
           "userId"
         );
-
         try {
           const response = await getOTP(
             userUUId,
