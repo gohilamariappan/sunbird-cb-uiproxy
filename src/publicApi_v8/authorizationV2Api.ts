@@ -1,8 +1,8 @@
 import axios from 'axios'
+import { AxiosRequestConfig, AxiosResponse} from 'axios'
 import _ from 'lodash'
-import qs  from 'querystring'
+import qs from 'querystring'
 import { axiosRequestConfig } from '../configs/request.config'
-import { AxiosRequestConfig, AxiosResponse} from 'axios';
 import { setSessionConfig } from '../configs/session.config'
 import { CONSTANTS } from '../utils/env'
 import { logInfo } from '../utils/logger'
@@ -21,20 +21,18 @@ export const authorizationV2Api = async (username: string, password: string) => 
                             grant_type: 'password',
                             password,
                             username,
-                        });
+                        })
     logInfo('Entered into authorization part.' + JSON.stringify(data))
 
     const configs: AxiosRequestConfig = {
+                data,
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
                 method: 'post',
                 url: 'https://aastrika-sb.idc.tarento.com/auth/realms/sunbird/protocol/openid-connect/token',
-                headers: { 
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                data : data
-                };
-      const response: AxiosResponse = await axios(configs);                
-
-                 
+                }
+    const response: AxiosResponse = await axios(configs)
 
     logInfo('authTokenResponse :' + JSON.stringify(response))
 
