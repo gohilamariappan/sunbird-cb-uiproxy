@@ -50,8 +50,7 @@ export const authorizationV2Api = async (username: string, password: string) => 
         if (userTokenResponse.data.name) {
             logInfo('Success ! Entered into setting cookie')
             setSessionConfig()
-            return true
         }
     }
-    return true
+  return true
 }
