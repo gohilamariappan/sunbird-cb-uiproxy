@@ -34,13 +34,13 @@ export const authorizationV2Api = async (username: string, password: string) => 
                 url: API_END_POINTS.generateToken,
             })
 
-    logInfo('Entered into authTokenResponse :' + JSON.stringify(authTokenResponse))
+        logInfo('Entered into authTokenResponse :' + authTokenResponse)
 
-    const accessToken = authTokenResponse.data.access_token
+        const accessToken = authTokenResponse.data.access_token
 
-    logInfo('accessToken ' + accessToken)
+        logInfo('accessToken ' + accessToken)
 
-    if (accessToken) {
+        if (accessToken) {
 
         logInfo('Entered into accessToken : ')
 
@@ -60,7 +60,7 @@ export const authorizationV2Api = async (username: string, password: string) => 
         }
     }
     } catch (e) {
-        logInfo('Error throwing Cookie : '+ e)
-    } 
+        logInfo('Error throwing Cookie : ' + e)
+    }
     return true
 }
