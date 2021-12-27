@@ -1,6 +1,5 @@
 import axios from 'axios'
 import _ from 'lodash'
-//import qs from 'querystring'
 import { axiosRequestConfig } from '../configs/request.config'
 import { setSessionConfig } from '../configs/session.config'
 import { CONSTANTS } from '../utils/env'
@@ -20,7 +19,7 @@ export const authorizationV2Api = async (username: string, password: string) => 
                             password,
                             username,
                         }
-    logInfo('Entered into authorization part.'+ encodedData)
+    logInfo('Entered into authorization part.' + encodedData)
     const authTokenResponse = await axios({
             ...axiosRequestConfig,
             data: encodedData,
@@ -38,7 +37,7 @@ export const authorizationV2Api = async (username: string, password: string) => 
     logInfo('accessToken ' + accessToken)
 
     if (accessToken) {
-        
+
         logInfo('Entered into accessToken : ')
 
         const userTokenResponse = await axios({
@@ -50,13 +49,13 @@ export const authorizationV2Api = async (username: string, password: string) => 
 
             url: API_END_POINTS.verfifyToken,
         })
-        
+
         logInfo('userTokenResponse : ', JSON.stringify(userTokenResponse))
 
         if (userTokenResponse.data.name) {
             logInfo('Success ! Entered into setting cookie')
-            setSessionConfig()  
+            setSessionConfig()
         }
     }
-  return true
+    return true
 }
