@@ -178,8 +178,8 @@ emailOrMobileLogin.post('/validateOtp', async (req, res) => {
         )
         if (verifyOtpResponse.data.result.response === 'SUCCESS') {
           logInfo('opt verify : ')
-          res.status(200).send({ message: 'Success ! OTP is verified .' })
           await authorizationV2Api(email ? email : mobileNumber, password)
+          res.status(200).send({ message: 'Success ! OTP is verified .' })
         }
         logInfo('Sending Responses in phone part : ' + verifyOtpResponse)
       }

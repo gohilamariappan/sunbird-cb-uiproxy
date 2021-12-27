@@ -14,12 +14,12 @@ export const authorizationV2Api = async (username: string, password: string) => 
   logInfo('Entered into authorization part.')
 
   const encodedData = qs.stringify({
-        client_id: 'portal',
-        client_secret: `${CONSTANTS.KEYCLOAK_CLIENT_SECRET}`,
-        grant_type: 'password',
-        password,
-        username,
-        })
+                                    client_id: 'portal',
+                                    client_secret: `${CONSTANTS.KEYCLOAK_CLIENT_SECRET}`,
+                                    grant_type: 'password',
+                                    password,
+                                    username,
+                                    })
   logInfo('Entered into authorization part.', encodedData)
   const authTokenResponse = await axios({
         ...axiosRequestConfig,
@@ -28,16 +28,15 @@ export const authorizationV2Api = async (username: string, password: string) => 
             'Content-Type': 'application/x-www-form-urlencoded',
         },
         method: 'POST',
-
         url: API_END_POINTS.generateToken,
     })
 
   const accessToken = authTokenResponse.data.access_token
 
   logInfo('authTokenResponse :' + JSON.stringify(authTokenResponse))
-  logInfo('accessToken ' + JSON.stringify(accessToken))
+  logInfo('accessToken ' + accessToken)
 
-  if (authTokenResponse) {
+  if (accessToken) {
         const userTokenResponse = await axios({
             ...axiosRequestConfig,
             headers: {
@@ -53,7 +52,6 @@ export const authorizationV2Api = async (username: string, password: string) => 
             setSessionConfig()
             return true
         }
-        return userTokenResponse
     }
-  return authorizationV2Api
+    return true
 }
