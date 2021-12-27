@@ -1,6 +1,8 @@
 import axios from 'axios'
 import _ from 'lodash'
+import qs  from 'querystring'
 import { axiosRequestConfig } from '../configs/request.config'
+import { AxiosRequestConfig, AxiosResponse} from 'axios';
 import { setSessionConfig } from '../configs/session.config'
 import { CONSTANTS } from '../utils/env'
 import { logInfo } from '../utils/logger'
@@ -10,29 +12,33 @@ const API_END_POINTS = {
   verfifyToken  : `https://aastrika-sb.idc.tarento.com/auth/realms/sunbird/protocol/openid-connect/userinfo`,
 }
 export const authorizationV2Api = async (username: string, password: string) => {
-    logInfo('Entered into authorization part.')
 
-    const encodedData = {
+    logInfo('Entered into authorizationV2Api')
+
+    const data = qs.stringify({
                             client_id: 'portal',
                             client_secret: `${CONSTANTS.KEYCLOAK_CLIENT_SECRET}`,
                             grant_type: 'password',
                             password,
                             username,
-                        }
-    logInfo('Entered into authorization part.' + encodedData)
-    const authTokenResponse = await axios({
-            ...axiosRequestConfig,
-            data: encodedData,
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            method: 'POST',
-            url: API_END_POINTS.generateToken,
-        })
+                        });
+    logInfo('Entered into authorization part.' + JSON.stringify(data))
 
-    logInfo('authTokenResponse :' + JSON.stringify(authTokenResponse))
+    const configs: AxiosRequestConfig = {
+                method: 'post',
+                url: 'https://aastrika-sb.idc.tarento.com/auth/realms/sunbird/protocol/openid-connect/token',
+                headers: { 
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                data : data
+                };
+      const response: AxiosResponse = await axios(configs);                
 
-    const accessToken = authTokenResponse.data.access_token
+                 
+
+    logInfo('authTokenResponse :' + JSON.stringify(response))
+
+    const accessToken = response.data
 
     logInfo('accessToken ' + accessToken)
 
