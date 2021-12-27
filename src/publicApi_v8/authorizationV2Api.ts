@@ -1,5 +1,4 @@
 import axios from 'axios'
-import { AxiosRequestConfig, AxiosResponse} from 'axios'
 import _ from 'lodash'
 import qs from 'querystring'
 import { axiosRequestConfig } from '../configs/request.config'
@@ -12,37 +11,35 @@ const API_END_POINTS = {
   verfifyToken  : `https://aastrika-sb.idc.tarento.com/auth/realms/sunbird/protocol/openid-connect/userinfo`,
 }
 export const authorizationV2Api = async (username: string, password: string) => {
+    logInfo('Entered into authorizationV2Api ')
 
-    logInfo('Entered into authorizationV2Api')
-
-    const data = qs.stringify({
-                            client_id: 'portal',
+    const encodedData = qs.stringify({
+                            client_id: "portal",
                             client_secret: `${CONSTANTS.KEYCLOAK_CLIENT_SECRET}`,
-                            grant_type: 'password',
+                            grant_type: "password",
                             password,
                             username,
                         })
-    logInfo('Entered into authorization part.' + JSON.stringify(data))
+    logInfo('Entered into authorization part.'+ encodedData)
+    const authTokenResponse = await axios({
+            ...axiosRequestConfig,
+            data: encodedData,
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            method: 'POST',
+            url: API_END_POINTS.generateToken,
+        })
 
-    const configs: AxiosRequestConfig = {
-                data,
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                method: 'post',
-                url: 'https://aastrika-sb.idc.tarento.com/auth/realms/sunbird/protocol/openid-connect/token',
-                }
-    const response: AxiosResponse = await axios(configs)
+    logInfo('Entered into authTokenResponse :' + JSON.stringify(authTokenResponse))
 
-    logInfo('authTokenResponse :' + JSON.stringify(response))
-
-    const accessToken = response.data
+    const accessToken = authTokenResponse.data.access_token
 
     logInfo('accessToken ' + accessToken)
 
     if (accessToken) {
-
-        logInfo('Entered into accessToken : ')
+        
+        logInfo('Entered intoaccessToken : ')
 
         const userTokenResponse = await axios({
             ...axiosRequestConfig,
@@ -53,13 +50,11 @@ export const authorizationV2Api = async (username: string, password: string) => 
 
             url: API_END_POINTS.verfifyToken,
         })
-
         logInfo('userTokenResponse : ', JSON.stringify(userTokenResponse))
-
         if (userTokenResponse.data.name) {
             logInfo('Success ! Entered into setting cookie')
-            setSessionConfig()
+            setSessionConfig()  
         }
     }
-    return true
+  return true
 }
