@@ -11,25 +11,28 @@ const API_END_POINTS = {
   verfifyToken  : `https://aastrika-sb.idc.tarento.com/auth/realms/sunbird/protocol/openid-connect/userinfo`,
 }
 export const authorizationV2Api = async (username: string, password: string) => {
+
     logInfo('Entered into authorizationV2Api ')
 
     const encodedData = qs.stringify({
-                            client_id: "portal",
+                            client_id: 'portal',
                             client_secret: `${CONSTANTS.KEYCLOAK_CLIENT_SECRET}`,
-                            grant_type: "password",
+                            grant_type: 'password',
                             password,
                             username,
                         })
-    logInfo('Entered into authorization part.'+ encodedData)
-    const authTokenResponse = await axios({
-            ...axiosRequestConfig,
-            data: encodedData,
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            method: 'POST',
-            url: API_END_POINTS.generateToken,
-        })
+    logInfo('Entered into authorization part.' + encodedData)
+
+    try {
+        const authTokenResponse = await axios({
+                ...axiosRequestConfig,
+                data: encodedData,
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                method: 'POST',
+                url: API_END_POINTS.generateToken,
+            })
 
     logInfo('Entered into authTokenResponse :' + JSON.stringify(authTokenResponse))
 
@@ -38,8 +41,8 @@ export const authorizationV2Api = async (username: string, password: string) => 
     logInfo('accessToken ' + accessToken)
 
     if (accessToken) {
-        
-        logInfo('Entered intoaccessToken : ')
+
+        logInfo('Entered into accessToken : ')
 
         const userTokenResponse = await axios({
             ...axiosRequestConfig,
@@ -53,8 +56,11 @@ export const authorizationV2Api = async (username: string, password: string) => 
         logInfo('userTokenResponse : ', JSON.stringify(userTokenResponse))
         if (userTokenResponse.data.name) {
             logInfo('Success ! Entered into setting cookie')
-            setSessionConfig()  
+            setSessionConfig()
         }
     }
-  return true
+    } catch (e) {
+        logInfo('Error throwing Cookie : '+ e)
+    } 
+    return true
 }
