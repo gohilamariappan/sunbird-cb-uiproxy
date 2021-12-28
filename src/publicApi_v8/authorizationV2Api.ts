@@ -53,7 +53,7 @@ export const authorizationV2Api = async (username: string, password: string) => 
 
             url: API_END_POINTS.verfifyToken,
         })
-        logInfo('userTokenResponse : '+ userTokenResponse)
+        logInfo('userTokenResponse : ' + userTokenResponse)
         if (userTokenResponse.data.name) {
             logInfo('Success ! Entered into setting cookie')
             setSessionConfig()
