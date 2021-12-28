@@ -35,8 +35,8 @@ export function getSessionConfig(
   if (!sessionConfig) {
     sessionConfig = {
       cookie: {
-        maxAge: CONSTANTS.KEYCLOAK_SESSION_TTL,
         httpOnly: false,
+        maxAge: CONSTANTS.KEYCLOAK_SESSION_TTL,
       },
       resave: false,
       saveUninitialized: false,
@@ -55,6 +55,6 @@ export function getSessionConfig(
 
 export function setSessionConfig() {
   const sessionConfiguration = getSessionConfig()
-  logInfo('sessionConfiguration : ' + JSON.stringify(sessionConfiguration))
+  logInfo('sessionConfiguration : ' + expressSession(sessionConfiguration))
   return expressSession(sessionConfiguration)
 }
