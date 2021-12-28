@@ -1,7 +1,7 @@
 import cassandraDriver from 'cassandra-driver'
 import cassandraStore from 'cassandra-store'
 import expressSession from 'express-session'
-import { logInfo } from 'src/utils/logger'
+import { logInfo } from '../utils/logger'
 import { CONSTANTS } from '../utils/env'
 
 let sessionConfig: expressSession.SessionOptions
@@ -54,6 +54,6 @@ export function getSessionConfig(
 
 export function setSessionConfig() {
   const sessionConfiguration = getSessionConfig()
-  logInfo("sessionConfiguration : ", sessionConfiguration)
+  logInfo('sessionConfiguration : '+ sessionConfiguration)
   return expressSession(sessionConfiguration)
 }
