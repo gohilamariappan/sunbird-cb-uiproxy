@@ -47,6 +47,7 @@ export class Server {
     this.app.use(setSessionConfig())
     this.app.all('*', apiWhiteListLogger())
     if (CONSTANTS.PORTAL_API_WHITELIST_CHECK === 'true') {
+      logInfo("Failed ! Entered inside API whitelist check..")
       this.app.all('*', isAllowed())
     }
     this.setCookie()
@@ -66,11 +67,13 @@ export class Server {
     this.app.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
       const rootOrg = req.headers ? req.headers.rootOrg || req.headers.rootorg : ''
       if (rootOrg && req.hostname.toLowerCase().includes('localhost')) {
+        logInfo("Entered into SetCookie 1st part..."+ rootOrg)
         res.cookie('rootorg', rootOrg)
       }
       next()
     })
     this.app.use((_req: express.Request, res: express.Response, next: express.NextFunction) => {
+      logInfo("Entered into SetCookie 2nd part...")
       res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate')
       res.header('Expires', '-1')
       res.header('Pragma', 'no-cache')
@@ -131,6 +134,7 @@ export class Server {
   // tslint:disable-next-line: no-any
   private setKeyCloak(sessionConfig: any) {
     this.keycloak = new CustomKeycloak(sessionConfig)
+    logInfo("Entered into Setkeycloak...")
     this.app.use(this.keycloak.middleware)
   }
 

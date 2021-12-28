@@ -55,6 +55,5 @@ export function getSessionConfig(
 
 export function setSessionConfig() {
   const sessionConfiguration = getSessionConfig()
-  logInfo('sessionConfiguration : ' + expressSession(sessionConfiguration))
   return expressSession(sessionConfiguration)
 }
