@@ -29,6 +29,7 @@ function haltOnTimedOut(req: Express.Request, _: Express.Response, next: NextFun
   }
 }
 export class Server {
+  // tslint:disable-next-line: no-any
   static app: any
   static bootstrap() {
     const server = new Server()
