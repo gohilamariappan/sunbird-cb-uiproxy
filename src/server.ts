@@ -45,12 +45,13 @@ export class Server {
       this.app.use(cors())
     }
     const sessionConfig = getSessionConfig()
+    logInfo('2. Entered into Server.ts sessioncookie ')
     this.app.use(expressSession(sessionConfig))
     setSessionEvent().then(
       // tslint:disable-next-line: no-any
-      (session: { sessionEmit : any }) => {
+      (session: { sessionEmit: any }) => {
         if (session.sessionEmit) {
-          logInfo('Session Value check : Session set')
+          logInfo('3. Session Value check : Session set')
           this.app.use(expressSession(sessionConfig))
         }
       }
