@@ -58,5 +58,5 @@ export function setSessionConfig() {
 }
 
 export async function setSessionEvent() {
-  return {'sessionEmit': true};
+  return {sessionEmit: true}
 }

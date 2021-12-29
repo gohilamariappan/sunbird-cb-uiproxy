@@ -20,8 +20,8 @@ import { logInfo, logSuccess } from './utils/logger'
 const cookieParser = require('cookie-parser')
 const healthcheck = require('express-healthcheck')
 
-import { apiWhiteListLogger, isAllowed } from './utils/apiWhiteList'
 import expressSession from 'express-session'
+import { apiWhiteListLogger, isAllowed } from './utils/apiWhiteList'
 
 function haltOnTimedOut(req: Express.Request, _: Express.Response, next: NextFunction) {
   if (!req.timedout) {
@@ -45,12 +45,13 @@ export class Server {
       this.app.use(cors())
     }
     const sessionConfig = getSessionConfig()
-    this.app.use(expressSession(sessionConfig));
+    this.app.use(expressSession(sessionConfig))
     setSessionEvent().then(
-      (session: { sessionEmit: any }) => {
-        if(session.sessionEmit){
-          logInfo("Session Value check : Session set")
-          this.app.use(expressSession(sessionConfig));
+      // tslint:disable-next-line: no-any
+      (session: { sessionEmit : any }) => {
+        if (session.sessionEmit) {
+          logInfo('Session Value check : Session set')
+          this.app.use(expressSession(sessionConfig))
         }
       }
     )
