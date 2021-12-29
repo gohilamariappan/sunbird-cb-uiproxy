@@ -53,7 +53,6 @@ export function getSessionConfig(
   return sessionConfig
 }
 
-
 export async function setSessionEvent() {
   logInfo('1. Entered into set session event.. ')
   return {sessionEmit: true}
