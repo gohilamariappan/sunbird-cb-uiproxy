@@ -10,7 +10,7 @@ import { authIapBackend } from './authoring/authIapBackend'
 import { authNotification } from './authoring/authNotification'
 import { authSearch } from './authoring/authSearch'
 import { authApi } from './authoring/content'
-import { getSessionConfig, setSessionEvent } from './configs/session.config'
+import { getSessionConfig } from './configs/session.config'
 import { protectedApiV8 } from './protectedApi_v8/protectedApiV8'
 import { proxiesV8 } from './proxies_v8/proxies_v8'
 import { publicApiV8 } from './publicApi_v8/publicApiV8'
@@ -29,6 +29,7 @@ function haltOnTimedOut(req: Express.Request, _: Express.Response, next: NextFun
   }
 }
 export class Server {
+  static app: any
   static bootstrap() {
     const server = new Server()
     server.app.listen(CONSTANTS.PORTAL_PORT, '0.0.0.0', () => {
@@ -47,15 +48,6 @@ export class Server {
     const sessionConfig = getSessionConfig()
     logInfo('2. Entered into Server.ts sessioncookie ')
     this.app.use(expressSession(sessionConfig))
-    setSessionEvent().then(
-      // tslint:disable-next-line: no-any
-      (session: { sessionEmit: any }) => {
-        if (session.sessionEmit) {
-          logInfo('3. Session Value check : Session set')
-          this.app.use(expressSession(sessionConfig))
-        }
-      }
-    )
     this.app.all('*', apiWhiteListLogger())
     if (CONSTANTS.PORTAL_API_WHITELIST_CHECK === 'true') {
       logInfo('Failed ! Entered inside API whitelist check..')
