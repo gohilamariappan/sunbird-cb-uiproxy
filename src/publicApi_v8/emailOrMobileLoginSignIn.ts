@@ -1,6 +1,8 @@
 import axios from 'axios'
 import { Router } from 'express'
+import expressSession from 'express-session'
 import _ from 'lodash'
+import { getSessionConfig } from '../configs/session.config'
 import { axiosRequestConfig } from '../configs/request.config'
 import { CONSTANTS } from '../utils/env'
 import { logError, logInfo } from '../utils/logger'
@@ -181,6 +183,9 @@ emailOrMobileLogin.post('/validateOtp', async (req, res) => {
         if (verifyOtpResponse.data.result.response === 'SUCCESS') {
           logInfo('opt verify : ')
           await authorizationV2Api(email ? email : mobileNumber, password)
+          const sessionConfiguration = getSessionConfig()
+          logInfo('1. Entered into set session Config.. ')
+          req.app.use(expressSession(sessionConfiguration))
           res.status(200).send({ message: 'Success ! OTP is verified .' })
         }
         logInfo('Sending Responses in phone part : ' + verifyOtpResponse)

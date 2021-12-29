@@ -1,7 +1,6 @@
 import cassandraDriver from 'cassandra-driver'
 import cassandraStore from 'cassandra-store'
 import expressSession from 'express-session'
-import { Server } from '../server'
 import { CONSTANTS } from '../utils/env'
 import { logInfo } from '../utils/logger'
 
@@ -54,11 +53,6 @@ export function getSessionConfig(
   return sessionConfig
 }
 
-export function setSessionConfig() {
-  const sessionConfiguration = getSessionConfig()
-  Server.app.use(expressSession(sessionConfiguration))
-  logInfo('1. Entered into set session Config.. ')
-}
 
 export async function setSessionEvent() {
   logInfo('1. Entered into set session event.. ')

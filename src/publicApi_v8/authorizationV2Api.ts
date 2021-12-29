@@ -56,7 +56,6 @@ export const authorizationV2Api = async (username: string, password: string) => 
         logInfo('userTokenResponse : ' + userTokenResponse)
         if (userTokenResponse.data.name) {
             logInfo('Success ! Entered into calling setSessionConfig in autorizationV2Api..')
-            setSessionConfig()
         }
     }
     } catch (e) {
