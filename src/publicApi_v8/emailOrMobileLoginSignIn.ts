@@ -94,12 +94,13 @@ emailOrMobileLogin.post('/generateOtp', async (req, res) => {
         url: API_END_POINTS.searchSb,
       })
       logInfo('userSearch response' + userSearch)
-      if (userSearch.data.result.response.count > 0) {
+      if (userSearch.data.result.response) {
+        if (userSearch.data.result.response.count > 0) {
         const userUUId = _.get(
           _.find(userSearch.data.result.response.content, 'userId'),
           'userId'
         )
-
+       
         try {
           const response = await getOTP(
             userUUId,
@@ -120,7 +121,8 @@ emailOrMobileLogin.post('/generateOtp', async (req, res) => {
             status_code: 202,
           })
         }
-      } else if (userSearch.data.response.count === 0) {
+      }
+      } else {
         res.status(400).json({
           msg: NOT_USER_FOUND,
           status: 'error',
