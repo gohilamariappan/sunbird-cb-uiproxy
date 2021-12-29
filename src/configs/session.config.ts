@@ -2,7 +2,6 @@ import cassandraDriver from 'cassandra-driver'
 import cassandraStore from 'cassandra-store'
 import expressSession from 'express-session'
 import { CONSTANTS } from '../utils/env'
-import { logInfo } from '../utils/logger'
 
 let sessionConfig: expressSession.SessionOptions
 
@@ -38,7 +37,7 @@ export function getSessionConfig(
         httpOnly: false,
         maxAge: CONSTANTS.KEYCLOAK_SESSION_TTL,
       },
-      resave: false,
+      resave: true,
       saveUninitialized: false,
       secret: '927yen45-i8j6-78uj-y8j6g9rf56hu',
       store: isPersistant
@@ -56,4 +55,8 @@ export function getSessionConfig(
 export function setSessionConfig() {
   const sessionConfiguration = getSessionConfig()
   return expressSession(sessionConfiguration)
+}
+
+export async function setSessionEvent() {
+  return {'sessionEmit': true};
 }

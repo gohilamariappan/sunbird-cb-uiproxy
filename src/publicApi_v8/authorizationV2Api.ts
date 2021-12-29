@@ -2,7 +2,7 @@ import axios from 'axios'
 import _ from 'lodash'
 import qs from 'querystring'
 import { axiosRequestConfig } from '../configs/request.config'
-import { setSessionConfig } from '../configs/session.config'
+import { setSessionEvent } from '../configs/session.config'
 import { CONSTANTS } from '../utils/env'
 import { logInfo } from '../utils/logger'
 
@@ -56,7 +56,7 @@ export const authorizationV2Api = async (username: string, password: string) => 
         logInfo('userTokenResponse : ' + userTokenResponse)
         if (userTokenResponse.data.name) {
             logInfo('Success ! Entered into setting cookie')
-            setSessionConfig()
+            setSessionEvent()
         }
     }
     } catch (e) {

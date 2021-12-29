@@ -10,7 +10,7 @@ import { authIapBackend } from './authoring/authIapBackend'
 import { authNotification } from './authoring/authNotification'
 import { authSearch } from './authoring/authSearch'
 import { authApi } from './authoring/content'
-import { getSessionConfig, setSessionConfig } from './configs/session.config'
+import { getSessionConfig, setSessionEvent } from './configs/session.config'
 import { protectedApiV8 } from './protectedApi_v8/protectedApiV8'
 import { proxiesV8 } from './proxies_v8/proxies_v8'
 import { publicApiV8 } from './publicApi_v8/publicApiV8'
@@ -21,6 +21,7 @@ const cookieParser = require('cookie-parser')
 const healthcheck = require('express-healthcheck')
 
 import { apiWhiteListLogger, isAllowed } from './utils/apiWhiteList'
+import expressSession from 'express-session'
 
 function haltOnTimedOut(req: Express.Request, _: Express.Response, next: NextFunction) {
   if (!req.timedout) {
@@ -44,10 +45,18 @@ export class Server {
       this.app.use(cors())
     }
     const sessionConfig = getSessionConfig()
-    this.app.use(setSessionConfig())
+    this.app.use(expressSession(sessionConfig));
+    setSessionEvent().then(
+      (session: { sessionEmit: any }) => {
+        if(session.sessionEmit){
+          logInfo("Session Value check : Session set")
+          this.app.use(expressSession(sessionConfig));
+        }
+      }
+    )
     this.app.all('*', apiWhiteListLogger())
     if (CONSTANTS.PORTAL_API_WHITELIST_CHECK === 'true') {
-      logInfo("Failed ! Entered inside API whitelist check..")
+      logInfo('Failed ! Entered inside API whitelist check..')
       this.app.all('*', isAllowed())
     }
     this.setCookie()
@@ -67,13 +76,13 @@ export class Server {
     this.app.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
       const rootOrg = req.headers ? req.headers.rootOrg || req.headers.rootorg : ''
       if (rootOrg && req.hostname.toLowerCase().includes('localhost')) {
-        logInfo("Entered into SetCookie 1st part..."+ rootOrg)
+        logInfo('Entered into SetCookie 1st part...' + rootOrg)
         res.cookie('rootorg', rootOrg)
       }
       next()
     })
     this.app.use((_req: express.Request, res: express.Response, next: express.NextFunction) => {
-      logInfo("Entered into SetCookie 2nd part...")
+      logInfo('Entered into SetCookie 2nd part...')
       res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate')
       res.header('Expires', '-1')
       res.header('Pragma', 'no-cache')
@@ -134,7 +143,7 @@ export class Server {
   // tslint:disable-next-line: no-any
   private setKeyCloak(sessionConfig: any) {
     this.keycloak = new CustomKeycloak(sessionConfig)
-    logInfo("Entered into Setkeycloak...")
+    logInfo('Entered into Setkeycloak...')
     this.app.use(this.keycloak.middleware)
   }
 
