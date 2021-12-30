@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { Router } from 'express'
+import session from 'express-session'
 import expressSession from 'express-session'
 import _ from 'lodash'
 import { axiosRequestConfig } from '../configs/request.config'
@@ -186,6 +187,12 @@ emailOrMobileLogin.post('/validateOtp', async (req, res) => {
           const sessionConfiguration = getSessionConfig()
           logInfo('1. Entered into set session Config.. ')
           req.app.use(expressSession(sessionConfiguration))
+          
+          const resSession = req.app.use(session({ genid: function(_req) {  return genuuid() // use UUIDs for session IDs
+            },
+            secret: 'keyboard cat'
+          }))
+          logInfo("Generating session through uuid :"+ resSession)
           res.status(200).send({ message: 'Success ! OTP is verified .' })
         }
         logInfo('Sending Responses in phone part : ' + verifyOtpResponse)
@@ -346,3 +353,7 @@ const createuserWithmobileOrEmail = async (accountDetails: any) => {
     logError('createuserwithmobile failed')
   }
 }
+function genuuid(): string {
+  throw new Error('Function not implemented.')
+}
+
