@@ -20,6 +20,14 @@ import { logInfo, logSuccess } from "./utils/logger";
 const cookieParser = require("cookie-parser");
 const healthcheck = require("express-healthcheck");
 
+//username and password
+const myusername = "user1";
+const mypassword = "mypassword";
+
+// a variable to save a session
+// tslint:disable-next-line: no-any
+let session: any;
+
 import expressSession from "express-session";
 import { apiWhiteListLogger, isAllowed } from "./utils/apiWhiteList";
 
@@ -54,15 +62,13 @@ export class Server {
     }
     const sessionConfig = getSessionConfig();
     logInfo("2. Entered into Server.ts sessioncookie ");
-    this.app.use(expressSession(sessionConfig));
-    logInfo(".set session call before");
-    this.app.use("set-session", expressSession(sessionConfig));
-    logInfo(".set session call after");
+    // this.app.use(expressSession(sessionConfig));
     this.app.all("*", apiWhiteListLogger());
     if (CONSTANTS.PORTAL_API_WHITELIST_CHECK === "true") {
       logInfo("Failed ! Entered inside API whitelist check..");
       this.app.all("*", isAllowed());
     }
+    this.setSession();
     this.setCookie();
     this.setKeyCloak(sessionConfig);
     this.authoringProxies();
@@ -73,8 +79,26 @@ export class Server {
     this.authoringApi();
     this.resetCookies();
     this.app.use(haltOnTimedOut);
+    this.app.post("/user", (req, res) => {
+      if (req.body.username == myusername && req.body.password == mypassword) {
+        session = req.session;
+        session.userid = req.body.username;
+        logInfo(" Entered into create user" + req.session);
+        res.send(`Hey there, welcome <a href=\'/logout'>click to logout</a>`);
+      } else {
+        res.send("Invalid username or password");
+      }
+    });
   }
-
+  private setSession() {
+    let sessionMiddleware = expressSession({
+      secret: "thisismysecrctekeyfhrgfgrfrty84fwir767",
+      saveUninitialized: true,
+      cookie: { maxAge: CONSTANTS.KEYCLOAK_SESSION_TTL },
+      resave: false,
+    });
+    this.app.use(sessionMiddleware);
+  }
   private setCookie() {
     this.app.use(cookieParser());
     this.app.use(
