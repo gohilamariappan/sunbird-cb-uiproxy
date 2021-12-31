@@ -3,6 +3,7 @@ import connectTimeout from "connect-timeout";
 import cors from "cors";
 import express, { NextFunction } from "express";
 import fileUpload from "express-fileupload";
+import expressSession from "express-session";
 import helmet from "helmet";
 import morgan from "morgan";
 import { authContent } from "./authoring/authContent";
@@ -17,7 +18,6 @@ import { publicApiV8 } from "./publicApi_v8/publicApiV8";
 import { CustomKeycloak } from "./utils/custom-keycloak";
 import { CONSTANTS } from "./utils/env";
 import { logInfo, logSuccess } from "./utils/logger";
-import expressSession from "express-session";
 const cookieParser = require("cookie-parser");
 const healthcheck = require("express-healthcheck");
 import { apiWhiteListLogger, isAllowed } from "./utils/apiWhiteList";
@@ -71,7 +71,14 @@ export class Server {
     this.app.use(haltOnTimedOut);
   }
   private setSession() {
-    const sessionConfig = getSessionConfig();
+    const sessionConfig = {
+      cookie: {
+        maxAge: CONSTANTS.KEYCLOAK_SESSION_TTL,
+      },
+      resave: false,
+      saveUninitialized: true,
+      secret: "927yen45-i8j6-78uj-y8j6g9rf56hu",
+    };
     this.app.use(expressSession(sessionConfig));
   }
   private setCookie() {
