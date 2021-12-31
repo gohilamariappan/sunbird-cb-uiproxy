@@ -73,16 +73,6 @@ export class Server {
 
     logInfo('2. Entered into Server.ts sessioncookie ')
     this.app.use(expressSession(sessionConfig))
-    this.app.use(session({
-      secret: ['veryimportantsecret','notsoimportantsecret','highlyprobablysecret'],  
-       name: "secretname",
-      cookie: {
-          httpOnly: true,
-          secure: true,
-          sameSite: true,
-          maxAge: 600000 // Time is in miliseconds
-      }
-    }))
     logInfo('.set session call before')
     this.app.use('set-session', expressSession(sessionConfig))
     logInfo('.set session call after')
