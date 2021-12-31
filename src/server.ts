@@ -23,9 +23,8 @@ const healthcheck = require("express-healthcheck");
 // tslint:disable-next-line: no-any
 let session: any;
 
-import expressSession from 'express-session'
-import session from 'express-session'
-import { apiWhiteListLogger, isAllowed } from './utils/apiWhiteList'
+import expressSession from "express-session";
+import { apiWhiteListLogger, isAllowed } from "./utils/apiWhiteList";
 
 function haltOnTimedOut(
   req: Express.Request,
@@ -33,28 +32,28 @@ function haltOnTimedOut(
   next: NextFunction
 ) {
   if (!req.timedout) {
-    next()
+    next();
   }
 }
 export class Server {
   // tslint:disable-next-line: no-any
-  static app: any
+  static app: any;
   static bootstrap() {
-    const server = new Server()
-    server.app.listen(CONSTANTS.PORTAL_PORT, '0.0.0.0', () => {
-      logSuccess(`${process.pid} : Server started at ${CONSTANTS.PORTAL_PORT}`)
-    })
+    const server = new Server();
+    server.app.listen(CONSTANTS.PORTAL_PORT, "0.0.0.0", () => {
+      logSuccess(`${process.pid} : Server started at ${CONSTANTS.PORTAL_PORT}`);
+    });
   }
 
-  protected app = express()
-  private keycloak?: CustomKeycloak
+  protected app = express();
+  private keycloak?: CustomKeycloak;
   private constructor() {
-    if (CONSTANTS.CORS_ENVIRONMENT === 'dev') {
+    if (CONSTANTS.CORS_ENVIRONMENT === "dev") {
       this.app.use(
-        cors({ origin: 'https://local.igot-dev.in:3000', credentials: true })
-      )
+        cors({ origin: "https://local.igot-dev.in:3000", credentials: true })
+      );
     } else {
-      this.app.use(cors())
+      this.app.use(cors());
     }
     const sessionConfig = getSessionConfig();
     logInfo("2. Entered into Server.ts sessioncookie ");
@@ -95,7 +94,7 @@ export class Server {
     this.app.use(sessionMiddleware);
   }
   private setCookie() {
-    this.app.use(cookieParser())
+    this.app.use(cookieParser());
     this.app.use(
       (
         req: express.Request,
@@ -104,47 +103,47 @@ export class Server {
       ) => {
         const rootOrg = req.headers
           ? req.headers.rootOrg || req.headers.rootorg
-          : ''
-        if (rootOrg && req.hostname.toLowerCase().includes('localhost')) {
-          logInfo('Entered into SetCookie 1st part...' + rootOrg)
-          res.cookie('rootorg', rootOrg)
+          : "";
+        if (rootOrg && req.hostname.toLowerCase().includes("localhost")) {
+          logInfo("Entered into SetCookie 1st part..." + rootOrg);
+          res.cookie("rootorg", rootOrg);
         }
-        next()
+        next();
       }
-    )
+    );
     this.app.use(
       (
         _req: express.Request,
         res: express.Response,
         next: express.NextFunction
       ) => {
-        logInfo('Entered into SetCookie 2nd part...')
+        logInfo("Entered into SetCookie 2nd part...");
         res.header(
-          'Cache-Control',
-          'private, no-cache, no-store, must-revalidate'
-        )
-        res.header('Expires', '-1')
-        res.header('Pragma', 'no-cache')
-        next()
+          "Cache-Control",
+          "private, no-cache, no-store, must-revalidate"
+        );
+        res.header("Expires", "-1");
+        res.header("Pragma", "no-cache");
+        next();
       }
-    )
+    );
   }
 
   private configureMiddleware() {
-    this.app.use(connectTimeout('240s'))
-    this.app.use(compression())
-    this.app.use(express.urlencoded({ extended: false, limit: '50mb' }))
-    this.app.use(express.json({ limit: '50mb' }))
-    this.app.use(fileUpload())
+    this.app.use(connectTimeout("240s"));
+    this.app.use(compression());
+    this.app.use(express.urlencoded({ extended: false, limit: "50mb" }));
+    this.app.use(express.json({ limit: "50mb" }));
+    this.app.use(fileUpload());
     // this.app.use(cors())
     this.app.use(
-      '/healthcheck',
+      "/healthcheck",
       healthcheck({
         healthy() {
-          return { everything: 'is ok' }
+          return { everything: "is ok" };
         },
       })
-    )
+    );
     this.app.use(
       helmet({
         contentSecurityPolicy: {
@@ -153,19 +152,19 @@ export class Server {
           },
         },
         dnsPrefetchControl: { allow: true },
-        frameguard: { action: 'sameorigin' },
+        frameguard: { action: "sameorigin" },
         hidePoweredBy: true,
         ieNoOpen: true,
         noCache: false,
         noSniff: true,
       })
-    )
+    );
     // TODO: See what needs to be logged
     this.app.use((req, _, next) => {
-      logInfo(`Worker ${process.pid} : ${req.url}`)
-      next()
-    })
-    this.app.use(morgan('dev'))
+      logInfo(`Worker ${process.pid} : ${req.url}`);
+      next();
+    });
+    this.app.use(morgan("dev"));
     this.app.use(
       morgan((tokens: morgan.TokenIndexer, req, res) =>
         [
@@ -173,59 +172,59 @@ export class Server {
           tokens.method(req, res),
           tokens.url(req, res),
           tokens.status(req, res),
-          tokens.res(req, res, 'content-length'),
-          '-',
-          tokens['response-time'](req, res),
-          'ms',
+          tokens.res(req, res, "content-length"),
+          "-",
+          tokens["response-time"](req, res),
+          "ms",
           `timeout: ${CONSTANTS.TIMEOUT}`,
-        ].join(' ')
+        ].join(" ")
       )
-    )
-    this.app.use(haltOnTimedOut)
+    );
+    this.app.use(haltOnTimedOut);
   }
   // tslint:disable-next-line: no-any
   private setKeyCloak(sessionConfig: any) {
-    this.keycloak = new CustomKeycloak(sessionConfig)
-    logInfo('Entered into Setkeycloak...')
-    this.app.use(this.keycloak.middleware)
+    this.keycloak = new CustomKeycloak(sessionConfig);
+    logInfo("Entered into Setkeycloak...");
+    this.app.use(this.keycloak.middleware);
   }
 
   private servePublicApi() {
-    this.app.use('/public/v8', publicApiV8)
+    this.app.use("/public/v8", publicApiV8);
   }
 
   private serverProtectedApi() {
     if (this.keycloak) {
-      this.app.use('/protected/v8', this.keycloak.protect, protectedApiV8)
+      this.app.use("/protected/v8", this.keycloak.protect, protectedApiV8);
     }
   }
   private serverProxies() {
     if (this.keycloak) {
-      this.app.use('/proxies/v8', this.keycloak.protect, proxiesV8)
+      this.app.use("/proxies/v8", this.keycloak.protect, proxiesV8);
     }
   }
   private authoringProxies() {
     if (this.keycloak) {
-      this.app.use('/authContent', this.keycloak.protect, authContent)
+      this.app.use("/authContent", this.keycloak.protect, authContent);
       this.app.use(
-        '/authNotificationApi',
+        "/authNotificationApi",
         this.keycloak.protect,
         authNotification
-      )
-      this.app.use('/authIapApi', this.keycloak.protect, authIapBackend)
+      );
+      this.app.use("/authIapApi", this.keycloak.protect, authIapBackend);
     }
   }
   private authoringApi() {
     if (this.keycloak) {
-      this.app.use('/authSearchApi', this.keycloak.protect, authSearch)
-      this.app.use('/authApi', authApi)
+      this.app.use("/authSearchApi", this.keycloak.protect, authSearch);
+      this.app.use("/authApi", authApi);
     }
   }
   private resetCookies() {
-    this.app.use('/reset', (_req, res) => {
-      logInfo('==========================\nCLEARING RES COOKIES')
-      res.clearCookie('connect.sid')
-      res.status(200).send()
-    })
+    this.app.use("/reset", (_req, res) => {
+      logInfo("==========================\nCLEARING RES COOKIES");
+      res.clearCookie("connect.sid");
+      res.status(200).send();
+    });
   }
 }
