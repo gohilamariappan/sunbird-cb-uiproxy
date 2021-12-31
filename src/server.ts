@@ -21,8 +21,8 @@ const cookieParser = require('cookie-parser')
 const healthcheck = require('express-healthcheck')
 
 import expressSession from 'express-session'
-import { apiWhiteListLogger, isAllowed } from './utils/apiWhiteList'
 import session from 'express-session'
+import { apiWhiteListLogger, isAllowed } from './utils/apiWhiteList'
 
 function haltOnTimedOut(
   req: Express.Request,
@@ -56,20 +56,6 @@ export class Server {
     const sessionConfig = getSessionConfig()
     // Use the session middleware
     this.app.use(session({ secret: 'keyboard cat', cookie: { maxAge: 60000 }}))
-
-    // Access the session as req.session
-    this.app.get('/', function(req, res, _next) {
-      if (req!.session!.views) {
-        req!.session!.views++
-        res.setHeader('Content-Type', 'text/html')
-        res.write('<p>views: ' + req!.session!.views + '</p>')
-        logInfo('3. Entered into session views ')
-      } else {
-        req!.session!.views = 1
-        logInfo('4. request session for  sessioncookie ')
-        res.end('5. welcome to the session demo. refresh!')
-      }
-    })
 
     logInfo('2. Entered into Server.ts sessioncookie ')
     this.app.use(expressSession(sessionConfig))
