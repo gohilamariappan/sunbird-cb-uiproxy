@@ -57,7 +57,6 @@ export class Server {
     }
     const sessionConfig = getSessionConfig();
     logInfo("2. Entered into Server.ts sessioncookie ");
-    // this.app.use(expressSession(sessionConfig));
     this.app.all("*", apiWhiteListLogger());
     if (CONSTANTS.PORTAL_API_WHITELIST_CHECK === "true") {
       logInfo("Failed ! Entered inside API whitelist check..");
