@@ -1,24 +1,27 @@
-import compression from 'compression'
-import connectTimeout from 'connect-timeout'
-import cors from 'cors'
-import express, { NextFunction } from 'express'
-import fileUpload from 'express-fileupload'
-import helmet from 'helmet'
-import morgan from 'morgan'
-import { authContent } from './authoring/authContent'
-import { authIapBackend } from './authoring/authIapBackend'
-import { authNotification } from './authoring/authNotification'
-import { authSearch } from './authoring/authSearch'
-import { authApi } from './authoring/content'
-import { getSessionConfig } from './configs/session.config'
-import { protectedApiV8 } from './protectedApi_v8/protectedApiV8'
-import { proxiesV8 } from './proxies_v8/proxies_v8'
-import { publicApiV8 } from './publicApi_v8/publicApiV8'
-import { CustomKeycloak } from './utils/custom-keycloak'
-import { CONSTANTS } from './utils/env'
-import { logInfo, logSuccess } from './utils/logger'
-const cookieParser = require('cookie-parser')
-const healthcheck = require('express-healthcheck')
+import compression from "compression";
+import connectTimeout from "connect-timeout";
+import cors from "cors";
+import express, { NextFunction } from "express";
+import fileUpload from "express-fileupload";
+import helmet from "helmet";
+import morgan from "morgan";
+import { authContent } from "./authoring/authContent";
+import { authIapBackend } from "./authoring/authIapBackend";
+import { authNotification } from "./authoring/authNotification";
+import { authSearch } from "./authoring/authSearch";
+import { authApi } from "./authoring/content";
+import { getSessionConfig } from "./configs/session.config";
+import { protectedApiV8 } from "./protectedApi_v8/protectedApiV8";
+import { proxiesV8 } from "./proxies_v8/proxies_v8";
+import { publicApiV8 } from "./publicApi_v8/publicApiV8";
+import { CustomKeycloak } from "./utils/custom-keycloak";
+import { CONSTANTS } from "./utils/env";
+import { logInfo, logSuccess } from "./utils/logger";
+const cookieParser = require("cookie-parser");
+const healthcheck = require("express-healthcheck");
+// a variable to save a session
+// tslint:disable-next-line: no-any
+let session: any;
 
 import expressSession from 'express-session'
 import session from 'express-session'
@@ -53,32 +56,44 @@ export class Server {
     } else {
       this.app.use(cors())
     }
-    const sessionConfig = getSessionConfig()
-    // Use the session middleware
-    this.app.use(session({ secret: 'keyboard cat', cookie: { maxAge: 60000 }}))
-
-    logInfo('2. Entered into Server.ts sessioncookie ')
-    this.app.use(expressSession(sessionConfig))
-    logInfo('.set session call before')
-    this.app.use('set-session', expressSession(sessionConfig))
-    logInfo('.set session call after')
-    this.app.all('*', apiWhiteListLogger())
-    if (CONSTANTS.PORTAL_API_WHITELIST_CHECK === 'true') {
-      logInfo('Failed ! Entered inside API whitelist check..')
-      this.app.all('*', isAllowed())
+    const sessionConfig = getSessionConfig();
+    logInfo("2. Entered into Server.ts sessioncookie ");
+    this.app.all("*", apiWhiteListLogger());
+    if (CONSTANTS.PORTAL_API_WHITELIST_CHECK === "true") {
+      logInfo("Failed ! Entered inside API whitelist check..");
+      this.app.all("*", isAllowed());
     }
-    this.setCookie()
-    this.setKeyCloak(sessionConfig)
-    this.authoringProxies()
-    this.configureMiddleware()
-    this.servePublicApi()
-    this.serverProtectedApi()
-    this.serverProxies()
-    this.authoringApi()
-    this.resetCookies()
-    this.app.use(haltOnTimedOut)
+    this.setSession();
+    this.setCookie();
+    this.setKeyCloak(sessionConfig);
+    this.authoringProxies();
+    this.configureMiddleware();
+    this.servePublicApi();
+    this.serverProtectedApi();
+    this.serverProxies();
+    this.authoringApi();
+    this.resetCookies();
+    this.app.use(haltOnTimedOut);
+    this.app.post("/user", (req, res) => {
+      if (req.body.username === "user" && req.body.password === "password") {
+        session = req.session;
+        session.userid = req.body.username;
+        logInfo(" Entered into create user" + req.session);
+        res.send(`Hey there, welcome <a href=\'/logout'>click to logout</a>`);
+      } else {
+        res.send("Invalid username or password");
+      }
+    });
   }
-
+  private setSession() {
+    const sessionMiddleware = expressSession({
+      cookie: { maxAge: CONSTANTS.KEYCLOAK_SESSION_TTL },
+      resave: false,
+      saveUninitialized: true,
+      secret: "thisismysecrctekeyfhrgfgrfrty84fwir767",
+    });
+    this.app.use(sessionMiddleware);
+  }
   private setCookie() {
     this.app.use(cookieParser())
     this.app.use(

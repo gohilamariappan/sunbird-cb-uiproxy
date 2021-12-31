@@ -1036,6 +1036,11 @@ export const API_LIST = {
       // tslint:disable-next-line: object-literal-sort-keys
       ROLE_CHECK: [ROLE.PUBLIC],
     },
+    '/public/v8/user': {
+      checksNeeded: [CHECK.ROLE],
+      // tslint:disable-next-line: object-literal-sort-keys
+      ROLE_CHECK: [ROLE.PUBLIC],
+    },
   },
   URL_PATTERN: [
     '/authApi/action/content/hierarchy/:do_id',
@@ -1046,6 +1051,7 @@ export const API_LIST = {
     '/authApi/content/v3/update/:do_id',
     '/authContent/:do_id',
     '/public/v8/google/callback',
+    '/public/v8/user',
     '/proxies/v8/api/user/v2/read',
     '/proxies/v8/api/user/v2/read/:id',
     '/proxies/v8/certreg/v2/certs/download/:id',
