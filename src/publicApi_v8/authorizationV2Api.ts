@@ -10,10 +10,10 @@ const API_END_POINTS = {
   generateToken: `https://aastrika-sb.idc.tarento.com/auth/realms/sunbird/protocol/openid-connect/token`,
   verfifyToken: `https://aastrika-sb.idc.tarento.com/auth/realms/sunbird/protocol/openid-connect/userinfo`,
 };
-// tslint:disable-next-line: no-any
 export const authorizationV2Api = async (
   username: string,
   password: string,
+  // tslint:disable-next-line: no-any
   req: any
 ) => {
   logInfo("Entered into authorizationV2Api ");
