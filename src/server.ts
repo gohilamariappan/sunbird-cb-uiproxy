@@ -3,6 +3,7 @@ import connectTimeout from "connect-timeout";
 import cors from "cors";
 import express, { NextFunction } from "express";
 import fileUpload from "express-fileupload";
+import expressSession from "express-session";
 import helmet from "helmet";
 import morgan from "morgan";
 import { authContent } from "./authoring/authContent";
@@ -17,7 +18,6 @@ import { publicApiV8 } from "./publicApi_v8/publicApiV8";
 import { CustomKeycloak } from "./utils/custom-keycloak";
 import { CONSTANTS } from "./utils/env";
 import { logInfo, logSuccess } from "./utils/logger";
-import expressSession from "express-session";
 const cookieParser = require("cookie-parser");
 const healthcheck = require("express-healthcheck");
 import { apiWhiteListLogger, isAllowed } from "./utils/apiWhiteList";
@@ -52,6 +52,7 @@ export class Server {
       this.app.use(cors());
     }
     const sessionConfig = getSessionConfig();
+    // tslint:disable-next-line: no-any
     setSessionEvent().then((emit: any) => {
       if (emit.sessionEmit) {
         logInfo("sessionEmit value" + emit.sessionEmit);
