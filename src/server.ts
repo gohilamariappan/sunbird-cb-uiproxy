@@ -20,7 +20,7 @@ import { logInfo, logSuccess } from "./utils/logger";
 const cookieParser = require("cookie-parser");
 const healthcheck = require("express-healthcheck");
 
-//username and password
+// username and password
 const myusername = "user1";
 const mypassword = "mypassword";
 
@@ -80,7 +80,10 @@ export class Server {
     this.resetCookies();
     this.app.use(haltOnTimedOut);
     this.app.post("/user", (req, res) => {
-      if (req.body.username == myusername && req.body.password == mypassword) {
+      if (
+        req.body.username === myusername &&
+        req.body.password === mypassword
+      ) {
         session = req.session;
         session.userid = req.body.username;
         logInfo(" Entered into create user" + req.session);
@@ -91,11 +94,11 @@ export class Server {
     });
   }
   private setSession() {
-    let sessionMiddleware = expressSession({
-      secret: "thisismysecrctekeyfhrgfgrfrty84fwir767",
-      saveUninitialized: true,
+    const sessionMiddleware = expressSession({
       cookie: { maxAge: CONSTANTS.KEYCLOAK_SESSION_TTL },
       resave: false,
+      secret: "thisismysecrctekeyfhrgfgrfrty84fwir767",
+      saveUninitialized: true,
     });
     this.app.use(sessionMiddleware);
   }
