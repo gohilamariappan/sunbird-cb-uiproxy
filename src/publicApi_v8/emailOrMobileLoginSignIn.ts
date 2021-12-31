@@ -182,10 +182,6 @@ emailOrMobileLogin.post('/validateOtp', async (req, res) => {
         if (verifyOtpResponse.data.result.response === 'SUCCESS') {
           logInfo('opt verify : ')
           await authorizationV2Api(email ? email : mobileNumber, password)
-<<<<<<< HEAD
-          res.redirect('/set-session')
-=======
->>>>>>> 4649eea4f1e20bc3bcca063d78ed881fb2202870
           const sessionConfiguration = getSessionConfig()
           logInfo('1. Entered into set session Config.. ')
           req.app.use(expressSession(sessionConfiguration))
