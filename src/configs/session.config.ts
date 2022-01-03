@@ -1,5 +1,5 @@
 import cassandraDriver from 'cassandra-driver'
-import cassandraStore from 'cassandra-store'
+
 import expressSession from 'express-session'
 import { CONSTANTS } from '../utils/env'
 import { logInfo } from '../utils/logger'
@@ -30,25 +30,15 @@ if (
     )
 }
 
-export function getSessionConfig(
-  isPersistant = true
-): expressSession.SessionOptions {
+export function getSessionConfig(): expressSession.SessionOptions {
   if (!sessionConfig) {
     sessionConfig = {
       cookie: {
         maxAge: CONSTANTS.KEYCLOAK_SESSION_TTL,
-        secure: true,
       },
-      resave: true,
-      saveUninitialized: false,
+      resave: false,
+      saveUninitialized: true,
       secret: '927yen45-i8j6-78uj-y8j6g9rf56hu',
-      store: isPersistant
-        ? new cassandraStore({
-            client: null,
-            clientOptions: cassandraClientOptions,
-            table: 'sessions',
-          })
-        : new expressSession.MemoryStore(),
     }
   }
   return sessionConfig

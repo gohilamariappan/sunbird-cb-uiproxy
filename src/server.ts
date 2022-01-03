@@ -3,6 +3,7 @@ import connectTimeout from 'connect-timeout'
 import cors from 'cors'
 import express, { NextFunction } from 'express'
 import fileUpload from 'express-fileupload'
+import expressSession from 'express-session'
 import helmet from 'helmet'
 import morgan from 'morgan'
 import { authContent } from './authoring/authContent'
@@ -19,11 +20,6 @@ import { CONSTANTS } from './utils/env'
 import { logInfo, logSuccess } from './utils/logger'
 const cookieParser = require('cookie-parser')
 const healthcheck = require('express-healthcheck')
-// a variable to save a session
-// tslint:disable-next-line: no-any
-let session: any
-
-import expressSession from 'express-session'
 import { apiWhiteListLogger, isAllowed } from './utils/apiWhiteList'
 
 function haltOnTimedOut(
@@ -56,13 +52,13 @@ export class Server {
       this.app.use(cors())
     }
     const sessionConfig = getSessionConfig()
-    logInfo('2. Entered into Server.ts sessioncookie ')
+    // tslint:disable-next-line: no-any
+    this.setSession()
     this.app.all('*', apiWhiteListLogger())
     if (CONSTANTS.PORTAL_API_WHITELIST_CHECK === 'true') {
       logInfo('Failed ! Entered inside API whitelist check..')
       this.app.all('*', isAllowed())
     }
-    this.setSession()
     this.setCookie()
     this.setKeyCloak(sessionConfig)
     this.authoringProxies()
@@ -73,25 +69,17 @@ export class Server {
     this.authoringApi()
     this.resetCookies()
     this.app.use(haltOnTimedOut)
-    this.app.post('/user', (req, res) => {
-      if (req.body.username === 'user' && req.body.password === 'password') {
-        session = req.session
-        session.userid = req.body.username
-        logInfo(' Entered into create user' + req.session)
-        res.send(`Hey there, welcome <a href=\'/logout'>click to logout</a>`)
-      } else {
-        res.send('Invalid username or password')
-      }
-    })
   }
   private setSession() {
-    const sessionMiddleware = expressSession({
-      cookie: { maxAge: CONSTANTS.KEYCLOAK_SESSION_TTL },
+    const sessionConfig = {
+      cookie: {
+        maxAge: CONSTANTS.KEYCLOAK_SESSION_TTL,
+      },
       resave: false,
       saveUninitialized: true,
-      secret: 'thisismysecrctekeyfhrgfgrfrty84fwir767',
-    })
-    this.app.use(sessionMiddleware)
+      secret: '927yen45-i8j6-78uj-y8j6g9rf56hu',
+    }
+    this.app.use(expressSession(sessionConfig))
   }
   private setCookie() {
     this.app.use(cookieParser())
