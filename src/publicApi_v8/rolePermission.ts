@@ -42,6 +42,7 @@ export const setRolesData = (reqObj: any, body: any) => {
       reqObj.session.userRoles.push('PUBLIC')
     }
     // tslint:disable-next-line: no-any
+    logInfo("reqObj.session >>>>>>>", JSON.stringify(reqObj.session))
     reqObj.session.save((error: any) => {
       if (error) {
         logError('Error while saving the roles')
@@ -72,7 +73,7 @@ export const getCurrentUserRoles = async (reqObj: any, accessToken: any) => {
     url: readUrl,
   })
   // tslint:disable-next-line: no-any
-  logInfo("getAuthTokenResponse :"+ authTokenResponse)
+  logInfo('getAuthTokenResponse :' + authTokenResponse)
   if (authTokenResponse) {
     setRolesData(reqObj, authTokenResponse.data)
   }
