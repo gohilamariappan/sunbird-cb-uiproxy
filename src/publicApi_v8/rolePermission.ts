@@ -41,8 +41,8 @@ export const setRolesData = (reqObj: any, body: any) => {
     if (!_.includes(reqObj.session.userRoles, 'PUBLIC')) {
       reqObj.session.userRoles.push('PUBLIC')
     }
+    logInfo('reqObj.session >>>>>>>', JSON.stringify(reqObj.session))
     // tslint:disable-next-line: no-any
-    logInfo("reqObj.session >>>>>>>", JSON.stringify(reqObj.session))
     reqObj.session.save((error: any) => {
       if (error) {
         logError('Error while saving the roles')
