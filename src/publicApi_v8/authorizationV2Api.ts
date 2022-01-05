@@ -1,59 +1,59 @@
-import axios from 'axios'
-import _ from 'lodash'
-import qs from 'querystring'
-import { axiosRequestConfig } from '../configs/request.config'
-import { CONSTANTS } from '../utils/env'
-import { logInfo } from '../utils/logger'
+import axios from "axios";
+import _ from "lodash";
+import qs from "querystring";
+import { axiosRequestConfig } from "../configs/request.config";
+import { CONSTANTS } from "../utils/env";
+import { logInfo } from "../utils/logger";
 const API_END_POINTS = {
   generateToken: `https://aastrika-sb.idc.tarento.com/auth/realms/sunbird/protocol/openid-connect/token`,
   verfifyToken: `https://aastrika-sb.idc.tarento.com/auth/realms/sunbird/protocol/openid-connect/userinfo`,
-}
+};
 export const authorizationV2Api = async (
   username: string,
   password: string
 ) => {
-  logInfo('Entered into authorizationV2Api ')
+  logInfo("Entered into authorizationV2Api ");
 
   const encodedData = qs.stringify({
-    client_id: 'portal',
+    client_id: "portal",
     client_secret: `${CONSTANTS.KEYCLOAK_CLIENT_SECRET}`,
-    grant_type: 'password',
+    grant_type: "password",
     password,
     username,
-  })
-  logInfo('Entered into authorization part.' + encodedData)
+  });
+  logInfo("Entered into authorization part." + encodedData);
 
   try {
     const authTokenResponse = await axios({
       ...axiosRequestConfig,
       data: encodedData,
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
+        "Content-Type": "application/x-www-form-urlencoded",
       },
-      method: 'POST',
+      method: "POST",
       url: API_END_POINTS.generateToken,
-    })
+    });
 
-    logInfo('Entered into authTokenResponse :' + authTokenResponse)
+    logInfo("Entered into authTokenResponse :" + authTokenResponse);
 
-    const accessToken = authTokenResponse.data.access_token
+    const accessToken = authTokenResponse.data.access_token;
     if (accessToken) {
       const userTokenResponse = await axios({
         ...axiosRequestConfig,
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
-        method: 'GET',
+        method: "GET",
 
         url: API_END_POINTS.verfifyToken,
-      })
-      logInfo('userTokenResponse : ' + userTokenResponse)
+      });
+      logInfo("userTokenResponse : " + userTokenResponse);
       if (userTokenResponse.data.name) {
-        logInfo('Success ! Entered into usertokenResponse..')
+        logInfo("Success ! Entered into usertokenResponse..");
       }
     }
   } catch (e) {
-    logInfo('Error throwing Cookie : ' + e)
+    logInfo("Error throwing Cookie : " + e);
   }
-  return true
-}
+  return true;
+};

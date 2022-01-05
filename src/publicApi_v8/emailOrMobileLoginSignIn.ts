@@ -6,6 +6,7 @@ import { CONSTANTS } from "../utils/env";
 import { logError, logInfo } from "../utils/logger";
 import { authorizationV2Api } from "./authorizationV2Api";
 import { getOTP, validateOTP } from "./otp";
+import { Request, Response } from "express";
 const API_END_POINTS = {
   createUserWithMobileNo: `${CONSTANTS.KONG_API_BASE}/user/v3/create`,
   fetchUserByEmail: `${CONSTANTS.KONG_API_BASE}/user/v1/exists/email/`,
@@ -142,68 +143,87 @@ emailOrMobileLogin.post("/generateOtp", async (req, res) => {
     });
   }
 });
-// validate  otp for  register's the user
-emailOrMobileLogin.post("/validateOtp", async (req, res) => {
-  try {
-    if (req.body.mobileNumber || req.body.email) {
-      logInfo("Entered into /validateOtp ", req.body);
-      const mobileNumber = req.body.mobileNumber;
-      const email = req.body.email;
-      const validOtp = req.body.otp;
-      const password = req.body.password;
-      const userSearch = await axios({
-        ...axiosRequestConfig,
-        data: {
-          request: {
-            filters: mobileNumber
-              ? { phone: mobileNumber.toLowerCase() }
-              : { email: email.toLowerCase() },
-            query: "",
-          },
-        },
-        method: "POST",
-        url: API_END_POINTS.searchSb,
-      });
-      if (userSearch.data.result.response.count > 0) {
-        const userUUId = _.get(
-          _.find(userSearch.data.result.response.content, "userId"),
-          "userId"
-        );
-        logInfo("User Id : ", userUUId);
-        logInfo("validate otp endpoints for kong", API_END_POINTS.generateOtp);
-        const verifyOtpResponse = await validateOTP(
-          userUUId,
-          mobileNumber ? mobileNumber : email,
-          email ? "email" : "phone",
-          validOtp
-        );
-        if (verifyOtpResponse.data.result.response === "SUCCESS") {
-          logInfo("opt verify : ");
-          await authorizationV2Api(email ? email : mobileNumber, password);
-          res.status(200).send({ message: "Success ! OTP is verified ." });
-        }
-        logInfo("Sending Responses in phone part : " + verifyOtpResponse);
-      }
-    } else if (!req.body.mobileNumber || !req.body.email) {
-      res.status(400).json({
-        msg: EMAIL_OR_MOBILE_ERROR_MSG,
-        status: "error",
-        status_code: 400,
-      });
-    }
-    if (!req.body.otp) {
-      res.status(400).json({
-        msg: "OTP. can not be empty",
-        status: "error",
-        status_code: 400,
-      });
-    }
-  } catch (error) {
-    res.status(500).send({
-      error: GENERAL_ERROR_MSG,
+// tslint:disable-next-line: no-any
+const validateRequestBody = (req: Request, res: Response, next: any) => {
+  if (!req.body.otp) {
+    res.status(400).json({
+      msg: "OTP. can not be empty",
+      status: "error",
+      status_code: 400,
     });
   }
-});
+  if (!req.body.password) {
+    res.status(400).json({
+      msg: "Password. can not be empty",
+      status: "error",
+      status_code: 400,
+    });
+  }
+  if (!req.body.mobileNumber || !req.body.email) {
+    res.status(400).json({
+      msg: EMAIL_OR_MOBILE_ERROR_MSG,
+      status: "error",
+      status_code: 400,
+    });
+  }
+  next();
+};
+// validate  otp for  register's the user
+emailOrMobileLogin.post(
+  "/validateOtp",
+  validateRequestBody,
+  async (req, res) => {
+    try {
+      if (req.body.mobileNumber || req.body.email) {
+        logInfo("Entered into /validateOtp ", req.body);
+        const mobileNumber = req.body.mobileNumber;
+        const email = req.body.email;
+        const validOtp = req.body.otp;
+        const password = req.body.password;
+        const userSearch = await axios({
+          ...axiosRequestConfig,
+          data: {
+            request: {
+              filters: mobileNumber
+                ? { phone: mobileNumber.toLowerCase() }
+                : { email: email.toLowerCase() },
+              query: "",
+            },
+          },
+          method: "POST",
+          url: API_END_POINTS.searchSb,
+        });
+        if (userSearch.data.result.response.count > 0) {
+          const userUUId = _.get(
+            _.find(userSearch.data.result.response.content, "userId"),
+            "userId"
+          );
+          logInfo("User Id : ", userUUId);
+          logInfo(
+            "validate otp endpoints for kong",
+            API_END_POINTS.generateOtp
+          );
+          const verifyOtpResponse = await validateOTP(
+            userUUId,
+            mobileNumber ? mobileNumber : email,
+            email ? "email" : "phone",
+            validOtp
+          );
+          if (verifyOtpResponse.data.result.response === "SUCCESS") {
+            logInfo("opt verify : ");
+            await authorizationV2Api(email ? email : mobileNumber, password);
+            res.status(200).send({ message: "Success ! OTP is verified ." });
+          }
+          logInfo("Sending Responses in phone part : " + verifyOtpResponse);
+        }
+      }
+    } catch (error) {
+      res.status(500).send({
+        error: GENERAL_ERROR_MSG,
+      });
+    }
+  }
+);
 emailOrMobileLogin.post("/registerUserWithMobile", async (req, res) => {
   try {
     if (!req.body.phone) {
