@@ -205,7 +205,11 @@ emailOrMobileLogin.post(
           );
           if (verifyOtpResponse.data.result.response === "SUCCESS") {
             logInfo("opt verify : ");
-            await authorizationV2Api(email ? email : mobileNumber, password);
+            await authorizationV2Api(
+              email ? email : mobileNumber,
+              password,
+              req
+            );
             res.status(200).send({ message: "Success ! OTP is verified ." });
           }
           logInfo("Sending Responses in phone part : " + verifyOtpResponse);
