@@ -1,7 +1,6 @@
 import axios from "axios";
 import jwt_decode from "jwt-decode";
 import _ from "lodash";
-import { Request } from "express";
 import qs from "querystring";
 import { axiosRequestConfig } from "../configs/request.config";
 import { CONSTANTS } from "../utils/env";
@@ -15,7 +14,8 @@ const API_END_POINTS = {
 export const authorizationV2Api = async (
   username: string,
   password: string,
-  request: Request
+  // tslint:disable-next-line: no-any
+  request: any
 ) => {
   logInfo("Entered into authorizationV2Api ");
 
