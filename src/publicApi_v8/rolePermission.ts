@@ -25,9 +25,9 @@ const ROLE = [
 // tslint:disable-next-line: no-any
 export const setRolesData = (reqObj: any, body: any) => {
   // tslint:disable-next-line: no-any
-  const userData: any = JSON.parse(body)
+  const userData: any = body
 
-  logInfo('userData' + userData)
+  logInfo('userData' + JSON.stringify(userData))
   if (reqObj.session) {
     reqObj.session.userId = userData.result.response.id
       ? userData.result.response.id
@@ -72,6 +72,7 @@ export const getCurrentUserRoles = async (reqObj: any, accessToken: any) => {
     url: readUrl,
   })
   // tslint:disable-next-line: no-any
+  logInfo("getAuthTokenResponse :"+ authTokenResponse)
   if (authTokenResponse) {
     setRolesData(reqObj, authTokenResponse.data)
   }
