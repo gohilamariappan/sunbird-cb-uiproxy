@@ -27,7 +27,7 @@ export const setRolesData = (reqObj: any, body: any) => {
   // tslint:disable-next-line: no-any
   const userData: any = body;
 
-  logInfo("userData" + userData);
+  logInfo("userData" + JSON.stringify(userData));
   if (reqObj.session) {
     reqObj.session.userId = userData.result.response.id
       ? userData.result.response.id
@@ -41,6 +41,7 @@ export const setRolesData = (reqObj: any, body: any) => {
     if (!_.includes(reqObj.session.userRoles, "PUBLIC")) {
       reqObj.session.userRoles.push("PUBLIC");
     }
+    logInfo("reqObj.session >>>>>>>", JSON.stringify(reqObj.session));
     // tslint:disable-next-line: no-any
     reqObj.session.save((error: any) => {
       if (error) {
@@ -72,6 +73,7 @@ export const getCurrentUserRoles = async (reqObj: any, accessToken: any) => {
     url: readUrl,
   });
   // tslint:disable-next-line: no-any
+  logInfo("getAuthTokenResponse :" + authTokenResponse);
   if (authTokenResponse) {
     setRolesData(reqObj, authTokenResponse.data);
   }
