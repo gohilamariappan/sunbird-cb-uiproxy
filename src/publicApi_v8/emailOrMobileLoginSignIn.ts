@@ -1,12 +1,12 @@
 import axios from "axios";
 import { Router } from "express";
+import { Request, Response } from "express";
 import _ from "lodash";
 import { axiosRequestConfig } from "../configs/request.config";
 import { CONSTANTS } from "../utils/env";
 import { logError, logInfo } from "../utils/logger";
 import { authorizationV2Api } from "./authorizationV2Api";
 import { getOTP, validateOTP } from "./otp";
-import { Request, Response } from "express";
 const API_END_POINTS = {
   createUserWithMobileNo: `${CONSTANTS.KONG_API_BASE}/user/v3/create`,
   fetchUserByEmail: `${CONSTANTS.KONG_API_BASE}/user/v1/exists/email/`,
@@ -159,15 +159,9 @@ const validateRequestBody = (req: Request, res: Response, next: any) => {
       status_code: 400,
     });
   }
-  if (!req.body.mobileNumber || !req.body.email) {
-    res.status(400).json({
-      msg: EMAIL_OR_MOBILE_ERROR_MSG,
-      status: "error",
-      status_code: 400,
-    });
-  }
   next();
 };
+
 // validate  otp for  register's the user
 emailOrMobileLogin.post(
   "/validateOtp",
@@ -216,6 +210,12 @@ emailOrMobileLogin.post(
           }
           logInfo("Sending Responses in phone part : " + verifyOtpResponse);
         }
+      } else {
+        res.status(400).json({
+          msg: EMAIL_OR_MOBILE_ERROR_MSG,
+          status: "error",
+          status_code: 400,
+        });
       }
     } catch (error) {
       res.status(500).send({
