@@ -20,15 +20,20 @@ import { CONSTANTS } from './utils/env'
 import { logInfo, logSuccess } from './utils/logger'
 const cookieParser = require('cookie-parser')
 const healthcheck = require('express-healthcheck')
-
 import { apiWhiteListLogger, isAllowed } from './utils/apiWhiteList'
 
-function haltOnTimedOut(req: Express.Request, _: Express.Response, next: NextFunction) {
+function haltOnTimedOut(
+  req: Express.Request,
+  _: Express.Response,
+  next: NextFunction
+) {
   if (!req.timedout) {
     next()
   }
 }
 export class Server {
+  // tslint:disable-next-line: no-any
+  static app: any
   static bootstrap() {
     const server = new Server()
     server.app.listen(CONSTANTS.PORTAL_PORT, '0.0.0.0', () => {
@@ -40,18 +45,21 @@ export class Server {
   private keycloak?: CustomKeycloak
   private constructor() {
     if (CONSTANTS.CORS_ENVIRONMENT === 'dev') {
-      this.app.use(cors({origin: 'https://local.igot-dev.in:3000', credentials: true}))
+      this.app.use(
+        cors({ origin: 'https://local.igot-dev.in:3000', credentials: true })
+      )
     } else {
       this.app.use(cors())
     }
     const sessionConfig = getSessionConfig()
     this.app.use(expressSession(sessionConfig))
+    // tslint:disable-next-line: no-any
     this.app.all('*', apiWhiteListLogger())
     if (CONSTANTS.PORTAL_API_WHITELIST_CHECK === 'true') {
+      logInfo('Failed ! Entered inside API whitelist check..')
       this.app.all('*', isAllowed())
     }
     this.setCookie()
-    this.setKeyCloak(sessionConfig)
     this.authoringProxies()
     this.configureMiddleware()
     this.servePublicApi()
@@ -61,22 +69,40 @@ export class Server {
     this.resetCookies()
     this.app.use(haltOnTimedOut)
   }
-
   private setCookie() {
     this.app.use(cookieParser())
-    this.app.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
-      const rootOrg = req.headers ? req.headers.rootOrg || req.headers.rootorg : ''
-      if (rootOrg && req.hostname.toLowerCase().includes('localhost')) {
-        res.cookie('rootorg', rootOrg)
+    this.app.use(
+      (
+        req: express.Request,
+        res: express.Response,
+        next: express.NextFunction
+      ) => {
+        const rootOrg = req.headers
+          ? req.headers.rootOrg || req.headers.rootorg
+          : ''
+        if (rootOrg && req.hostname.toLowerCase().includes('localhost')) {
+          logInfo('Entered into SetCookie 1st part...' + rootOrg)
+          res.cookie('rootorg', rootOrg)
+        }
+        next()
       }
-      next()
-    })
-    this.app.use((_req: express.Request, res: express.Response, next: express.NextFunction) => {
-      res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate')
-      res.header('Expires', '-1')
-      res.header('Pragma', 'no-cache')
-      next()
-    })
+    )
+    this.app.use(
+      (
+        _req: express.Request,
+        res: express.Response,
+        next: express.NextFunction
+      ) => {
+        logInfo('Entered into SetCookie 2nd part...')
+        res.header(
+          'Cache-Control',
+          'private, no-cache, no-store, must-revalidate'
+        )
+        res.header('Expires', '-1')
+        res.header('Pragma', 'no-cache')
+        next()
+      }
+    )
   }
 
   private configureMiddleware() {
@@ -86,11 +112,14 @@ export class Server {
     this.app.use(express.json({ limit: '50mb' }))
     this.app.use(fileUpload())
     // this.app.use(cors())
-    this.app.use('/healthcheck', healthcheck({
-      healthy() {
-        return { everything: 'is ok' }
-      },
-    }))
+    this.app.use(
+      '/healthcheck',
+      healthcheck({
+        healthy() {
+          return { everything: 'is ok' }
+        },
+      })
+    )
     this.app.use(
       helmet({
         contentSecurityPolicy: {
@@ -129,11 +158,6 @@ export class Server {
     )
     this.app.use(haltOnTimedOut)
   }
-  // tslint:disable-next-line: no-any
-  private setKeyCloak(sessionConfig: any) {
-    this.keycloak = new CustomKeycloak(sessionConfig)
-    this.app.use(this.keycloak.middleware)
-  }
 
   private servePublicApi() {
     this.app.use('/public/v8', publicApiV8)
@@ -152,7 +176,11 @@ export class Server {
   private authoringProxies() {
     if (this.keycloak) {
       this.app.use('/authContent', this.keycloak.protect, authContent)
-      this.app.use('/authNotificationApi', this.keycloak.protect, authNotification)
+      this.app.use(
+        '/authNotificationApi',
+        this.keycloak.protect,
+        authNotification
+      )
       this.app.use('/authIapApi', this.keycloak.protect, authIapBackend)
     }
   }
