@@ -1,13 +1,13 @@
-const _ = require("lodash");
-const uuidv1 = require("uuid/v1");
-const { pathToRegexp } = require("path-to-regexp");
-const dateFormat = require("dateformat");
+const _ = require('lodash')
+const uuidv1 = require('uuid/v1')
+const { pathToRegexp } = require('path-to-regexp')
+const dateFormat = require('dateformat')
 
-import { NextFunction, Request, Response } from "express";
-import { CONSTANTS } from "./env";
-import { logError, logInfo } from "./logger";
-import { API_LIST } from "./whitelistApis";
-
+import { NextFunction, Request, Response } from 'express'
+import { CONSTANTS } from './env'
+import { logError, logInfo } from './logger'
+import { API_LIST } from './whitelistApis'
+/* tslint:disable */
 /**
  * @param  { String } REQ_URL - Request URL
  * @returns { Boolean } - Return boolean value based on exclude path criteria
