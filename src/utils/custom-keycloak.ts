@@ -11,8 +11,9 @@ const composable = require('composable-middleware')
 
 export class CustomKeycloak {
   private multiTenantKeycloak = new Map<string, keycloakConnect>()
-
+  
   constructor(sessionConfig: expressSession.SessionOptions) {
+    logInfo("1. Entered into keycloak - custom-keycloak.ts >>>>>>>", CONSTANTS.MULTI_TENANT_KEYCLOAK)
     if (CONSTANTS.MULTI_TENANT_KEYCLOAK) {
       CONSTANTS.MULTI_TENANT_KEYCLOAK.split(';').forEach((v: string) => {
         const domainUrlMap = v.split(',')
@@ -22,11 +23,13 @@ export class CustomKeycloak {
         )
       })
     }
+    logInfo("2. Entered into keycloak - custom-keycloak.ts >>>>>>>")
     this.multiTenantKeycloak.set('common', this.generateKeyCloak(sessionConfig))
   }
 
   middleware = (req: express.Request, res: express.Response, next: express.NextFunction) => {
     const keycloak = this.getKeyCloakObject(req)
+    logInfo(".3 Entered into keycloak - custom-keycloak.ts >>>>>>>"+ keycloak)
     const middleware = composable(
       keycloak.middleware({
         admin: '/callback',
