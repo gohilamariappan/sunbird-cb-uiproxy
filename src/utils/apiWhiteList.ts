@@ -1,13 +1,13 @@
-const _ = require('lodash')
-const uuidv1 = require('uuid/v1')
-const { pathToRegexp } = require('path-to-regexp')
-const dateFormat = require('dateformat')
+const _ = require("lodash");
+const uuidv1 = require("uuid/v1");
+const { pathToRegexp } = require("path-to-regexp");
+const dateFormat = require("dateformat");
 
-import { NextFunction, Request, Response } from 'express'
-import { CONSTANTS } from './env'
-import { logError, logInfo } from './logger'
-import { API_LIST } from './whitelistApis'
-/* tslint:disable */
+import { NextFunction, Request, Response } from "express";
+import { CONSTANTS } from "./env";
+import { logError, logInfo } from "./logger";
+import { API_LIST } from "./whitelistApis";
+
 /**
  * @param  { String } REQ_URL - Request URL
  * @returns { Boolean } - Return boolean value based on exclude path criteria
@@ -57,8 +57,7 @@ const urlChecks = {
     rolesForURL: any,
     REQ_URL: any
   ) => {
-    const data = _.get(req, "session.userRoles")
-      ? _.get(req, "session.userRoles")
+    const data = _.get(req, "session.userRoles") ? _.get(req, "session.userRoles")
       : [];
     logInfo("Portal_API_WHITELIST : Middleware for URL [ " + REQ_URL + " ]");
     if (_.includes(rolesForURL, "ALL") && data.length > 0) {
@@ -256,6 +255,8 @@ export const isAllowed = () => {
           return true;
         });
         // Is API whitelisted ?
+        logInfo("1. isAllowed : " + API_LIST.URL);
+        logInfo("2. isAllowed : " + REQ_URL);
         if (_.get(API_LIST.URL, REQ_URL)) {
           const URL_RULE_OBJ = _.get(API_LIST.URL, REQ_URL);
           // tslint:disable-next-line: no-any
@@ -313,6 +314,7 @@ const validateAPI = (req: Request, res: Response, next: NextFunction) => {
       REQ_URL_ORIGINAL = url;
       return false;
     }
+    logInfo("Entered into Validate Api ?>>> ", url);
     return true;
   });
   if (_.get(API_LIST.URL, REQ_URL_ORIGINAL)) {

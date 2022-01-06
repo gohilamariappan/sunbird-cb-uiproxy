@@ -1,11 +1,13 @@
-import { CONSTANTS } from '../utils/env'
+import { CONSTANTS } from "../utils/env";
+import { logInfo } from "../utils/logger";
 
-export function getKeycloakConfig(realm?: string) {
+export function getKeycloakConfig(url?: string, realm?: string) {
+  logInfo("4. Entered into keycloak config " + url);
   return {
-    'ssl-required': 'external',
+    "ssl-required": "external",
     // tslint:disable-next-line: object-literal-sort-keys
-    'public-client': true,
+    "public-client": true,
     realm: realm ? realm : CONSTANTS.KEYCLOAK_REALM,
-    resource: 'portal',
-  }
+    resource: "portal",
+  };
 }
