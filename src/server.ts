@@ -53,6 +53,7 @@ export class Server {
     }
     const sessionConfig = getSessionConfig();
     this.app.use(expressSession(sessionConfig));
+    // tslint:disable-next-line: no-any
     this.app.all("*", apiWhiteListLogger());
     if (CONSTANTS.PORTAL_API_WHITELIST_CHECK === "true") {
       logInfo("Failed ! Entered inside API whitelist check..");
@@ -69,7 +70,6 @@ export class Server {
     this.resetCookies();
     this.app.use(haltOnTimedOut);
   }
-
   private setCookie() {
     this.app.use(cookieParser());
     this.app.use(
