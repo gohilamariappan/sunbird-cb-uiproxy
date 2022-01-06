@@ -225,6 +225,8 @@ export const isAllowed = () => {
                     return true
                 })
                 // Is API whitelisted ?
+                logInfo("1. isAllowed : "+ API_LIST.URL)
+                logInfo("2. isAllowed : "+ REQ_URL)
                 if (_.get(API_LIST.URL, REQ_URL)) {
                     const URL_RULE_OBJ = _.get(API_LIST.URL, REQ_URL)
                     // tslint:disable-next-line: no-any
@@ -271,7 +273,7 @@ const validateAPI = (req: Request, res: Response, next: NextFunction) => {
             REQ_URL_ORIGINAL = url
             return false
         }
-        logInfo("Entered into Validate Api ?>>> ", url)
+        logInfo('Entered into Validate Api ?>>> ', url)
         return true
     })
     if (_.get(API_LIST.URL, REQ_URL_ORIGINAL)) {

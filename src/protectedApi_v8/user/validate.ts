@@ -14,6 +14,6 @@ validateApi.get('/', async (req, res) => {
     name: extractUserNameFromRequest(req) || 'demo user',
     userId: extractUserIdFromRequest(req) || 'user@demo.com',
   }
-  logInfo("Validate api body >>"+ body)
+  logInfo('Validate api body >>' + body)
   res.send(body)
 })
