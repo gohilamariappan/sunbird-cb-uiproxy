@@ -159,11 +159,11 @@ export class Server {
     this.app.use(haltOnTimedOut);
   }
   // tslint:disable-next-line: no-any
-  private setKeyCloak(sessionConfig: any) {
-    this.keycloak = new CustomKeycloak(sessionConfig);
-    logInfo("Entered into Setkeycloak...");
-    this.app.use(this.keycloak.middleware);
-  }
+  // private setKeyCloak(sessionConfig: any) {
+  //   this.keycloak = new CustomKeycloak(sessionConfig)
+  //   logInfo('Entered into Setkeycloak...')
+  //   this.app.use(this.keycloak.middleware)
+  // }
 
   private servePublicApi() {
     this.app.use("/public/v8", publicApiV8);
