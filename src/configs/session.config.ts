@@ -1,21 +1,21 @@
-import cassandraDriver from "cassandra-driver";
-import cassandraStore from "cassandra-store";
-import expressSession from "express-session";
-import { CONSTANTS } from "../utils/env";
-import { logInfo } from "../utils/logger";
+import cassandraDriver from 'cassandra-driver'
+import cassandraStore from 'cassandra-store'
+import expressSession from 'express-session'
+import { CONSTANTS } from '../utils/env'
+import { logInfo } from '../utils/logger'
 
-let sessionConfig: expressSession.SessionOptions;
+let sessionConfig: expressSession.SessionOptions
 
 const cassandraClientOptions: cassandraDriver.ClientOptions = {
   contactPoints: getIPList(),
-  keyspace: "portal",
+  keyspace: 'portal',
   queryOptions: {
     prepare: true,
   },
-};
+}
 
 function getIPList() {
-  return CONSTANTS.CASSANDRA_IP.split(",");
+  return CONSTANTS.CASSANDRA_IP.split(',')
 }
 
 if (
@@ -27,7 +27,7 @@ if (
     new cassandraDriver.auth.PlainTextAuthProvider(
       CONSTANTS.CASSANDRA_USERNAME,
       CONSTANTS.CASSANDRA_PASSWORD
-    );
+    )
 }
 
 export function getSessionConfig(
@@ -40,20 +40,20 @@ export function getSessionConfig(
       },
       resave: false,
       saveUninitialized: false,
-      secret: "927yen45-i8j6-78uj-y8j6g9rf56hu",
+      secret: '927yen45-i8j6-78uj-y8j6g9rf56hu',
       store: isPersistant
         ? new cassandraStore({
             client: null,
             clientOptions: cassandraClientOptions,
-            table: "sessions",
+            table: 'sessions',
           })
         : new expressSession.MemoryStore(),
-    };
+    }
   }
-  return sessionConfig;
+  return sessionConfig
 }
 
 export async function setSessionEvent() {
-  logInfo("1. Entered into set session event.. ");
-  return { sessionEmit: true };
+  logInfo('1. Entered into set session event.. ')
+  return { sessionEmit: true }
 }
