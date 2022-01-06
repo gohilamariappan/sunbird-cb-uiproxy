@@ -271,6 +271,7 @@ const validateAPI = (req: Request, res: Response, next: NextFunction) => {
             REQ_URL_ORIGINAL = url
             return false
         }
+        logInfo("Entered into Validate Api ?>>> ", url)
         return true
     })
     if (_.get(API_LIST.URL, REQ_URL_ORIGINAL)) {
