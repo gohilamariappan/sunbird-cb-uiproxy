@@ -60,6 +60,7 @@ export class Server {
       this.app.all('*', isAllowed())
     }
     this.setCookie()
+    this.setKeyCloak(sessionConfig)
     this.authoringProxies()
     this.configureMiddleware()
     this.servePublicApi()
@@ -157,6 +158,12 @@ export class Server {
       )
     )
     this.app.use(haltOnTimedOut)
+  }
+  // tslint:disable-next-line: no-any
+  private setKeyCloak(sessionConfig: any) {
+    this.keycloak = new CustomKeycloak(sessionConfig)
+    logInfo('Entered into Setkeycloak...')
+    this.app.use(this.keycloak.middleware)
   }
 
   private servePublicApi() {
