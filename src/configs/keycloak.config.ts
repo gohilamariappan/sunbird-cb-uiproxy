@@ -7,6 +7,5 @@ export function getKeycloakConfig(url?: string, realm?: string) {
     'public-client': true,
     realm: realm ? realm : CONSTANTS.KEYCLOAK_REALM,
     resource: 'portal',
-    'auth-server-url': url ? `${url}` : `${CONSTANTS.HTTPS_HOST}/auth`,
   }
 }
