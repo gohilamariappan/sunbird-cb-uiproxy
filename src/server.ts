@@ -51,8 +51,8 @@ export class Server {
     } else {
       this.app.use(cors())
     }
-    const sessionConfig = getSessionConfig();
-    this.app.use(expressSession(sessionConfig));
+    const sessionConfig = getSessionConfig()
+    this.app.use(expressSession(sessionConfig))
     // tslint:disable-next-line: no-any
     this.app.all('*', apiWhiteListLogger())
     if (CONSTANTS.PORTAL_API_WHITELIST_CHECK === 'true') {
