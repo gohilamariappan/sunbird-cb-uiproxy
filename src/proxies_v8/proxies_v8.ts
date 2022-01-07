@@ -27,8 +27,8 @@ const API_END_POINTS = {
   contentNotificationEmail: `${CONSTANTS.NOTIFICATION_SERVIC_API_BASE}/v1/notification/send/sync`,
 }
 
-const accessToken = 'x-authenticated-user-token';
-const authenticatedUserId = 'x-authenticated-userid';
+const accessToken = 'x-authenticated-user-token'
+const authenticatedUserId = 'x-authenticated-userid'
 
 const client = new elasticsearch.Client({
   hosts: ['http://10.1.2.138:9200'],
@@ -77,11 +77,11 @@ proxiesV8.post('/upload/*', (req, res) => {
       {
         headers: {
           // tslint:disable-next-line:max-line-length
+          accessToken: extractUserToken(req),
+          authenticatedUserId: extractUserIdFromRequest(req),
           Authorization: CONSTANTS.SB_API_KEY,
           org: 'dopt',
           rootorg: 'igot',
-          accessToken: extractUserToken(req),
-          authenticatedUserId: extractUserIdFromRequest(req),
         },
         host: 'knowledge-mw-service',
         path: url,
@@ -120,11 +120,11 @@ proxiesV8.post('/private/upload/*', (_req, _res) => {
       {
         headers: {
           // tslint:disable-next-line:max-line-length
+          accessToken: extractUserToken(_req),
+          authenticatedUserId: extractUserIdFromRequest(_req),
           Authorization: CONSTANTS.SB_API_KEY,
           org: 'dopt',
           rootorg: 'igot',
-          accessToken: extractUserToken(_req),
-          authenticatedUserId: extractUserIdFromRequest(_req),
         },
         host: 'content-service',
         path: _url,
@@ -219,17 +219,17 @@ proxiesV8.use('/read/content-progres/*',
 // )
 
 proxiesV8.use('/api/user/v2/read', async (req, res) => {
-            
+
             const readApiResponse = await axios({
               ...axiosRequestConfig,
               data: {
                 headers: {
                   // tslint:disable-next-line:max-line-length
+                  accessToken: extractUserToken(req),
+                  authenticatedUserId: extractUserIdFromRequest(req),
                   Authorization: CONSTANTS.SB_API_KEY,
                   org: 'aastar',
                   rootorg: 'aastar',
-                  accessToken: extractUserToken(req),
-                  authenticatedUserId: extractUserIdFromRequest(req),
                 },
               },
               method: 'POST',
