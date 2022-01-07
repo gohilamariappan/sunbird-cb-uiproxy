@@ -219,9 +219,9 @@ proxiesV8.use('/read/content-progres/*',
 // )
 
 proxiesV8.use('/api/user/v2/read', async (req, res) => {
-      logInfo("1.Const values >>", accessToken)
-      logInfo("2.Const values >>", authenticatedUserId)
-            const readApiResponse = await axios({
+      logInfo('1.Const values >>', accessToken)
+      logInfo('2.Const values >>', authenticatedUserId)
+      const readApiResponse = await axios({
               ...axiosRequestConfig,
               data: {
                 headers: {
@@ -233,11 +233,11 @@ proxiesV8.use('/api/user/v2/read', async (req, res) => {
                   rootorg: 'aastar',
                 },
               },
-              method: 'POST',
+              method: 'GET',
               url:  `${CONSTANTS.KONG_API_BASE}/user/v2/read/`,
             })
-            logInfo('readApiResponse >>>>>>' + readApiResponse)
-            if (!readApiResponse) {
+      logInfo('readApiResponse >>>>>>' + readApiResponse)
+      if (!readApiResponse) {
               res.status(400).send('Failed to get read api data')
             } else {
               res.status(200).send('Read api is working..')
