@@ -91,6 +91,8 @@ export class CustomKeycloak {
 
   protect = (req: express.Request, res: express.Response, next: express.NextFunction) => {
     const keycloak = this.getKeyCloakObject(req)
+    logInfo("Entered into custom keycloak req :"+ req)
+    logInfo("Entered into custom keycloak value :"+ keycloak)
     keycloak.protect()(req, res, next)
   }
 
