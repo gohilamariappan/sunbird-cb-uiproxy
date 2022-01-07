@@ -225,8 +225,8 @@ export const isAllowed = () => {
                     return true
                 })
                 // Is API whitelisted ?
-                logInfo("1. isAllowed : "+ API_LIST.URL)
-                logInfo("2. isAllowed : "+ REQ_URL)
+                logInfo('1. isAllowed : ' + API_LIST.URL)
+                logInfo('2. isAllowed : ' + REQ_URL)
                 if (_.get(API_LIST.URL, REQ_URL)) {
                     const URL_RULE_OBJ = _.get(API_LIST.URL, REQ_URL)
                     // tslint:disable-next-line: no-any
