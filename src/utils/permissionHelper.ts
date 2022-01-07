@@ -26,13 +26,13 @@ export const PERMISSION_HELPER = {
             }
             // tslint:disable-next-line: no-any
             reqObj.session.save((error: any) => {
-                logInfo("Entered into permission helper reobj.session:")
+                logInfo('Entered into permission helper reobj.session:')
                 if (error) {
-                    logInfo("Entered into permission helper reobj.session error section:")
-                  callback(error, null)
+                    logInfo('Entered into permission helper reobj.session error section:')
+                    callback(error, null)
                 } else {
-                    logInfo("Entered into permission helper reobj.session passing section:"+ userData)
-                  callback(null, userData)
+                    logInfo('Entered into permission helper reobj.session passing section:' + userData)
+                    callback(null, userData)
                 }
             })
         }
@@ -41,7 +41,7 @@ export const PERMISSION_HELPER = {
     getCurrentUserRoles(reqObj: any, callback: any) {
         // console.log('Step 3: Get user roles function')
         const userId = reqObj.session.userId
-        logInfo("Entered into permission helper userId:"+ userId)
+        logInfo('Entered into permission helper userId:' + userId)
         // console.log(userId)
         const readUrl = `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/user/v2/read/` + userId
         const options = {
