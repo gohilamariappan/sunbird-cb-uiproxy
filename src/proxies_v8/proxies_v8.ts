@@ -213,12 +213,8 @@ proxiesV8.use('/read/content-progres/*',
   // tslint:disable-next-line: max-line-length
   proxyCreatorSunbirdSearch(express.Router(), `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/course/v1/content/state/read`)
 )
-
-// proxiesV8.use('/api/user/v2/read',
-//   proxyCreatorToAppentUserId(express.Router(), `${CONSTANTS.KONG_API_BASE}/user/v2/read/`)
-// )
-
 proxiesV8.use('/api/user/v2/read', async (req, res) => {
+      logInfo("Entered into read api")
       logInfo('1.Const values >>', accessToken)
       logInfo('2.Const values >>', authenticatedUserId)
       const readApiResponse = await axios({
