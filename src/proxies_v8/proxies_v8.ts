@@ -219,7 +219,8 @@ proxiesV8.use('/read/content-progres/*',
 // )
 
 proxiesV8.use('/api/user/v2/read', async (req, res) => {
-
+      logInfo("1.Const values >>", accessToken)
+      logInfo("2.Const values >>", authenticatedUserId)
             const readApiResponse = await axios({
               ...axiosRequestConfig,
               data: {
