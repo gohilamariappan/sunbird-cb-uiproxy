@@ -18,7 +18,6 @@ import {
   proxyCreatorRoute,
   proxyCreatorSunbird,
   proxyCreatorSunbirdSearch,
-  proxyCreatorToAppentUserId,
   proxyHierarchyKnowledge,
   scormProxyCreatorRoute
 } from '../utils/proxyCreator'
@@ -212,9 +211,35 @@ proxiesV8.use('/read/content-progres/*',
   proxyCreatorSunbirdSearch(express.Router(), `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/course/v1/content/state/read`)
 )
 
-proxiesV8.use('/api/user/v2/read',
-  proxyCreatorToAppentUserId(express.Router(), `${CONSTANTS.KONG_API_BASE}/user/v2/read/`)
-)
+// proxiesV8.use('/api/user/v2/read',
+//   proxyCreatorToAppentUserId(express.Router(), `${CONSTANTS.KONG_API_BASE}/user/v2/read/`)
+// )
+
+
+proxiesV8.use('/api/user/v2/read', async (req, res) => {
+            const readApiResponse = await axios({
+              ...axiosRequestConfig,
+              data: {
+                headers: {
+                  // tslint:disable-next-line:max-line-length
+                  Authorization: CONSTANTS.SB_API_KEY,
+                  org: 'aastar',
+                  rootorg: 'aastar',
+                  'x-authenticated-user-token': extractUserToken(req),
+                  'x-authenticated-userid': extractUserIdFromRequest(req),
+                },
+              },
+              method: 'POST',
+              url:  `${CONSTANTS.KONG_API_BASE}/user/v2/read/`,
+            })
+            logInfo("readApiResponse >>>>>>"+ readApiResponse)
+            if (!readApiResponse) {
+              res.status(400).send('Failed to get read api data')
+            } else {
+              res.status(200).send('Read api is working..')
+            }
+  });
+
 
 proxiesV8.use([
   '/action/questionset/v1/*',

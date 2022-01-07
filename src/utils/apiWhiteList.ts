@@ -261,6 +261,7 @@ export const isAllowed = () => {
 }
 const redirectToLogin = (req: Request) => {
     const redirectUrl = 'protected/v8/resource/'
+    logInfo("Entered into redirection >>>>>>>>")
     return `https://${req.get('host')}/${redirectUrl}` // 'http://localhost:3003/protected/v8/user/resource/'
 }
 
@@ -273,7 +274,6 @@ const validateAPI = (req: Request, res: Response, next: NextFunction) => {
             REQ_URL_ORIGINAL = url
             return false
         }
-        logInfo('Entered into Validate Api ?>>> ', url)
         return true
     })
     if (_.get(API_LIST.URL, REQ_URL_ORIGINAL)) {
