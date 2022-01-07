@@ -77,8 +77,8 @@ proxiesV8.post('/upload/*', (req, res) => {
       {
         headers: {
           // tslint:disable-next-line:max-line-length
-          accessToken: extractUserToken(req),
           Authorization: CONSTANTS.SB_API_KEY,
+          accessToken: extractUserToken(req),
           authenticatedUserId: extractUserIdFromRequest(req),
           org: 'dopt',
           rootorg: 'igot',
@@ -120,8 +120,8 @@ proxiesV8.post('/private/upload/*', (_req, _res) => {
       {
         headers: {
           // tslint:disable-next-line:max-line-length
-          accessToken: extractUserToken(_req),
           Authorization: CONSTANTS.SB_API_KEY,
+          accessToken: extractUserToken(_req),
           authenticatedUserId: extractUserIdFromRequest(_req),
           org: 'dopt',
           rootorg: 'igot',
@@ -225,8 +225,8 @@ proxiesV8.use('/api/user/v2/read', async (req, res) => {
               data: {
                 headers: {
                   // tslint:disable-next-line:max-line-length
-                  accessToken: extractUserToken(req),
                   Authorization: CONSTANTS.SB_API_KEY,
+                  accessToken: extractUserToken(req),
                   authenticatedUserId: extractUserIdFromRequest(req),
                   org: 'aastar',
                   rootorg: 'aastar',
