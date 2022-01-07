@@ -214,7 +214,7 @@ proxiesV8.use('/read/content-progres/*',
   proxyCreatorSunbirdSearch(express.Router(), `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/course/v1/content/state/read`)
 )
 proxiesV8.use('/api/user/v2/read', async (req, res) => {
-      logInfo("Entered into read api")
+      logInfo('Entered into read api')
       logInfo('1.Const values >>', accessToken)
       logInfo('2.Const values >>', authenticatedUserId)
       const readApiResponse = await axios({
@@ -225,8 +225,8 @@ proxiesV8.use('/api/user/v2/read', async (req, res) => {
                   Authorization: CONSTANTS.SB_API_KEY,
                   accessToken: extractUserToken(req),
                   authenticatedUserId: extractUserIdFromRequest(req),
-                  org: 'aastar',
-                  rootorg: 'aastar',
+                  org: req.headers.org,
+                  rootOrg: req.headers.rootOrg,
                 },
               },
               method: 'GET',
