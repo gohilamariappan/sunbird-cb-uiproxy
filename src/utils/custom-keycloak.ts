@@ -61,6 +61,7 @@ export class CustomKeycloak {
     try {
       const userId = request.kauth.grant.access_token.content.sub.split(':')
       request.session.userId = userId[userId.length - 1]
+      logInfo("Custom keycloak userId : ", userId)
     } catch (err) {
       logError('userId conversation error' + request.kauth.grant.access_token.content.sub)
     }
@@ -91,8 +92,8 @@ export class CustomKeycloak {
 
   protect = (req: express.Request, res: express.Response, next: express.NextFunction) => {
     const keycloak = this.getKeyCloakObject(req)
-    logInfo("Entered into custom keycloak req :"+ req)
-    logInfo("Entered into custom keycloak value :"+ keycloak)
+    logInfo('Entered into custom keycloak req :' + req)
+    logInfo('Entered into custom keycloak value :' + keycloak)
     keycloak.protect()(req, res, next)
   }
 
