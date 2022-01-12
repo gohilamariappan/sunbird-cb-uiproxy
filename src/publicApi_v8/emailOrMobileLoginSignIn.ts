@@ -15,7 +15,7 @@ const API_END_POINTS = {
   generateOtp: `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/otp/v1/generate`,
   searchSb: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/private/user/v1/search`,
   verifyOtp: `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/otp/v1/verify`,
-  GENERATE_TOKEN: `${CONSTANTS.HTTPS_HOST}/auth/realms/sunbird/protocol/openid-connect/token`,
+  TOKEN: `${CONSTANTS.HTTPS_HOST}/auth/realms/sunbird/protocol/openid-connect/token`,
 }
 const GENERAL_ERROR_MSG = 'Failed due to unknown reason'
 const EMAIL_OR_MOBILE_ERROR_MSG = 'Mobile no. or EmailId can not be empty'
@@ -368,7 +368,6 @@ const createuserWithmobileOrEmail = async (accountDetails: any) => {
   }
 }
 
-
 // login endpoint for public users
 emailOrMobileLogin.post('/auth', async (req, res) => {
   try {
@@ -382,8 +381,7 @@ emailOrMobileLogin.post('/auth', async (req, res) => {
       logInfo('Step 0 : mobileNumber response value :->' + mobileNumber)
       logInfo('Step 00 : email response value :->' + email)
       logInfo('Step 000 : password response value :->' + password)
-      try 
-      {
+      try {
           const encodedData = qs.stringify({
                                               client_id: 'portal',
                                               client_secret: `${CONSTANTS.KEYCLOAK_CLIENT_SECRET}`,
@@ -391,23 +389,23 @@ emailOrMobileLogin.post('/auth', async (req, res) => {
                                               password,
                                               username,
                                             })
-        logInfo('Entered into authorization part.' + encodedData)
-      
-            const authTokenResponse = await axios({
+          logInfo('Entered into authorization part.' + encodedData)
+
+          const authTokenResponse = await axios({
               ...axiosRequestConfig,
               data: encodedData,
               headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
               },
               method: 'POST',
-              url: API_END_POINTS.GENERATE_TOKEN,
+              url: API_END_POINTS.TOKEN,
             })
-        
-            logInfo('Entered into authTokenResponse :' + authTokenResponse)
-        
-            const accessToken = authTokenResponse.data.access_token
+
+          logInfo('Entered into authTokenResponse :' + authTokenResponse)
+
+          const accessToken = authTokenResponse.data.access_token
             // tslint:disable-next-line: no-any
-            logInfo('Entered into accesstoken :' + accessToken)
+          logInfo('Entered into accesstoken :' + accessToken)
       } catch (e) {
         logInfo('Error throwing Cookie : ' + e)
         res.status(400).send({
