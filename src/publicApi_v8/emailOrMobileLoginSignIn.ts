@@ -20,6 +20,7 @@ const API_END_POINTS = {
           verifyOtp: `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/otp/v1/verify`,
           verfifyToken: `${CONSTANTS.HTTPS_HOST}/auth/realms/sunbird/protocol/openid-connect/userinfo`,
 }
+
 const GENERAL_ERROR_MSG = 'Failed due to unknown reason'
 const EMAIL_OR_MOBILE_ERROR_MSG = 'Mobile no. or EmailId can not be empty'
 const NOT_USER_FOUND = 'User not found.'
@@ -27,7 +28,6 @@ const AUTH_FAIL = 'Authentication failed ! Please check credentials and try agai
 const AUTHENTICATED = 'Success ! User is sucessfully authenticated.'
 
 export const emailOrMobileLogin = Router()
-
 emailOrMobileLogin.post('/signup', async (req, res) => {
   try {
     if (!req.body.email) {
@@ -374,7 +374,9 @@ const createuserWithmobileOrEmail = async (accountDetails: any) => {
 }
 
 // login endpoint for public users
-emailOrMobileLogin.post('/auth', async (req, res) => {
+// tslint:disable-next-line: no-any
+emailOrMobileLogin.post('/auth', async (req:any, res) => {
+
   try {
     if (req.body.mobileNumber || req.body.email) {
       logInfo('Entered into /login/auth endpoint >>> ')
@@ -411,32 +413,22 @@ emailOrMobileLogin.post('/auth', async (req, res) => {
 
           if (authTokenResponse.data) {
             const accessToken = authTokenResponse.data.access_token
-            // tslint:disable-next-line: no-any
             logInfo('Entered into accesstoken :' + accessToken)
             // tslint:disable-next-line: no-any
             const decodedToken: any = jwt_decode(accessToken)
             const decodedTokenArray = decodedToken.sub.split(':')
             const userId = decodedTokenArray[decodedTokenArray.length - 1]
-            request.session.userId = userId
-            const userTokenResponse = await axios({
-                                      ...axiosRequestConfig,
-                                      headers: {
-                                        Authorization: `Bearer ${accessToken}`,
-                                      },
-                                      method: 'GET',
-                                      url: API_END_POINTS.verfifyToken,
-                                    })
-
-            logInfo('Check value of userTokenResponse : ' + userTokenResponse)
-            if (userTokenResponse.data.name) {
-              logInfo('Success ! Entered into usertokenResponse..')
-              const updateRoles = await getCurrentUserRoles(request, accessToken)
-              logInfo('Entered into updateRoles :' + updateRoles)
-            }
+            req.session.userId = userId
+              
+            logInfo('Success ! Entered into usertokenResponse..')
+            const updateRoles = await getCurrentUserRoles(request, accessToken)
+            logInfo('Entered into updateRoles :' + updateRoles)
+          
             res.status(200).json({
               msg: AUTHENTICATED,
               status: 'success',
             })
+
           } else {
             res.status(302).json({
               msg: AUTH_FAIL,
