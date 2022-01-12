@@ -1,21 +1,24 @@
 import axios from 'axios'
-import { Router } from 'express'
+import { request, Router } from 'express'
 import { Request, Response } from 'express'
 import _ from 'lodash'
 import qs from 'querystring'
 import { axiosRequestConfig } from '../configs/request.config'
 import { CONSTANTS } from '../utils/env'
 import { logError, logInfo } from '../utils/logger'
+import jwt_decode from 'jwt-decode'
 import { authorizationV2Api } from './authorizationV2Api'
 import { getOTP, validateOTP } from './otp'
+import { getCurrentUserRoles } from './rolePermission'
 const API_END_POINTS = {
-  createUserWithMobileNo: `${CONSTANTS.KONG_API_BASE}/user/v3/create`,
-  fetchUserByEmail: `${CONSTANTS.KONG_API_BASE}/user/v1/exists/email/`,
-  fetchUserByMobileNo: `${CONSTANTS.KONG_API_BASE}/user/v1/exists/phone/`,
-  generateOtp: `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/otp/v1/generate`,
-  generateToken: `${CONSTANTS.HTTPS_HOST}/auth/realms/sunbird/protocol/openid-connect/token`,
-  searchSb: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/private/user/v1/search`,
-  verifyOtp: `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/otp/v1/verify`,
+          createUserWithMobileNo: `${CONSTANTS.KONG_API_BASE}/user/v3/create`,
+          fetchUserByEmail: `${CONSTANTS.KONG_API_BASE}/user/v1/exists/email/`,
+          fetchUserByMobileNo: `${CONSTANTS.KONG_API_BASE}/user/v1/exists/phone/`,
+          generateOtp: `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/otp/v1/generate`,
+          generateToken: `${CONSTANTS.HTTPS_HOST}/auth/realms/sunbird/protocol/openid-connect/token`,
+          searchSb: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/private/user/v1/search`,
+          verifyOtp: `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/otp/v1/verify`,
+          verfifyToken: `${CONSTANTS.HTTPS_HOST}/auth/realms/sunbird/protocol/openid-connect/userinfo`,
 }
 const GENERAL_ERROR_MSG = 'Failed due to unknown reason'
 const EMAIL_OR_MOBILE_ERROR_MSG = 'Mobile no. or EmailId can not be empty'
@@ -24,6 +27,7 @@ const AUTH_FAIL = 'Authentication failed ! Please check credentials and try agai
 const AUTHENTICATED = 'Success ! User is sucessfully authenticated.'
 
 export const emailOrMobileLogin = Router()
+
 emailOrMobileLogin.post('/signup', async (req, res) => {
   try {
     if (!req.body.email) {
@@ -382,6 +386,7 @@ emailOrMobileLogin.post('/auth', async (req, res) => {
       logInfo('Step i : mobileNumber response value :->' + mobileNumber)
       logInfo('Step ii : email response value :->' + email)
       logInfo('Step iii : password response value :->' + password)
+
       try {
           const encodedData = qs.stringify({
                                               client_id: 'portal',
@@ -404,16 +409,35 @@ emailOrMobileLogin.post('/auth', async (req, res) => {
 
           logInfo('Entered into authTokenResponse :' + authTokenResponse)
 
-          if(authTokenResponse.data){
+          if (authTokenResponse.data) {
             const accessToken = authTokenResponse.data.access_token
             // tslint:disable-next-line: no-any
             logInfo('Entered into accesstoken :' + accessToken)
+            // tslint:disable-next-line: no-any
+            const decodedToken: any = jwt_decode(accessToken)
+            const decodedTokenArray = decodedToken.sub.split(':')
+            const userId = decodedTokenArray[decodedTokenArray.length - 1]
+            request.session.userId = userId
+            const userTokenResponse = await axios({
+                                      ...axiosRequestConfig,
+                                      headers: {
+                                        Authorization: `Bearer ${accessToken}`,
+                                      },
+                                      method: 'GET',
+                                      url: API_END_POINTS.verfifyToken,
+                                    })
+
+            logInfo('Check value of userTokenResponse : ' + userTokenResponse)
+            if (userTokenResponse.data.name) {
+              logInfo('Success ! Entered into usertokenResponse..')
+              const updateRoles = await getCurrentUserRoles(request, accessToken)
+              logInfo('Entered into updateRoles :' + updateRoles)
+            }
             res.status(200).json({
               msg: AUTHENTICATED,
               status: 'success',
             })
-          }
-          else{
+          } else {
             res.status(302).json({
               msg: AUTH_FAIL,
               status: 'error',
