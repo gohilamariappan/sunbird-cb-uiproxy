@@ -13,8 +13,8 @@ const API_END_POINTS = {
   fetchUserByEmail: `${CONSTANTS.KONG_API_BASE}/user/v1/exists/email/`,
   fetchUserByMobileNo: `${CONSTANTS.KONG_API_BASE}/user/v1/exists/phone/`,
   generateOtp: `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/otp/v1/generate`,
+  generateToken: `${CONSTANTS.HTTPS_HOST}/auth/realms/sunbird/protocol/openid-connect/token`,
   searchSb: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/private/user/v1/search`,
-  TOKEN: `${CONSTANTS.HTTPS_HOST}/auth/realms/sunbird/protocol/openid-connect/token`,
   verifyOtp: `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/otp/v1/verify`,
 }
 const GENERAL_ERROR_MSG = 'Failed due to unknown reason'
@@ -398,7 +398,7 @@ emailOrMobileLogin.post('/auth', async (req, res) => {
                 'Content-Type': 'application/x-www-form-urlencoded',
               },
               method: 'POST',
-              url: API_END_POINTS.TOKEN,
+              url: API_END_POINTS.generateToken,
             })
 
           logInfo('Entered into authTokenResponse :' + authTokenResponse)
