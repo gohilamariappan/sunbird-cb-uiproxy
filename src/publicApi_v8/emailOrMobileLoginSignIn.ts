@@ -1,12 +1,12 @@
 import axios from 'axios'
 import { request, Router } from 'express'
 import { Request, Response } from 'express'
+import jwt_decode from 'jwt-decode'
 import _ from 'lodash'
 import qs from 'querystring'
 import { axiosRequestConfig } from '../configs/request.config'
 import { CONSTANTS } from '../utils/env'
 import { logError, logInfo } from '../utils/logger'
-import jwt_decode from 'jwt-decode'
 import { authorizationV2Api } from './authorizationV2Api'
 import { getOTP, validateOTP } from './otp'
 import { getCurrentUserRoles } from './rolePermission'
@@ -18,7 +18,6 @@ const API_END_POINTS = {
           generateToken: `${CONSTANTS.HTTPS_HOST}/auth/realms/sunbird/protocol/openid-connect/token`,
           searchSb: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/private/user/v1/search`,
           verifyOtp: `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/otp/v1/verify`,
-          verfifyToken: `${CONSTANTS.HTTPS_HOST}/auth/realms/sunbird/protocol/openid-connect/userinfo`,
 }
 
 const GENERAL_ERROR_MSG = 'Failed due to unknown reason'
@@ -375,7 +374,7 @@ const createuserWithmobileOrEmail = async (accountDetails: any) => {
 
 // login endpoint for public users
 // tslint:disable-next-line: no-any
-emailOrMobileLogin.post('/auth', async (req:any, res) => {
+emailOrMobileLogin.post('/auth', async (req: any, res) => {
 
   try {
     if (req.body.mobileNumber || req.body.email) {
@@ -419,11 +418,11 @@ emailOrMobileLogin.post('/auth', async (req:any, res) => {
             const decodedTokenArray = decodedToken.sub.split(':')
             const userId = decodedTokenArray[decodedTokenArray.length - 1]
             req.session.userId = userId
-              
+
             logInfo('Success ! Entered into usertokenResponse..')
             const updateRoles = await getCurrentUserRoles(request, accessToken)
             logInfo('Entered into updateRoles :' + updateRoles)
-          
+
             res.status(200).json({
               msg: AUTHENTICATED,
               status: 'success',
