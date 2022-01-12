@@ -2,11 +2,11 @@ import axios from 'axios'
 import { Router } from 'express'
 import { Request, Response } from 'express'
 import _ from 'lodash'
+import qs from 'querystring'
 import { axiosRequestConfig } from '../configs/request.config'
 import { CONSTANTS } from '../utils/env'
 import { logError, logInfo } from '../utils/logger'
 import { authorizationV2Api } from './authorizationV2Api'
-import qs from 'querystring'
 import { getOTP, validateOTP } from './otp'
 const API_END_POINTS = {
   createUserWithMobileNo: `${CONSTANTS.KONG_API_BASE}/user/v3/create`,
@@ -14,8 +14,8 @@ const API_END_POINTS = {
   fetchUserByMobileNo: `${CONSTANTS.KONG_API_BASE}/user/v1/exists/phone/`,
   generateOtp: `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/otp/v1/generate`,
   searchSb: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/private/user/v1/search`,
-  verifyOtp: `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/otp/v1/verify`,
   TOKEN: `${CONSTANTS.HTTPS_HOST}/auth/realms/sunbird/protocol/openid-connect/token`,
+  verifyOtp: `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/otp/v1/verify`,
 }
 const GENERAL_ERROR_MSG = 'Failed due to unknown reason'
 const EMAIL_OR_MOBILE_ERROR_MSG = 'Mobile no. or EmailId can not be empty'
