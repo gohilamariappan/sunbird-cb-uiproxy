@@ -6,6 +6,7 @@ import { axiosRequestConfig } from '../configs/request.config'
 import { CONSTANTS } from '../utils/env'
 import { logError, logInfo } from '../utils/logger'
 import { authorizationV2Api } from './authorizationV2Api'
+import qs from 'querystring'
 import { getOTP, validateOTP } from './otp'
 const API_END_POINTS = {
   createUserWithMobileNo: `${CONSTANTS.KONG_API_BASE}/user/v3/create`,
@@ -14,10 +15,12 @@ const API_END_POINTS = {
   generateOtp: `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/otp/v1/generate`,
   searchSb: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/private/user/v1/search`,
   verifyOtp: `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/otp/v1/verify`,
+  GENERATE_TOKEN: `${CONSTANTS.HTTPS_HOST}/auth/realms/sunbird/protocol/openid-connect/token`,
 }
 const GENERAL_ERROR_MSG = 'Failed due to unknown reason'
-const EMAIL_OR_MOBILE_ERROR_MSG = 'Mobile no or Email id. can not be empty'
+const EMAIL_OR_MOBILE_ERROR_MSG = 'Mobile no. or EmailId can not be empty'
 const NOT_USER_FOUND = 'User not found.'
+const AUTH_FAIL = 'Authentication failed ! Please check credentials and try again.'
 
 export const emailOrMobileLogin = Router()
 emailOrMobileLogin.post('/signup', async (req, res) => {
@@ -364,3 +367,65 @@ const createuserWithmobileOrEmail = async (accountDetails: any) => {
     logError('createuserwithmobile failed')
   }
 }
+
+
+// login endpoint for public users
+emailOrMobileLogin.post('/auth', async (req, res) => {
+  try {
+    if (req.body.mobileNumber || req.body.email) {
+      logInfo('Entered into login endpoint >>> ')
+      const mobileNumber = req.body.mobileNumber
+      const email        = req.body.email
+      const password     = req.body.Password
+      const username = mobileNumber ? mobileNumber : email
+
+      logInfo('Step 0 : mobileNumber response value :->' + mobileNumber)
+      logInfo('Step 00 : email response value :->' + email)
+      logInfo('Step 000 : password response value :->' + password)
+      try 
+      {
+          const encodedData = qs.stringify({
+                                              client_id: 'portal',
+                                              client_secret: `${CONSTANTS.KEYCLOAK_CLIENT_SECRET}`,
+                                              grant_type: 'password',
+                                              password,
+                                              username,
+                                            })
+        logInfo('Entered into authorization part.' + encodedData)
+      
+            const authTokenResponse = await axios({
+              ...axiosRequestConfig,
+              data: encodedData,
+              headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+              },
+              method: 'POST',
+              url: API_END_POINTS.GENERATE_TOKEN,
+            })
+        
+            logInfo('Entered into authTokenResponse :' + authTokenResponse)
+        
+            const accessToken = authTokenResponse.data.access_token
+            // tslint:disable-next-line: no-any
+            logInfo('Entered into accesstoken :' + accessToken)
+      } catch (e) {
+        logInfo('Error throwing Cookie : ' + e)
+        res.status(400).send({
+          error: AUTH_FAIL,
+        })
+      }
+
+    } else if (!req.body.mobileNumber || !req.body.email) {
+      res.status(400).json({
+        msg: EMAIL_OR_MOBILE_ERROR_MSG,
+        status: 'error',
+        status_code: 400,
+      })
+    }
+  } catch (error) {
+    logInfo('error' + error)
+    res.status(500).send({
+      error: GENERAL_ERROR_MSG,
+    })
+  }
+})
