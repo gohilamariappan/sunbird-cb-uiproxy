@@ -21,6 +21,7 @@ const GENERAL_ERROR_MSG = 'Failed due to unknown reason'
 const EMAIL_OR_MOBILE_ERROR_MSG = 'Mobile no. or EmailId can not be empty'
 const NOT_USER_FOUND = 'User not found.'
 const AUTH_FAIL = 'Authentication failed ! Please check credentials and try again.'
+const AUTHENTICATED = 'Success ! User is sucessfully authenticated.'
 
 export const emailOrMobileLogin = Router()
 emailOrMobileLogin.post('/signup', async (req, res) => {
@@ -372,15 +373,15 @@ const createuserWithmobileOrEmail = async (accountDetails: any) => {
 emailOrMobileLogin.post('/auth', async (req, res) => {
   try {
     if (req.body.mobileNumber || req.body.email) {
-      logInfo('Entered into login endpoint >>> ')
+      logInfo('Entered into /login/auth endpoint >>> ')
       const mobileNumber = req.body.mobileNumber
       const email        = req.body.email
-      const password     = req.body.Password
+      const password     = req.body.password
       const username = mobileNumber ? mobileNumber : email
 
-      logInfo('Step 0 : mobileNumber response value :->' + mobileNumber)
-      logInfo('Step 00 : email response value :->' + email)
-      logInfo('Step 000 : password response value :->' + password)
+      logInfo('Step i : mobileNumber response value :->' + mobileNumber)
+      logInfo('Step ii : email response value :->' + email)
+      logInfo('Step iii : password response value :->' + password)
       try {
           const encodedData = qs.stringify({
                                               client_id: 'portal',
@@ -403,9 +404,22 @@ emailOrMobileLogin.post('/auth', async (req, res) => {
 
           logInfo('Entered into authTokenResponse :' + authTokenResponse)
 
-          const accessToken = authTokenResponse.data.access_token
+          if(authTokenResponse.data){
+            const accessToken = authTokenResponse.data.access_token
             // tslint:disable-next-line: no-any
-          logInfo('Entered into accesstoken :' + accessToken)
+            logInfo('Entered into accesstoken :' + accessToken)
+            res.status(200).json({
+              msg: AUTHENTICATED,
+              status: 'success',
+            })
+          }
+          else{
+            res.status(302).json({
+              msg: AUTH_FAIL,
+              status: 'error',
+            })
+          }
+
       } catch (e) {
         logInfo('Error throwing Cookie : ' + e)
         res.status(400).send({
