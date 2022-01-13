@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { request, Router } from 'express'
+import { Router } from 'express'
 import { Request, Response } from 'express'
 import jwt_decode from 'jwt-decode'
 import _ from 'lodash'
@@ -418,10 +418,12 @@ emailOrMobileLogin.post('/auth', async (req: any, res) => {
             const decodedTokenArray = decodedToken.sub.split(':')
             const userId = decodedTokenArray[decodedTokenArray.length - 1]
             req.session.userId = userId
+            req.kauth = {grant: authTokenResponse.data}
+            req.session.grant = authTokenResponse.data
 
             logInfo('Success ! Entered into usertokenResponse..')
-            const updateRoles = await getCurrentUserRoles(request, accessToken)
-            logInfo('Entered into updateRoles :' + updateRoles)
+            await getCurrentUserRoles(req, accessToken)
+            logInfo('Entered into updateRoles :' + JSON.stringify(req.session))
 
             res.status(200).json({
               msg: AUTHENTICATED,

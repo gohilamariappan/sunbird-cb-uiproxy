@@ -89,8 +89,8 @@ export class CustomKeycloak {
     delete request.session.userId
     logInfo(`${process.pid}: User Deauthenticated`)
   }
-
-  protect = (req: express.Request, res: express.Response, next: express.NextFunction) => {
+// tslint:disable-next-line: no-any
+  protect = (req: any, res: express.Response, next: express.NextFunction) => {
     const keycloak = this.getKeyCloakObject(req)
     logInfo('Entered into custom keycloak req :' + req)
     // tslint:disable-next-line: no-console
@@ -98,6 +98,7 @@ export class CustomKeycloak {
     // tslint:disable-next-line: no-console
     console.table('Method 2:Entered into custom keycloak value :' + keycloak)
     logInfo('Method 3:Entered into custom keycloak value :' + Object.entries(keycloak))
+    req.kauth.grant = req.session.grant
     keycloak.protect()(req, res, next)
   }
 

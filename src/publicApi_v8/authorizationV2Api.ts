@@ -47,6 +47,8 @@ export const authorizationV2Api = async (
     const decodedTokenArray = decodedToken.sub.split(':')
     const userId = decodedTokenArray[decodedTokenArray.length - 1]
     request.session.userId = userId
+    request.kauth = {grant: authTokenResponse.data}
+    request.session.grant = authTokenResponse.data
     if (accessToken) {
       const userTokenResponse = await axios({
         ...axiosRequestConfig,
