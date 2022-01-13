@@ -59,7 +59,7 @@ export class Server {
       this.app.all('*', isAllowed())
     }
     this.setCookie()
-    // this.setKeyCloak(sessionConfig)
+    this.setKeyCloak(sessionConfig)
     this.authoringProxies()
     this.configureMiddleware()
     this.servePublicApi()
@@ -158,12 +158,12 @@ export class Server {
     )
     this.app.use(haltOnTimedOut)
   }
-  // tslint:disable-next-line: no-any
-  // private setKeyCloak(sessionConfig: any) {
-  //   this.keycloak = new CustomKeycloak(sessionConfig)
-  //   logInfo('Entered into Setkeycloak...')
-  //   this.app.use(this.keycloak.middleware)
-  // }
+  //tslint:disable-next-line: no-any
+  private setKeyCloak(sessionConfig: any) {
+    this.keycloak = new CustomKeycloak(sessionConfig)
+    logInfo('Entered into Setkeycloak...')
+    this.app.use(this.keycloak.middleware)
+  }
 
   private servePublicApi() {
     this.app.use('/public/v8', publicApiV8)
@@ -175,6 +175,7 @@ export class Server {
     }
   }
   private serverProxies() {
+    logInfo('Entered into Server proxies/v8')
     if (this.keycloak) {
       logInfo('Entered into proxies/v8')
       this.app.use('/proxies/v8', this.keycloak.protect, proxiesV8)
