@@ -73,7 +73,7 @@ export const getCurrentUserRoles = async (reqObj: any, accessToken: any) => {
     url: readUrl,
   })
   // tslint:disable-next-line: no-any
-  logInfo('getAuthTokenResponse :' , JSON.stringify(authTokenResponse))
+  logInfo('getAuthTokenResponse :' + authTokenResponse)
   if (authTokenResponse) {
     setRolesData(reqObj, authTokenResponse.data)
   }

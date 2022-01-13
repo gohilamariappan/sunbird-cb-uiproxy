@@ -187,7 +187,7 @@ export async function getKCToken() {
   const params = new URLSearchParams()
   params.append('username', CONSTANTS.KEYCLOAK_ADMIN_USERNAME)
   params.append('password', CONSTANTS.KEYCLOAK_ADMIN_PASSWORD)
-  params.append('client_id', 'admin-cli')
+  params.append('client_id', 'portal')
   params.append('grant_type', 'password')
   const contentType = 'application/x-www-form-urlencoded'
   const config = {

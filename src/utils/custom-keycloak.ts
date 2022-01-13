@@ -23,15 +23,8 @@ export class CustomKeycloak {
         )
       })
     }
-<<<<<<< HEAD
-    this.multiTenantKeycloak.set(
-      'common',
-      this.generateKeyCloak(sessionConfig)
-    )
-=======
     logInfo('2. Entered into keycloak - custom-keycloak.ts >>>>>>>')
     this.multiTenantKeycloak.set('common', this.generateKeyCloak(sessionConfig))
->>>>>>> 70a4a26f64f7d6bf0c84eaf1f3e6ba54b208c963
   }
 
   middleware = (
@@ -73,6 +66,7 @@ export class CustomKeycloak {
     try {
       const userId = request.kauth.grant.access_token.content.sub.split(':')
       request.session.userId = userId[userId.length - 1]
+      logInfo('Custom keycloak userId : ', userId)
     } catch (err) {
       logError(
         'userId conversation error' +
@@ -102,14 +96,17 @@ export class CustomKeycloak {
     delete request.session.userRoles
     delete request.session.userId
     logInfo(`${process.pid}: User Deauthenticated`)
-  };
-
-  protect = (
-    req: express.Request,
-    res: express.Response,
-    next: express.NextFunction
-  ) => {
+  }
+// tslint:disable-next-line: no-any
+  protect = (req: any, res: express.Response, next: express.NextFunction) => {
     const keycloak = this.getKeyCloakObject(req)
+    logInfo('Entered into custom keycloak req :' + req)
+    // tslint:disable-next-line: no-console
+    console.dir('Method 1:Entered into custom keycloak value :' + keycloak)
+    // tslint:disable-next-line: no-console
+    console.table('Method 2:Entered into custom keycloak value :' + keycloak)
+    logInfo('Method 3:Entered into custom keycloak value :' + Object.entries(keycloak))
+    req.kauth.grant = req.session.grant
     keycloak.protect()(req, res, next)
   };
 

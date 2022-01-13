@@ -31,7 +31,7 @@ if (
 }
 
 export function getSessionConfig(
-  isPersistant = true
+
 ): expressSession.SessionOptions {
   if (!sessionConfig) {
     sessionConfig = {
@@ -39,15 +39,13 @@ export function getSessionConfig(
         maxAge: CONSTANTS.KEYCLOAK_SESSION_TTL,
       },
       resave: false,
-      saveUninitialized: false,
+      saveUninitialized: true,
       secret: '927yen45-i8j6-78uj-y8j6g9rf56hu',
-      store: isPersistant
-        ? new cassandraStore({
+      store: new cassandraStore({
             client: null,
             clientOptions: cassandraClientOptions,
             table: 'sessions',
-          })
-        : new expressSession.MemoryStore(),
+          }),
     }
   }
   return sessionConfig

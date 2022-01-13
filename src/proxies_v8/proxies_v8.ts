@@ -18,7 +18,6 @@ import {
   proxyCreatorRoute,
   proxyCreatorSunbird,
   proxyCreatorSunbirdSearch,
-  proxyCreatorToAppentUserId,
   proxyHierarchyKnowledge,
   scormProxyCreatorRoute
 } from '../utils/proxyCreator'
@@ -27,6 +26,9 @@ import { extractUserIdFromRequest, extractUserToken } from '../utils/requestExtr
 const API_END_POINTS = {
   contentNotificationEmail: `${CONSTANTS.NOTIFICATION_SERVIC_API_BASE}/v1/notification/send/sync`,
 }
+
+const accessToken = 'x-authenticated-user-token'
+const authenticatedUserId = 'x-authenticated-userid'
 
 const client = new elasticsearch.Client({
   hosts: ['http://10.1.2.138:9200'],
@@ -76,10 +78,10 @@ proxiesV8.post('/upload/*', (req, res) => {
         headers: {
           // tslint:disable-next-line:max-line-length
           Authorization: CONSTANTS.SB_API_KEY,
+          accessToken: extractUserToken(req),
+          authenticatedUserId: extractUserIdFromRequest(req),
           org: 'dopt',
           rootorg: 'igot',
-          'x-authenticated-user-token': extractUserToken(req),
-          'x-authenticated-userid': extractUserIdFromRequest(req),
         },
         host: 'knowledge-mw-service',
         path: url,
@@ -119,10 +121,10 @@ proxiesV8.post('/private/upload/*', (_req, _res) => {
         headers: {
           // tslint:disable-next-line:max-line-length
           Authorization: CONSTANTS.SB_API_KEY,
+          accessToken: extractUserToken(_req),
+          authenticatedUserId: extractUserIdFromRequest(_req),
           org: 'dopt',
           rootorg: 'igot',
-          'x-authenticated-user-token': extractUserToken(_req),
-          'x-authenticated-userid': extractUserIdFromRequest(_req),
         },
         host: 'content-service',
         path: _url,
@@ -211,10 +213,32 @@ proxiesV8.use('/read/content-progres/*',
   // tslint:disable-next-line: max-line-length
   proxyCreatorSunbirdSearch(express.Router(), `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/course/v1/content/state/read`)
 )
-
-proxiesV8.use('/api/user/v2/read',
-  proxyCreatorToAppentUserId(express.Router(), `${CONSTANTS.KONG_API_BASE}/user/v2/read/`)
-)
+proxiesV8.use('/api/user/v2/read', async (req, res) => {
+      logInfo('Entered into read api')
+      logInfo('1.Const values >>', accessToken)
+      logInfo('2.Const values >>', authenticatedUserId)
+      const readApiResponse = await axios({
+              ...axiosRequestConfig,
+              data: {
+                headers: {
+                  // tslint:disable-next-line:max-line-length
+                  Authorization: CONSTANTS.SB_API_KEY,
+                  accessToken: extractUserToken(req),
+                  authenticatedUserId: extractUserIdFromRequest(req),
+                  org: req.headers.org,
+                  rootOrg: req.headers.rootOrg,
+                },
+              },
+              method: 'GET',
+              url:  `${CONSTANTS.KONG_API_BASE}/user/v2/read/`,
+            })
+      logInfo('readApiResponse >>>>>>' + readApiResponse)
+      if (!readApiResponse) {
+              res.status(400).send('Failed to get read api data')
+            } else {
+              res.status(200).send('Read api is working..')
+            }
+  })
 
 proxiesV8.use([
   '/action/questionset/v1/*',

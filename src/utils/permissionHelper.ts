@@ -1,6 +1,7 @@
 const _                 = require('lodash')
 import request from 'request'
 import { CONSTANTS } from './env'
+import { logInfo } from './logger'
 
 const ROLE = [
      'CBC_ADMIN', 'CBC_MEMBER', 'CONTENT_CREATOR', 'CONTENT_PUBLISHER', 'CONTENT_REVIEWER', 'EDITOR', 'FRAC_COMPETENCY_MEMBER',
@@ -25,10 +26,13 @@ export const PERMISSION_HELPER = {
             }
             // tslint:disable-next-line: no-any
             reqObj.session.save((error: any) => {
+                logInfo('Entered into permission helper reobj.session:')
                 if (error) {
-                  callback(error, null)
+                    logInfo('Entered into permission helper reobj.session error section:')
+                    callback(error, null)
                 } else {
-                  callback(null, userData)
+                    logInfo('Entered into permission helper reobj.session passing section:' + userData)
+                    callback(null, userData)
                 }
             })
         }
@@ -37,6 +41,7 @@ export const PERMISSION_HELPER = {
     getCurrentUserRoles(reqObj: any, callback: any) {
         // console.log('Step 3: Get user roles function')
         const userId = reqObj.session.userId
+        logInfo('Entered into permission helper userId:' + userId)
         // console.log(userId)
         const readUrl = `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/user/v2/read/` + userId
         const options = {
