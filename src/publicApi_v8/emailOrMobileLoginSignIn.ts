@@ -381,7 +381,7 @@ emailOrMobileLogin.post('/auth', async (req: any, res) => {
       logInfo('Entered into /login/auth endpoint >>> ')
       const mobileNumber = req.body.mobileNumber
       const email        = req.body.email
-      const password     = req.body.password
+      const password     = req.body.Password
       const username = mobileNumber ? mobileNumber : email
 
       logInfo('Step i : mobileNumber response value :->' + mobileNumber)
