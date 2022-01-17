@@ -154,7 +154,7 @@ forgotPassword.post('/verifyOtp', async (req, res) => {
         ...axiosRequestConfig,
         data: { request: { query: '', filters: { phone: key.toLowerCase() } } },
         method: 'POST',
-        url: API_END_POINTS.recoverPassword,
+        url: API_END_POINTS.searchSb,
       })
       if (searchresponse.data.result.response.count > 0) {
         const userUUId = _.get(
