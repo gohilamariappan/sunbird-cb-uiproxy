@@ -128,7 +128,7 @@ forgotPassword.post('/verifyOtp', async (req, res) => {
         method: 'POST',
         url: API_END_POINTS.searchSb,
       })
-      
+
       if (searchresponse.data.result.response.count > 0) {
         const userUUId = _.get(
           _.find(searchresponse.data.result.response.content, 'userId'),
@@ -173,7 +173,7 @@ forgotPassword.post('/verifyOtp', async (req, res) => {
           url: API_END_POINTS.recoverPassword,
         })
         logInfo('Success ! Recover password working for phone.. ')
-        res.status(200).send(sendResponse)
+        res.status(200).send(sendResponse.data.result)
       }
     } else {
       logError('Error in Usertype : Neither validated email nor phone ')
