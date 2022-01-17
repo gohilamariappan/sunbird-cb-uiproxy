@@ -145,7 +145,7 @@ forgotPassword.post('/verifyOtp', async (req, res) => {
           method: 'POST',
           url: API_END_POINTS.recoverPassword,
         })
-        logInfo('Sending Responses in phone : ' + sendResponse)
+        logInfo('Success ! Recover password working for email.. ')
         res.status(200).send(sendResponse.data.result)
       }
     } else if (userType === 'phone') {
@@ -172,7 +172,7 @@ forgotPassword.post('/verifyOtp', async (req, res) => {
           method: 'POST',
           url: API_END_POINTS.recoverPassword,
         })
-        logInfo('Sending Responses in phone : ' + sendResponse)
+        logInfo('Success ! Recover password working for phone.. ')
         res.status(200).send(sendResponse)
       }
     } else {
