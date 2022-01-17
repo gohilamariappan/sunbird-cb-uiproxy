@@ -44,7 +44,7 @@ forgotPassword.post('/reset/proxy/password', async (req, res) => {
           _.find(searchresponse.data.result.response.content, 'userId'),
           'userId'
         )
-        logInfo('User Id : ', userUUId)
+        logInfo('>>>>>>>> User Id : ', userUUId)
 
         // generate otp
         const sendResponse = await axios({
