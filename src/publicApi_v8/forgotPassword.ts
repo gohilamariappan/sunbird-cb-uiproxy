@@ -68,14 +68,6 @@ forgotPassword.post('/reset/proxy/password', async (req, res) => {
       const searchresponse = await axios({
         ...axiosRequestConfig,
         data: {
-          request: { query: '', filters: { email: sbUsername.toLowerCase() } },
-        },
-        method: 'POST',
-        url: API_END_POINTS.searchSb,
-      })
-      const searchresponse = await axios({
-        ...axiosRequestConfig,  
-        data: {
           request: { query: '', filters: { phone: sbUsername.toLowerCase() } },
         },
         method: 'POST',
