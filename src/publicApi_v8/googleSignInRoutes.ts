@@ -1,9 +1,9 @@
 import axios from 'axios'
 import { Router } from 'express'
 import { OAuth2Client } from 'google-auth-library'
+import jwt_decode from 'jwt-decode'
 import _ from 'lodash'
 import qs from 'querystring'
-import jwt_decode from 'jwt-decode'
 import { axiosRequestConfig } from '../configs/request.config'
 import { CONSTANTS } from '../utils/env'
 import { logError, logInfo } from '../utils/logger'
@@ -18,8 +18,8 @@ const AUTH_FAIL = 'Authentication failed ! Please check credentials and try agai
 const AUTHENTICATED = 'Success ! User is sucessfully authenticated.'
 const client = new OAuth2Client(CONSTANTS.GOOGLE_CLIENT_ID)
 export const googleAuth = Router()
-//tslint:disable-next-line: no-any
-googleAuth.post('/callback', async (req:any, res:any) => {
+// tslint:disable-next-line: no-any
+googleAuth.post('/callback', async (req: any, res: any) => {
     logInfo('Google auth callback called' )
     try {
         const { idToken } = req.body
@@ -42,7 +42,6 @@ googleAuth.post('/callback', async (req:any, res:any) => {
                 }
         }
         logInfo('google profile ', googleProfile )
-        console.log(JSON.stringify(googleProfile))
         isUserExist = await fetchUserByEmailId(googleProfile.emailId)
         if (!isUserExist) {
             logInfo('creating new google user')
@@ -76,8 +75,8 @@ googleAuth.post('/callback', async (req:any, res:any) => {
                         const decodedTokenArray = decodedToken.sub.split(':')
                         const userId = decodedTokenArray[decodedTokenArray.length - 1]
                         req.session.userId = userId
-                        req.kauth = {grant: {access_token: {content:decodedToken, token : accessToken}}}
-                        req.session.grant =  {access_token: {content:decodedToken, token : accessToken}}
+                        req.kauth = {grant: {access_token: {content: decodedToken, token : accessToken}}}
+                        req.session.grant =  {access_token: {content: decodedToken, token : accessToken}}
                         logInfo('Success ! Entered into usertokenResponse..')
                         await getCurrentUserRoles(req, accessToken)
                         logInfo('Entered into updateRoles :' + JSON.stringify(req.session))
@@ -93,11 +92,11 @@ googleAuth.post('/callback', async (req:any, res:any) => {
                       }
                 } catch (error) {
                 logInfo('Error in generating session : ' + error)
-                    res.status(400).send({
+                res.status(400).send({
                     error: AUTH_FAIL,
                  })
                 }
-               
+
             }
         } else {
             logInfo('Email already exists.')
