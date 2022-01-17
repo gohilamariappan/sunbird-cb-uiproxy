@@ -29,10 +29,9 @@ forgotPassword.post('/reset/proxy/password', async (req, res) => {
       const searchresponse = await axios({
         ...axiosRequestConfig,
         data: {
-          request: { query: '', 
-                     filters: { 
-                       email: sbUsername.toLowerCase() 
-                      } 
+          request: { filters: {
+                       email: sbUsername.toLowerCase(),
+                      },
                     },
         },
         method: 'POST',
