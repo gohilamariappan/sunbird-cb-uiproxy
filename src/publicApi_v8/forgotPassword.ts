@@ -128,7 +128,7 @@ forgotPassword.post('/verifyOtp', async (req, res) => {
         method: 'POST',
         url: API_END_POINTS.searchSb,
       })
-      logInfo('Entered inside email with response is ', searchresponse.data.result.response)
+      
       if (searchresponse.data.result.response.count > 0) {
         const userUUId = _.get(
           _.find(searchresponse.data.result.response.content, 'userId'),
