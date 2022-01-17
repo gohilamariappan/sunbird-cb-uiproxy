@@ -68,6 +68,14 @@ forgotPassword.post('/reset/proxy/password', async (req, res) => {
       const searchresponse = await axios({
         ...axiosRequestConfig,
         data: {
+          request: { query: '', filters: { email: sbUsername.toLowerCase() } },
+        },
+        method: 'POST',
+        url: API_END_POINTS.searchSb,
+      })
+      const searchresponse = await axios({
+        ...axiosRequestConfig,  
+        data: {
           request: { query: '', filters: { phone: sbUsername.toLowerCase() } },
         },
         method: 'POST',
@@ -118,12 +126,14 @@ forgotPassword.post('/verifyOtp', async (req, res) => {
   const validOtp = req.body.otp
   try {
     if (userType === 'email') {
+      logInfo('Entered inside email')
       const searchresponse = await axios({
         ...axiosRequestConfig,
-        data: { request: { query: '', filters: { email: key.toLowerCase() } } },
+        data: { request: { filters: { email: key.toLowerCase() } } },
         method: 'POST',
         url: API_END_POINTS.searchSb,
       })
+      logInfo('Entered inside email with response is ', searchresponse.data.result.response)
       if (searchresponse.data.result.response.count > 0) {
         const userUUId = _.get(
           _.find(searchresponse.data.result.response.content, 'userId'),
@@ -144,6 +154,7 @@ forgotPassword.post('/verifyOtp', async (req, res) => {
         res.status(200).send(sendResponse.data.result)
       }
     } else if (userType === 'phone') {
+      logInfo('Entered inside email')
       const searchresponse = await axios({
         ...axiosRequestConfig,
         data: { request: { query: '', filters: { phone: key.toLowerCase() } } },
@@ -172,7 +183,7 @@ forgotPassword.post('/verifyOtp', async (req, res) => {
     } else {
       logError('Error in Usertype : Neither validated email nor phone ')
       res
-        .status(500)
+        .status(403)
         .send('Error in Usertype : Neither validated email nor phone')
     }
     return
