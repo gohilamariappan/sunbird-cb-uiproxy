@@ -93,11 +93,11 @@ export class CustomKeycloak {
     const keycloak = this.getKeyCloakObject(req)
     logInfo('Entered into custom keycloak req :' + JSON.stringify(req.session))
     // tslint:disable-next-line: no-console
-    if(req.session.grant){
+    if (req.session.grant) {
       logInfo('Entered into if statement to set kauth grant ')
       req.kauth.grant = req.session.grant
     }
-    
+
     keycloak.protect()(req, res, next)
   }
 

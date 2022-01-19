@@ -143,17 +143,14 @@ const getFormatedRequest = (data: any, requestBody: any) => {
             if (optKey.optionId === qoptKey.optionId) {
               if (
                 qkey.questionType === 'mcq-sca' ||
-                qkey.questionType === 'fitb'
+                qkey.questionType === 'fitb' || qkey.questionType === 'mcq-mca'
               ) {
                 _.set(optKey, 'isCorrect', _.get(qoptKey, 'isCorrect'))
                 _.set(optKey, 'text', _.get(qoptKey, 'text'))
               } else if (qkey.questionType === 'mtf') {
                 _.set(optKey, 'isCorrect', _.get(qoptKey, 'isCorrect'))
                 _.set(optKey, 'match', _.get(qoptKey, 'match'))
-              } else if (qkey.questionType === 'mcq-mca') {
-                _.set(optKey, 'isCorrect', _.get(qoptKey, 'isCorrect'))
-                _.set(optKey, 'text', _.get(qoptKey, 'text'))
-              } 
+              }
             }
           })
         })
