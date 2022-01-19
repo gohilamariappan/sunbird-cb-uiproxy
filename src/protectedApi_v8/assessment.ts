@@ -53,7 +53,7 @@ assessmentApi.post('/submit/v2', async (req, res) => {
       res.status(response.status).send(response.data)
     }
   } catch (err) {
-    logError('submitassessment  failed')
+    logError('submitassessment  failed' + err)
     res.status((err && err.response && err.response.status) || 500).send(
       (err && err.response && err.response.data) || {
         error: GENERAL_ERR_MSG,
@@ -137,7 +137,7 @@ const getFormatedRequest = (data: any, requestBody: any) => {
 
   _.forEach(data.questions, (qkey) => {
     _.forEach(requestBody.questions, (reqKey) => {
-      if (qkey.questionType === 'mcq-sca' || qkey.questionType === 'fitb') {
+      if (qkey.questionType === 'mcq-sca' || qkey.questionType === 'fitb' ||  qkey.questionType === 'mcq-mca' ) {
         _.forEach(qkey.options, (qoptKey) => {
           _.forEach(reqKey.options, (optKey) => {
             if (optKey.optionId === qoptKey.optionId) {
@@ -150,13 +150,16 @@ const getFormatedRequest = (data: any, requestBody: any) => {
               } else if (qkey.questionType === 'mtf') {
                 _.set(optKey, 'isCorrect', _.get(qoptKey, 'isCorrect'))
                 _.set(optKey, 'match', _.get(qoptKey, 'match'))
-              }
+              } else if (qkey.questionType === 'mcq-mca') {
+                _.set(optKey, 'isCorrect', _.get(qoptKey, 'isCorrect'))
+                _.set(optKey, 'text', _.get(qoptKey, 'text'))
+              } 
             }
           })
         })
       }
     })
   })
-  logInfo('requestBody', JSON.stringify(requestBody))
+  logInfo('requestBody to submit the assessment ', JSON.stringify(requestBody))
   return requestBody
 }
