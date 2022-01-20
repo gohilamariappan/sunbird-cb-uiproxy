@@ -90,7 +90,6 @@ proxiesV8.post('/private/content/*', (req, res) => {
                 url: `${CONSTANTS.HTTPS_HOST}` + targetUrl  ,
     })
     .then(function(response) {
-     // console.log(">>>>>>>>>>>>>>>>>>>>Dddddddd>>>>>>>>>",JSON.stringify(response.data));
       const output = {
             message : 'success',
             identifier : response.data.result.identifier,
@@ -101,7 +100,7 @@ proxiesV8.post('/private/content/*', (req, res) => {
       res.send(output)
     })
     .catch(function(error) {
-      console.log('Error >>>>>>>>>>>???????>>>>>>>>>>>.', error)
+      logInfo('Error >>>>>>>>>>>???????>>>>>>>>>>>.', error)
     })
 
   } else {
