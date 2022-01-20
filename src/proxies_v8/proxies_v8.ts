@@ -91,10 +91,9 @@ proxiesV8.post('/private/content/*', (req, res) => {
     })
     .then(function(response) {
       const output = {
-            message : 'success',
-            identifier : response.data.result.identifier,
             artifactUrl : response.data.result.artifactUrl,
             content_url : response.data.result.content_url,
+            identifier : response.data.result.identifier,
             status : response.data.params.status,
       }
       res.send(output)
