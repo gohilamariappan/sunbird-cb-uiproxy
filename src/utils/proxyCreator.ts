@@ -70,8 +70,6 @@ export function proxyCreatorRoute(route: Router, targetUrl: string, timeout = 10
     }
     // tslint:disable-next-line: no-console
     console.log('REQ_URL_ORIGINAL', req.originalUrl)
-    // tslint:disable-next-line: no-console
-    console.log('REQ_URL', req.url)
     proxyCreator(timeout).web(req, res, {
       target: targetUrl,
     })
@@ -101,8 +99,6 @@ export function scormProxyCreatorRoute(route: Router, baseUrl: string): Router {
 export function proxyCreatorLearner(route: Router, targetUrl: string, _timeout = 10000): Router {
   route.all('/*', (req, res) => {
 
-    // tslint:disable-next-line: no-console
-    console.log('REQ_URL_ORIGINAL proxyCreatorLearner', req.originalUrl)
     const url = removePrefix(`${PROXY_SLUG}/learner`, req.originalUrl)
     logInfo('Final URL: ', targetUrl + url)
     proxy.web(req, res, {

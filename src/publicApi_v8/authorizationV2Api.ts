@@ -17,7 +17,6 @@ export const authorizationV2Api = async (
   // tslint:disable-next-line: no-any
   request: any
 ) => {
-  logInfo('Entered into authorizationV2Api ')
 
   const encodedData = qs.stringify({
     client_id: 'portal',
@@ -26,7 +25,6 @@ export const authorizationV2Api = async (
     password,
     username,
   })
-  logInfo('Entered into authorization part.' + encodedData)
 
   try {
     const authTokenResponse = await axios({
@@ -39,7 +37,6 @@ export const authorizationV2Api = async (
       url: API_END_POINTS.generateToken,
     })
 
-    logInfo('Entered into authTokenResponse :' + authTokenResponse)
 
     const accessToken = authTokenResponse.data.access_token
     // tslint:disable-next-line: no-any
@@ -59,7 +56,6 @@ export const authorizationV2Api = async (
 
         url: API_END_POINTS.verfifyToken,
       })
-      logInfo('userTokenResponse : ' + userTokenResponse)
       if (userTokenResponse.data.name) {
         logInfo('Success ! Entered into usertokenResponse..')
         await getCurrentUserRoles(request, accessToken)

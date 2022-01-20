@@ -43,7 +43,6 @@ googleAuth.post('/callback', async (req: any, res: any) => {
         type: 'email',
       }
     }
-    logInfo('google profile ', googleProfile)
     isUserExist = await fetchUserByEmailId(googleProfile.emailId)
     if (!isUserExist) {
       newUserDetails = await createuserwithmailId(googleProfile).catch(
@@ -63,7 +62,6 @@ googleAuth.post('/callback', async (req: any, res: any) => {
         password,
         username,
       })
-      logInfo('Entered into authorization part.' + encodedData)
       const authTokenResponse = await axios({
         ...axiosRequestConfig,
         data: encodedData,
@@ -75,7 +73,6 @@ googleAuth.post('/callback', async (req: any, res: any) => {
       })
       if (authTokenResponse.data) {
         const accessToken = authTokenResponse.data.access_token
-        logInfo('Entered into accesstoken :' + accessToken)
         // tslint:disable-next-line: no-any
         const decodedToken: any = jwt_decode(accessToken)
         const decodedTokenArray = decodedToken.sub.split(':')
@@ -89,9 +86,7 @@ googleAuth.post('/callback', async (req: any, res: any) => {
         req.session.grant = {
           access_token: { content: decodedToken, token: accessToken },
         }
-        logInfo('Success ! Entered into usertokenResponse..')
         await getCurrentUserRoles(req, accessToken)
-        logInfo('Entered into updateRoles :' + JSON.stringify(req.session))
         res.status(200).json({
           msg: AUTHENTICATED,
           status: 'success',
@@ -116,7 +111,6 @@ googleAuth.post('/callback', async (req: any, res: any) => {
 
 // tslint:disable-next-line: no-any
 const handleCreateUserError = (error: any) => {
-  logInfo('Error ocurred while creating user' + error)
   if (_.get(error, 'error.params')) {
     throw error.error.params
   } else if (error instanceof Error) {
@@ -160,7 +154,7 @@ const createuserwithmailId = async (accountDetails: any) => {
       )
     }
   } catch (err) {
-    logError('createUserWithMailId failed')
+    logError('createUserWithMailId failed'+ err)
   }
 }
 const fetchUserByEmailId = async (emailId: string) => {
@@ -177,8 +171,6 @@ const fetchUserByEmailId = async (emailId: string) => {
       method: 'GET',
       url: API_END_POINTS.fetchUserByEmailId + emailId,
     })
-    logInfo('Response Data in JSON :', JSON.stringify(response.data))
-    logInfo('Response Data in Success :', response.data.responseCode)
     if (response.data.responseCode === 'OK') {
       logInfo(
         'Response result.exists :',
