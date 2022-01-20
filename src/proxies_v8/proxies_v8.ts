@@ -75,38 +75,35 @@ proxiesV8.post('/private/content/*', (req, res) => {
     const targetUrl  = '/api' + url
     logInfo('URL >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>' + targetUrl)
 
-    formData.submit(
-      {
-        headers: {
-          // tslint:disable-next-line:max-line-length
-          Authorization: CONSTANTS.SB_API_KEY,
-          accessToken: extractUserToken(req),
-          authenticatedUserId: extractUserIdFromRequest(req),
-          org: 'aastar',
-          rootorg: 'aastar',
-        },
-        host: 'aastrika-sb.idc.tarento.com',
-        path: targetUrl,
-        port: 5000,
-      },
-      (err, response) => {
-        logInfo('Error in reponse 94 >>>>>>>>>>>>>>>>>>>.' + err)
-        if (response) {
-        response.on('data', (data) => {
-          if (!err && (response.statusCode === 200 || response.statusCode === 201)) {
-            res.send(JSON.parse(data.toString('utf8')))
-          } else {
-            res.send(data.toString('utf8'))
-          }
-        })
+    axios({
+      ...axiosRequestConfig,
+                method: 'post',
+                url: `${CONSTANTS.HTTPS_HOST}`+targetUrl  ,
+                headers: { 
+                        // tslint:disable-next-line:max-line-length
+                        Authorization: CONSTANTS.SB_API_KEY,
+                        accessToken: extractUserToken(req),
+                        org: 'aastar',
+                        rootorg: 'aastar',
+                  ...formData.getHeaders()
+                },
+                data : formData
+    })
+    .then(function (response) {
+     // console.log(">>>>>>>>>>>>>>>>>>>>Dddddddd>>>>>>>>>",JSON.stringify(response.data));
+      const output = {
+            message : 'success',
+            identifier : response.data.result.identifier, 
+            artifactUrl : response.data.result.artifactUrl, 
+            content_url : response.data.result.content_url, 
+            status : response.data.params.status,
       }
-
-        if (err) {
-          res.send(err)
-        }
-
-      }
-    )
+      res.send(output)
+    })
+    .catch(function (error) {
+      console.log("Error >>>>>>>>>>>???????>>>>>>>>>>>.",error);
+    });
+   
   } else {
     res.send('File not found')
   }
