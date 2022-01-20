@@ -77,33 +77,33 @@ proxiesV8.post('/private/content/*', (req, res) => {
 
     axios({
       ...axiosRequestConfig,
-                method: 'post',
-                url: `${CONSTANTS.HTTPS_HOST}`+targetUrl  ,
-                headers: { 
+                data : formData,
+                headers: {
                         // tslint:disable-next-line:max-line-length
                         Authorization: CONSTANTS.SB_API_KEY,
                         accessToken: extractUserToken(req),
                         org: 'aastar',
                         rootorg: 'aastar',
-                  ...formData.getHeaders()
+                  ...formData.getHeaders(),
                 },
-                data : formData
+                method: 'post',
+                url: `${CONSTANTS.HTTPS_HOST}` + targetUrl  ,
     })
-    .then(function (response) {
+    .then(function(response) {
      // console.log(">>>>>>>>>>>>>>>>>>>>Dddddddd>>>>>>>>>",JSON.stringify(response.data));
       const output = {
             message : 'success',
-            identifier : response.data.result.identifier, 
-            artifactUrl : response.data.result.artifactUrl, 
-            content_url : response.data.result.content_url, 
+            identifier : response.data.result.identifier,
+            artifactUrl : response.data.result.artifactUrl,
+            content_url : response.data.result.content_url,
             status : response.data.params.status,
       }
       res.send(output)
     })
-    .catch(function (error) {
-      console.log("Error >>>>>>>>>>>???????>>>>>>>>>>>.",error);
-    });
-   
+    .catch(function(error) {
+      console.log('Error >>>>>>>>>>>???????>>>>>>>>>>>.', error)
+    })
+
   } else {
     res.send('File not found')
   }
