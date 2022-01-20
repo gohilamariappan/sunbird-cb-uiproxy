@@ -89,16 +89,17 @@ proxiesV8.post('/private/content/*', (req, res) => {
                 method: 'post',
                 url: `${CONSTANTS.HTTPS_HOST}` + targetUrl  ,
     })
-    .then(function(response) {
+    .then((response)=> {
       const output = {
             artifactUrl : response.data.result.artifactUrl,
             content_url : response.data.result.content_url,
             identifier : response.data.result.identifier,
             status : response.data.params.status,
       }
-     return res.send(output)
+      return res.send(output)
     })
-    .catch(function(error) {
+    .catch((error)=>{
+      return res.send(error)
       logInfo('Error >>>>>>>>>>>???????>>>>>>>>>>>.', error)
     })
 
