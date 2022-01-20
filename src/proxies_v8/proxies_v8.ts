@@ -63,7 +63,7 @@ proxiesV8.get('/learning-analytics', (req, res) => {
 })
 
 proxiesV8.post('/private/content/*', (req, res) => {
-  //console.log("Entered >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"+JSON.stringify(req.files))
+  // console.log("Entered >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"+JSON.stringify(req.files))
   if (req.files && req.files.data) {
     const url = removePrefix('/proxies/v8', req.originalUrl)
     const file: UploadedFile = req.files.data as UploadedFile
@@ -72,10 +72,9 @@ proxiesV8.post('/private/content/*', (req, res) => {
       contentType: file.mimetype,
       filename: file.name,
     })
-   // formData.append('file', fs.createReadStream('/C:/Users/test/Documents/testfile.pdf'));
-    const targetUrl  = '/api'+url
-    logInfo("URL >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"+ targetUrl)
-   
+    const targetUrl  = '/api' + url
+    logInfo('URL >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>' + targetUrl)
+
     formData.submit(
       {
         headers: {
@@ -88,11 +87,11 @@ proxiesV8.post('/private/content/*', (req, res) => {
         },
         host: 'aastrika-sb.idc.tarento.com',
         path: targetUrl,
-        port: 5000
+        port: 5000,
       },
       (err, response) => {
-        logInfo("Error in reponse 94 >>>>>>>>>>>>>>>>>>>."+ err)
-        if(response){
+        logInfo('Error in reponse 94 >>>>>>>>>>>>>>>>>>>.' + err)
+        if (response) {
         response.on('data', (data) => {
           if (!err && (response.statusCode === 200 || response.statusCode === 201)) {
             res.send(JSON.parse(data.toString('utf8')))
@@ -101,7 +100,7 @@ proxiesV8.post('/private/content/*', (req, res) => {
           }
         })
       }
-      
+
         if (err) {
           res.send(err)
         }
@@ -114,7 +113,6 @@ proxiesV8.post('/private/content/*', (req, res) => {
 })
 
 proxiesV8.post('/private/upload/*', (_req, _res) => {
-  console.log("Entered into upload content........................................++++++++++++++++")
   if (_req.files && _req.files.data) {
     const _url = removePrefix('/proxies/v8/private/upload', _req.originalUrl)
     const _file: UploadedFile = _req.files.data as UploadedFile
