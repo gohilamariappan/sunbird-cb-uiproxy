@@ -62,17 +62,17 @@ proxiesV8.get('/learning-analytics', (req, res) => {
   })
 })
 
-proxiesV8.post('/private/content/*', (req, res) => {
+proxiesV8.post('/upload/action/*', (req, res) => {
   // console.log("Entered >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"+JSON.stringify(req.files))
   if (req.files && req.files.data) {
-    const url = removePrefix('/proxies/v8', req.originalUrl)
+    const url = removePrefix('/proxies/v8/upload/action/upload/content/v3/', req.originalUrl)
     const file: UploadedFile = req.files.data as UploadedFile
     const formData = new FormData()
     formData.append('file', Buffer.from(file.data), {
       contentType: file.mimetype,
       filename: file.name,
     })
-    const targetUrl  = '/api' + url
+    const targetUrl  = '/api/private/content/v3/upload/' + url
     logInfo('URL >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>' + targetUrl)
 
     axios({
@@ -89,7 +89,7 @@ proxiesV8.post('/private/content/*', (req, res) => {
                 method: 'post',
                 url: `${CONSTANTS.HTTPS_HOST}` + targetUrl  ,
     })
-    .then((response)=> {
+    .then((response) => {
       const output = {
             artifactUrl : response.data.result.artifactUrl,
             content_url : response.data.result.content_url,
@@ -98,7 +98,7 @@ proxiesV8.post('/private/content/*', (req, res) => {
       }
       return res.send(output)
     })
-    .catch((error)=>{
+    .catch((error) => {
       return res.send(error)
       logInfo('Error >>>>>>>>>>>???????>>>>>>>>>>>.', error)
     })
