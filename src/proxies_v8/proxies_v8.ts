@@ -96,7 +96,7 @@ proxiesV8.post('/private/content/*', (req, res) => {
             identifier : response.data.result.identifier,
             status : response.data.params.status,
       }
-      res.send(output)
+     return res.send(output)
     })
     .catch(function(error) {
       logInfo('Error >>>>>>>>>>>???????>>>>>>>>>>>.', error)
