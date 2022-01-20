@@ -37,7 +37,6 @@ export const authorizationV2Api = async (
       url: API_END_POINTS.generateToken,
     })
 
-
     const accessToken = authTokenResponse.data.access_token
     // tslint:disable-next-line: no-any
     const decodedToken: any = jwt_decode(accessToken)

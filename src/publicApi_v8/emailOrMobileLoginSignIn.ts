@@ -412,7 +412,6 @@ emailOrMobileLogin.post('/auth', async (req: any, res) => {
 
           if (authTokenResponse.data) {
             const accessToken = authTokenResponse.data.access_token
-            logInfo('Entered into accesstoken :' + accessToken)
             // tslint:disable-next-line: no-any
             const decodedToken: any = jwt_decode(accessToken)
             const decodedTokenArray = decodedToken.sub.split(':')
@@ -422,7 +421,6 @@ emailOrMobileLogin.post('/auth', async (req: any, res) => {
             req.session.grant =  {access_token: {content: decodedToken, token : accessToken}}
             logInfo('Success ! Entered into usertokenResponse..')
             await getCurrentUserRoles(req, accessToken)
-            logInfo('Entered into updateRoles :' + JSON.stringify(req.session))
 
             res.status(200).json({
               msg: AUTHENTICATED,

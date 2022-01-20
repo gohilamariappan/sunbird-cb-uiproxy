@@ -154,7 +154,7 @@ const createuserwithmailId = async (accountDetails: any) => {
       )
     }
   } catch (err) {
-    logError('createUserWithMailId failed'+ err)
+    logError('createUserWithMailId failed' + err)
   }
 }
 const fetchUserByEmailId = async (emailId: string) => {
