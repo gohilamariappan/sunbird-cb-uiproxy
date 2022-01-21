@@ -77,6 +77,17 @@ export function proxyCreatorRoute(route: Router, targetUrl: string, timeout = 10
   return route
 }
 
+export function getContentProxyCreatorRoute(route: Router): Router {
+  route.all('/*', (req, res) => {
+    const baseUrl = req.query.artificatUrl
+    console.log(baseUrl)
+    proxyCreator().web(req, res, {
+      target: baseUrl,
+    })
+  })
+  return route
+}
+
 export function ilpProxyCreatorRoute(route: Router, baseUrl: string): Router {
   route.all('/*', (req, res) => {
     proxyCreator().web(req, res, {

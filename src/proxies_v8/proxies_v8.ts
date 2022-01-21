@@ -20,7 +20,8 @@ import {
   proxyCreatorSunbirdSearch,
   proxyCreatorToAppentUserId,
   proxyHierarchyKnowledge,
-  scormProxyCreatorRoute
+  scormProxyCreatorRoute,
+  getContentProxyCreatorRoute
 } from '../utils/proxyCreator'
 import { extractUserIdFromRequest, extractUserToken } from '../utils/requestExtract'
 
@@ -61,6 +62,11 @@ proxiesV8.get('/learning-analytics', (req, res) => {
     })
   })
 })
+
+proxiesV8.get('/getContent',
+getContentProxyCreatorRoute(express.Router())
+)
+
 
 proxiesV8.post('/upload/action/*', (req, res) => {
   // console.log("Entered >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"+JSON.stringify(req.files))
