@@ -80,7 +80,6 @@ export function proxyCreatorRoute(route: Router, targetUrl: string, timeout = 10
 export function getContentProxyCreatorRoute(route: Router): Router {
   route.all('/*', (req, res) => {
     const baseUrl = req.query.artificatUrl
-    console.log(baseUrl)
     proxyCreator().web(req, res, {
       target: baseUrl,
     })
