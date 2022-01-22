@@ -68,7 +68,6 @@ proxiesV8.get('/getContent',
 )
 
 proxiesV8.get('/getContents', (req, res) => {
-     logInfo(req.url)
      axios({
       ...axiosRequestConfig,
                 method: 'get',
