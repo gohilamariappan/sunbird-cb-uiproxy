@@ -71,14 +71,14 @@ proxiesV8.get('/getContents', (req, res) => {
      axios({
       ...axiosRequestConfig,
                 method: 'get',
-                url: req.params.artificatUrl,
+                url: req.query.artificatUrl,
     })
     .then((response) => {
     logInfo('Success' + typeof(response))
     return res.send(response)
     })
     .catch((error) => {
-      logInfo('Error >>>>>>>>>>>???????>>>>>>>>>>>.', error)
+      logInfo('Error : >>>>>>>>>>>>>>>>>>>>>.', error)
       return res.send(error)
     })
 }
@@ -122,7 +122,6 @@ proxiesV8.post('/upload/action/*', (req, res) => {
     })
     .catch((error) => {
       return res.send(error)
-      logInfo('Error >>>>>>>>>>>???????>>>>>>>>>>>.', error)
     })
 
   } else {
