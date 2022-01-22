@@ -64,8 +64,27 @@ proxiesV8.get('/learning-analytics', (req, res) => {
 })
 
 proxiesV8.get('/getContent',
-getContentProxyCreatorRoute(express.Router())
+      getContentProxyCreatorRoute(express.Router())
 )
+
+proxiesV8.get('/getContents', (req, res) => {
+     logInfo(req.url)
+    axios({
+      ...axiosRequestConfig,
+                method: 'get',
+                url: `http://sunbirdcontent.s3-ap-south-1.amazonaws.com/content/do_113456071925293056132/artifact/do_113456071925293056132_1642678799567_aastar-source.png`  ,
+    })
+    .then((response) => {
+    logInfo("Success"+ typeof(response))
+      return res.send(response)
+    })
+    .catch((error) => {
+      logInfo('Error >>>>>>>>>>>???????>>>>>>>>>>>.', error)
+      return res.send(error)
+    })
+}
+)
+
 
 proxiesV8.post('/upload/action/*', (req, res) => {
   // console.log("Entered >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"+JSON.stringify(req.files))
