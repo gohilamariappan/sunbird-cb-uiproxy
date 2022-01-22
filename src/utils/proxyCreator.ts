@@ -81,7 +81,7 @@ export function getContentProxyCreatorRoute(route: Router): Router {
   route.all('/*', (req, res) => {
     const baseUrl = removePrefix('https', req.query.artificatUrl)
     proxyCreator().web(req, res, {
-      target: 'http'+ baseUrl,
+      target: 'http' + baseUrl,
     })
   })
   return route

@@ -69,14 +69,14 @@ proxiesV8.get('/getContent',
 
 proxiesV8.get('/getContents', (req, res) => {
      logInfo(req.url)
-    axios({
+     axios({
       ...axiosRequestConfig,
                 method: 'get',
-                url: `http://sunbirdcontent.s3-ap-south-1.amazonaws.com/content/do_113456071925293056132/artifact/do_113456071925293056132_1642678799567_aastar-source.png`  ,
+                url: req.params.artificatUrl,
     })
     .then((response) => {
-    logInfo("Success"+ typeof(response))
-      return res.send(response)
+    logInfo('Success' + typeof(response))
+    return res.send(response)
     })
     .catch((error) => {
       logInfo('Error >>>>>>>>>>>???????>>>>>>>>>>>.', error)
@@ -84,7 +84,6 @@ proxiesV8.get('/getContents', (req, res) => {
     })
 }
 )
-
 
 proxiesV8.post('/upload/action/*', (req, res) => {
   // console.log("Entered >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"+JSON.stringify(req.files))
