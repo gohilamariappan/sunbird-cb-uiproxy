@@ -4,7 +4,7 @@ import { Request, Response } from 'express'
 import jwt_decode from 'jwt-decode'
 import _ from 'lodash'
 import qs from 'querystring'
-import { extractUserToken } from 'src/utils/requestExtract'
+import { extractUserToken } from '../utils/requestExtract'
 import { axiosRequestConfig } from '../configs/request.config'
 import { CONSTANTS } from '../utils/env'
 import { logError, logInfo } from '../utils/logger'
@@ -15,11 +15,11 @@ const API_END_POINTS = {
           createUserWithMobileNo: `${CONSTANTS.KONG_API_BASE}/user/v3/create`,
           fetchUserByEmail: `${CONSTANTS.KONG_API_BASE}/user/v1/exists/email/`,
           fetchUserByMobileNo: `${CONSTANTS.KONG_API_BASE}/user/v1/exists/phone/`,
+          logoutKeycloak : `${CONSTANTS.HTTPS_HOST}/auth/realms/sunbird/protocol/openid-connect/logout`,
           generateOtp: `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/otp/v1/generate`,
           generateToken: `${CONSTANTS.HTTPS_HOST}/auth/realms/sunbird/protocol/openid-connect/token`,
           searchSb: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/private/user/v1/search`,
           verifyOtp: `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/otp/v1/verify`,
-          logoutKeycloak : `${CONSTANTS.HTTPS_HOST}/auth/realms/sunbird/protocol/openid-connect/logout`,
 }
 
 const GENERAL_ERROR_MSG = 'Failed due to unknown reason'
@@ -487,6 +487,6 @@ emailOrMobileLogin.get('/user', async (req: any, res) => {
       })
       .catch((error) => {
         logInfo('Error IN LOGOUT USER : >>>>>>>>>>>>>>>>>>>>>.', error)
-        return res.send('Attention ! Error in logging out user..'+error)
+        return res.send('Attention ! Error in logging out user..' + error)
       })
 })
