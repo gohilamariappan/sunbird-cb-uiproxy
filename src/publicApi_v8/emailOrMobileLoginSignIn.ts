@@ -19,7 +19,7 @@ const API_END_POINTS = {
           generateToken: `${CONSTANTS.HTTPS_HOST}/auth/realms/sunbird/protocol/openid-connect/token`,
           searchSb: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/private/user/v1/search`,
           verifyOtp: `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/otp/v1/verify`,
-          logoutKeycloak : `${CONSTANTS.HTTPS_HOST}/auth/realms/sunbird/protocol/openid-connect/logout`
+          logoutKeycloak : `${CONSTANTS.HTTPS_HOST}/auth/realms/sunbird/protocol/openid-connect/logout`,
 }
 
 const GENERAL_ERROR_MSG = 'Failed due to unknown reason'
@@ -459,13 +459,11 @@ emailOrMobileLogin.post('/auth', async (req: any, res) => {
   }
 })
 
-
 // tslint:disable-next-line: no-any
-emailOrMobileLogin.get('/user', async (req: any, res) => { 
-       req.session.destroy();
-       //const redirect =  CONSTANTS.HTTPS_HOST
+emailOrMobileLogin.get('/user', async (req: any, res) => {
+       req.session.destroy()
        const keycloakUrl = API_END_POINTS.logoutKeycloak
-      
+
        axios({
         ...axiosRequestConfig,
                   headers: {
@@ -473,20 +471,22 @@ emailOrMobileLogin.get('/user', async (req: any, res) => {
                     Authorization: CONSTANTS.SB_API_KEY,
                     accessToken: extractUserToken(req),
                     org: 'aastar',
-                    rootorg: 'aastar', 
+                    rootorg: 'aastar',
                   },
                   method: 'get',
                   url: keycloakUrl,
       })
       .then((response) => {
         logInfo('Success IN LOGOUT USER >>>>>>>>>>>' + response)
-        return res.clearCookie('connect.sid', {path: '/'}).status(200).send({
-          status : 'success',
-         message: GENERAL_LOGOUT_MSG,
-       });
+        return res.clearCookie('connect.sid', {path: '/'})
+                .status(200)
+                .send({
+                  message: GENERAL_LOGOUT_MSG,
+                  status : 'success',
+              })
       })
       .catch((error) => {
         logInfo('Error IN LOGOUT USER : >>>>>>>>>>>>>>>>>>>>>.', error)
-        return res.send(error)
+        return res.send('Attention ! Error in logging out user..'+error)
       })
 })
