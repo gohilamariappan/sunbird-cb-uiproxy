@@ -4,6 +4,7 @@ import { Request, Response } from 'express'
 import jwt_decode from 'jwt-decode'
 import _ from 'lodash'
 import qs from 'querystring'
+import { extractUserToken } from 'src/utils/requestExtract'
 import { axiosRequestConfig } from '../configs/request.config'
 import { CONSTANTS } from '../utils/env'
 import { logError, logInfo } from '../utils/logger'
@@ -18,6 +19,7 @@ const API_END_POINTS = {
           generateToken: `${CONSTANTS.HTTPS_HOST}/auth/realms/sunbird/protocol/openid-connect/token`,
           searchSb: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/private/user/v1/search`,
           verifyOtp: `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/otp/v1/verify`,
+          logoutKeycloak : `${CONSTANTS.HTTPS_HOST}/auth/realms/sunbird/protocol/openid-connect/logout`
 }
 
 const GENERAL_ERROR_MSG = 'Failed due to unknown reason'
@@ -25,6 +27,7 @@ const EMAIL_OR_MOBILE_ERROR_MSG = 'Mobile no. or EmailId can not be empty'
 const NOT_USER_FOUND = 'User not found.'
 const AUTH_FAIL = 'Authentication failed ! Please check credentials and try again.'
 const AUTHENTICATED = 'Success ! User is sucessfully authenticated.'
+const GENERAL_LOGOUT_MSG = 'You are successfully logged Out!!'
 
 export const emailOrMobileLogin = Router()
 emailOrMobileLogin.post('/signup', async (req, res) => {
@@ -454,4 +457,36 @@ emailOrMobileLogin.post('/auth', async (req: any, res) => {
       error: GENERAL_ERROR_MSG,
     })
   }
+})
+
+
+// tslint:disable-next-line: no-any
+emailOrMobileLogin.get('/user', async (req: any, res) => { 
+       req.session.destroy();
+       //const redirect =  CONSTANTS.HTTPS_HOST
+       const keycloakUrl = API_END_POINTS.logoutKeycloak
+      
+       axios({
+        ...axiosRequestConfig,
+                  headers: {
+                    // tslint:disable-next-line:max-line-length
+                    Authorization: CONSTANTS.SB_API_KEY,
+                    accessToken: extractUserToken(req),
+                    org: 'aastar',
+                    rootorg: 'aastar', 
+                  },
+                  method: 'get',
+                  url: keycloakUrl,
+      })
+      .then((response) => {
+        logInfo('Success IN LOGOUT USER >>>>>>>>>>>' + response)
+        return res.clearCookie('connect.sid', {path: '/'}).status(200).send({
+          status : 'success',
+         message: GENERAL_LOGOUT_MSG,
+       });
+      })
+      .catch((error) => {
+        logInfo('Error IN LOGOUT USER : >>>>>>>>>>>>>>>>>>>>>.', error)
+        return res.send(error)
+      })
 })
