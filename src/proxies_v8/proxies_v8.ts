@@ -3,10 +3,10 @@ import elasticsearch from 'elasticsearch'
 import express from 'express'
 import { UploadedFile } from 'express-fileupload'
 import FormData from 'form-data'
+import request from 'request'
 import { axiosRequestConfig } from '../configs/request.config'
 import { CONSTANTS } from '../utils/env'
 import { logInfo } from '../utils/logger'
-import  request  from 'request'
 import {
   getContentProxyCreatorRoute,
   // proxyCreatorDiscussion,
@@ -72,19 +72,18 @@ proxiesV8.get('/getContent',
 )
 
 proxiesV8.get('/getContents', (req, res) => {
-  return request(req.query.artifactUrl).pipe(res); 
+  return request(req.query.artifactUrl).pipe(res)
 }
 )
 
-
 proxiesV8.get('/logout/user', (_req, res) => {
-  
+
   const keycloakUrl = API_END_POINTS.logoutKeycloak
-   axios({
+  axios({
     ...axiosRequestConfig,
               headers: {
                 // tslint:disable-next-line:max-line-length
-                Authorization: 'bearer '+extractUserToken(_req),
+                Authorization: 'bearer ' + extractUserToken(_req),
                 org: 'aastar',
                 rootorg: 'aastar',
               },
@@ -93,7 +92,7 @@ proxiesV8.get('/logout/user', (_req, res) => {
   })
   .then((response) => {
    logInfo('Success IN LOGOUT USER >>>>>>>>>>>' + response)
-    return res.clearCookie('connect.sid', {path: '/'})
+   return res.clearCookie('connect.sid', {path: '/'})
             .status(200)
             .send({
               message: GENERAL_LOGOUT_MSG,
