@@ -233,6 +233,11 @@ export const API_LIST = {
       // tslint:disable-next-line: object-literal-sort-keys
       ROLE_CHECK: [ROLE.PUBLIC],
     },
+    '/proxies/v8/getContents/content/:do_id/artifact/:do_id':{
+      checksNeeded: [CHECK.ROLE],
+      // tslint:disable-next-line: object-literal-sort-keys
+      ROLE_CHECK: [ROLE.PUBLIC],
+    },
     '/proxies/v8/upload/action/content/v3/upload/:do_id': {
       checksNeeded: [CHECK.ROLE],
       // tslint:disable-next-line: object-literal-sort-keys
@@ -1109,6 +1114,7 @@ export const API_LIST = {
     '/proxies/v8/getContent',
     '/proxies/v8/getContents',
     '/proxies/v8/logout/user',
+    '/proxies/v8/getContents/content/:do_id/artifact/:do_id',
     '/proxies/v8/v1/content/retire',
     '/proxies/v8/action/content/v3/updateReviewStatus/:do_id',
     '/proxies/v8/action/content/v3/review/:do_id',
