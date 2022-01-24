@@ -73,7 +73,7 @@ proxiesV8.get('/getContent',
 
 proxiesV8.get('/getContents/*', (req, res) => {
   const path = removePrefix('/proxies/v8/getContents/', req.originalUrl)
-  return request(path).pipe(res); 
+  return request(path).pipe(res)
 }
 )
 
