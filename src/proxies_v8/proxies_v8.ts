@@ -71,13 +71,11 @@ proxiesV8.get('/getContent',
       getContentProxyCreatorRoute(express.Router())
 )
 
-proxiesV8.get('/getContents', (req, res) => {
-  const url = removePrefix("https", req.query.artifactUrl)
-  const targetUrl = 'http'+url
-  logInfo("the url coming after removing prefix >> "+url)
-  logInfo("the url coming after adding prefix >> "+targetUrl)
-  return request(targetUrl).pipe(res)
-})
+proxiesV8.get('/getContents/*', (req, res) => {
+  const path = removePrefix('/proxies/v8/getContents/', req.originalUrl)
+  return request(path).pipe(res); 
+}
+)
 
 proxiesV8.get('/logout/user', (_req, res) => {
 
