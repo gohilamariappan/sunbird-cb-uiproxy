@@ -7,7 +7,7 @@ import qs from 'querystring'
 import { axiosRequestConfig } from '../configs/request.config'
 import { CONSTANTS } from '../utils/env'
 import { logError, logInfo } from '../utils/logger'
-import { extractUserToken } from '../utils/requestExtract'
+//import { extractUserToken } from '../utils/requestExtract'
 import { authorizationV2Api } from './authorizationV2Api'
 import { getOTP, validateOTP } from './otp'
 import { getCurrentUserRoles } from './rolePermission'
@@ -17,7 +17,6 @@ const API_END_POINTS = {
           fetchUserByMobileNo: `${CONSTANTS.KONG_API_BASE}/user/v1/exists/phone/`,
           generateOtp: `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/otp/v1/generate`,
           generateToken: `${CONSTANTS.HTTPS_HOST}/auth/realms/sunbird/protocol/openid-connect/token`,
-          logoutKeycloak : `${CONSTANTS.HTTPS_HOST}/auth/realms/sunbird/protocol/openid-connect/logout`,
           searchSb: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/private/user/v1/search`,
           verifyOtp: `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/otp/v1/verify`,
 }
@@ -27,7 +26,6 @@ const EMAIL_OR_MOBILE_ERROR_MSG = 'Mobile no. or EmailId can not be empty'
 const NOT_USER_FOUND = 'User not found.'
 const AUTH_FAIL = 'Authentication failed ! Please check credentials and try again.'
 const AUTHENTICATED = 'Success ! User is sucessfully authenticated.'
-const GENERAL_LOGOUT_MSG = 'You are successfully logged Out!!'
 
 export const emailOrMobileLogin = Router()
 emailOrMobileLogin.post('/signup', async (req, res) => {
@@ -457,36 +455,4 @@ emailOrMobileLogin.post('/auth', async (req: any, res) => {
       error: GENERAL_ERROR_MSG,
     })
   }
-})
-
-// tslint:disable-next-line: no-any
-emailOrMobileLogin.get('/user', async (req: any, res) => {
-       req.session.destroy()
-       const keycloakUrl = API_END_POINTS.logoutKeycloak
-
-       axios({
-        ...axiosRequestConfig,
-                  headers: {
-                    // tslint:disable-next-line:max-line-length
-                    Authorization: CONSTANTS.SB_API_KEY,
-                    accessToken: extractUserToken(req),
-                    org: 'aastar',
-                    rootorg: 'aastar',
-                  },
-                  method: 'get',
-                  url: keycloakUrl,
-      })
-      .then((response) => {
-        logInfo('Success IN LOGOUT USER >>>>>>>>>>>' + response)
-        return res.clearCookie('connect.sid', {path: '/'})
-                .status(200)
-                .send({
-                  message: GENERAL_LOGOUT_MSG,
-                  status : 'success',
-              })
-      })
-      .catch((error) => {
-        logInfo('Error IN LOGOUT USER : >>>>>>>>>>>>>>>>>>>>>.', error)
-        return res.send('Attention ! Error in logging out user..' + error)
-      })
 })

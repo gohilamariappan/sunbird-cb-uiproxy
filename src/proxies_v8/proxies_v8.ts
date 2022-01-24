@@ -6,6 +6,7 @@ import FormData from 'form-data'
 import { axiosRequestConfig } from '../configs/request.config'
 import { CONSTANTS } from '../utils/env'
 import { logInfo } from '../utils/logger'
+import  request  from 'request'
 import {
   getContentProxyCreatorRoute,
   // proxyCreatorDiscussion,
@@ -27,11 +28,14 @@ import { extractUserIdFromRequest, extractUserToken } from '../utils/requestExtr
 
 const API_END_POINTS = {
   contentNotificationEmail: `${CONSTANTS.NOTIFICATION_SERVIC_API_BASE}/v1/notification/send/sync`,
+  logoutKeycloak : `${CONSTANTS.HTTPS_HOST}/auth/realms/sunbird/protocol/openid-connect/logout`,
 }
 
 const client = new elasticsearch.Client({
   hosts: ['http://10.1.2.138:9200'],
 })
+
+const GENERAL_LOGOUT_MSG = 'You are successfully logged Out!!'
 
 export const proxiesV8 = express.Router()
 
@@ -68,21 +72,39 @@ proxiesV8.get('/getContent',
 )
 
 proxiesV8.get('/getContents', (req, res) => {
-     axios({
-      ...axiosRequestConfig,
-                method: 'get',
-                url: req.query.artificatUrl,
-    })
-    .then((response) => {
-    logInfo('Success' + typeof(response))
-    return res.send(response)
-    })
-    .catch((error) => {
-      logInfo('Error : >>>>>>>>>>>>>>>>>>>>>.', error)
-      return res.send(error)
-    })
+  return request(req.query.artifactUrl).pipe(res); 
 }
 )
+
+
+proxiesV8.get('/logout/user', (_req, res) => {
+  
+  const keycloakUrl = API_END_POINTS.logoutKeycloak
+   axios({
+    ...axiosRequestConfig,
+              headers: {
+                // tslint:disable-next-line:max-line-length
+                Authorization: 'bearer '+extractUserToken(_req),
+                org: 'aastar',
+                rootorg: 'aastar',
+              },
+              method: 'get',
+              url: keycloakUrl,
+  })
+  .then((response) => {
+   logInfo('Success IN LOGOUT USER >>>>>>>>>>>' + response)
+    return res.clearCookie('connect.sid', {path: '/'})
+            .status(200)
+            .send({
+              message: GENERAL_LOGOUT_MSG,
+              status : 'success',
+          })
+  })
+  .catch((error) => {
+    logInfo('Error IN LOGOUT USER : >>>>>>>>>>>>>>>>>>>>>.', error)
+    return res.send('Attention ! Error in logging out user..' + error)
+  })
+})
 
 proxiesV8.post('/upload/action/*', (req, res) => {
   // console.log("Entered >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"+JSON.stringify(req.files))
