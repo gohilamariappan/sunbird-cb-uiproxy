@@ -233,7 +233,7 @@ export const API_LIST = {
       // tslint:disable-next-line: object-literal-sort-keys
       ROLE_CHECK: [ROLE.PUBLIC],
     },
-    '/proxies/v8/getContents/content/:do_id/artifact/:do_id':{
+    '/proxies/v8/getContents/content/:do_id/artifact/:do_id': {
       checksNeeded: [CHECK.ROLE],
       // tslint:disable-next-line: object-literal-sort-keys
       ROLE_CHECK: [ROLE.PUBLIC],

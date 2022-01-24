@@ -73,8 +73,8 @@ proxiesV8.get('/getContent',
 
 proxiesV8.get('/getContents/*', (req, res) => {
   const path = removePrefix('/proxies/v8/getContents/', req.originalUrl)
-  const sunbirdUrl = 'https://sunbirdcontent.s3-ap-south-1.amazonaws.com/'+path
-  console.log("SUbnbir ?>>>>>>>>>>>>>>>>>>>>>>>>>>>..",sunbirdUrl)
+  const sunbirdUrl = 'https://sunbirdcontent.s3-ap-south-1.amazonaws.com/' + path
+  logInfo('New getcontents sunbird URL >>>>>>>>>>> ', sunbirdUrl)
   return request(sunbirdUrl).pipe(res)
 }
 )
