@@ -72,7 +72,11 @@ proxiesV8.get('/getContent',
 )
 
 proxiesV8.get('/getContents', (req, res) => {
-  return request(req.query.artifactUrl).pipe(res)
+  const url = removePrefix("https", req.query.artifactUrl)
+  const targetUrl = 'http'+url
+  logInfo("the url coming after removing prefix >> "+url)
+  logInfo("the url coming after adding prefix >> "+targetUrl)
+  return request(targetUrl).pipe(res)
 })
 
 proxiesV8.get('/logout/user', (_req, res) => {
