@@ -73,12 +73,12 @@ proxiesV8.get('/getContent',
 
 proxiesV8.get('/getContents', (req, res) => {
   return request(req.query.artifactUrl).pipe(res)
-}
-)
+})
 
 proxiesV8.get('/logout/user', (_req, res) => {
 
   const keycloakUrl = API_END_POINTS.logoutKeycloak
+  const redirectUrl = `https://${ÇONSTANT.HTTTP_HOST}`+'/public/home'
   axios({
     ...axiosRequestConfig,
               headers: {
@@ -97,7 +97,9 @@ proxiesV8.get('/logout/user', (_req, res) => {
             .send({
               message: GENERAL_LOGOUT_MSG,
               status : 'success',
-          })
+            })
+            .redirect(redirectUrl)
+
   })
   .catch((error) => {
     logInfo('Error IN LOGOUT USER : >>>>>>>>>>>>>>>>>>>>>.', error)
