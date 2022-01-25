@@ -35,7 +35,7 @@ const client = new elasticsearch.Client({
   hosts: ['http://10.1.2.138:9200'],
 })
 
-const GENERAL_LOGOUT_MSG = 'You are successfully logged Out!!'
+//const GENERAL_LOGOUT_MSG = 'You are successfully logged Out!!'
 
 export const proxiesV8 = express.Router()
 
@@ -96,13 +96,8 @@ proxiesV8.get('/logout/user', (_req, res) => {
   })
   .then((response) => {
    logInfo('Success IN LOGOUT USER >>>>>>>>>>>' + response)
-   return res.clearCookie('connect.sid', {path: '/'})
-            .status(200)
-            .send({
-              message: GENERAL_LOGOUT_MSG,
-              status : 'success',
-            })
-            .redirect(redirectUrl)
+    res.clearCookie('connect.sid')
+    res.redirect(200, redirectUrl)
 
   })
   .catch((error) => {
