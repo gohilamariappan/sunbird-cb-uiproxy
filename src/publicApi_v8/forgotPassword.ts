@@ -141,7 +141,7 @@ forgotPassword.post('/verifyOtp', async (req, res) => {
           data: {
             request: { userId: userUUId, key, type: userType, otp: validOtp },
           },
-          headers: { Authorization: req.header('Authorization') },
+          headers: { Authorization: CONSTANTS.SB_API_KEY },
           method: 'POST',
           url: API_END_POINTS.recoverPassword,
         })
