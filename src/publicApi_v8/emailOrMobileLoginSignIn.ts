@@ -108,13 +108,11 @@ emailOrMobileLogin.post('/generateOtp', async (req, res) => {
             _.find(userSearch.data.result.response.content, 'userId'),
             'userId'
           )
-          try {
             const response = await getOTP(
               userUUId,
               email ? email : mobileNumber,
               email ? 'email' : 'phone'
             )
-            logInfo('response form getOTP : ' + response)
              // tslint:disable-next-line: no-console
             console.log('2 response form getOTP : ' + response)
             if (response.data.result.response === 'SUCCESS') {
@@ -122,14 +120,6 @@ emailOrMobileLogin.post('/generateOtp', async (req, res) => {
                 .status(200)
                 .send({ message: 'Success ! Please verify the OTP .' })
             }
-            // tslint:disable-next-line: no-any
-          } catch (error) {
-            res.status(202).json({
-              msg: 'Error : There was an error sending OTP. Please check administrator.',
-              status: 'error',
-              status_code: 202,
-            })
-          }
         }
       } else {
         res.status(400).json({
