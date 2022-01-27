@@ -17,6 +17,7 @@ const API_END_POINTS = {
           generateOtp: `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/otp/v1/generate`,
           generateToken: `${CONSTANTS.HTTPS_HOST}/auth/realms/sunbird/protocol/openid-connect/token`,
           searchSb: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/private/user/v1/search`,
+          userRoles : `${CONSTANTS.LEARNER_SERVICE_API_BASE}/api/user/private/v1/assign/role`,
           verifyOtp: `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/otp/v1/verify`,
 }
 
@@ -187,7 +188,12 @@ emailOrMobileLogin.post(
             _.find(userSearch.data.result.response.content, 'userId'),
             'userId'
           )
+          const organisationId = _.get(
+            _.find(userSearch.data.result.response.content, 'organisationId'),
+            'organisationId'
+          )
           logInfo('User Id : ', userUUId)
+          logInfo('organisationId : ', organisationId)
           logInfo(
             'validate otp endpoints for kong',
             API_END_POINTS.generateOtp
@@ -205,6 +211,20 @@ emailOrMobileLogin.post(
               password,
               req
             )
+            await axios({
+              ...axiosRequestConfig,
+              data: {
+                request: {
+                  userId: userUUId,
+                  organisationId: organisationId,
+                  roles: [
+                      "PUBLIC"
+                  ]
+                },
+              },
+              method: 'POST',
+              url: API_END_POINTS.userRoles,
+            })
             res.status(200).send({ message: 'Success ! OTP is verified .' })
           }
           logInfo('Sending Responses in phone part : ' + verifyOtpResponse)

@@ -12,6 +12,7 @@ const API_END_POINTS = {
   createUserWithMailId: `${CONSTANTS.KONG_API_BASE}/user/v3/create`,
   fetchUserByEmailId: `${CONSTANTS.KONG_API_BASE}/user/v1/exists/email/`,
   generateToken: `${CONSTANTS.HTTPS_HOST}/auth/realms/sunbird/protocol/openid-connect/token`,
+  userRoles : `${CONSTANTS.LEARNER_SERVICE_API_BASE}/api/user/private/v1/assign/role`,
 }
 const AUTH_FAIL =
   'Authentication failed ! Please check credentials and try again.'
@@ -49,6 +50,7 @@ googleAuth.post('/callback', async (req: any, res: any) => {
         handleCreateUserError
       )
       if (newUserDetails) {
+
         logInfo('user created successfully! ')
       }
     }
@@ -87,6 +89,20 @@ googleAuth.post('/callback', async (req: any, res: any) => {
           access_token: { content: decodedToken, token: accessToken },
         }
         await getCurrentUserRoles(req, accessToken)
+        await axios({
+          ...axiosRequestConfig,
+          data: {
+            request: {
+              userId: "e26fed40-ff6f-49c6-b3b2-dbd91f2c243b",
+              organisationId: "013385131277139968128",
+              roles: [
+                  "PUBLIC"
+              ]
+            },
+          },
+          method: 'POST',
+          url: API_END_POINTS.userRoles,
+        })
         res.status(200).json({
           msg: AUTHENTICATED,
           status: 'success',
