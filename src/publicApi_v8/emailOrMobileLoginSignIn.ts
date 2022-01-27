@@ -115,6 +115,8 @@ emailOrMobileLogin.post('/generateOtp', async (req, res) => {
               email ? 'email' : 'phone'
             )
             logInfo('response form getOTP : ' + response)
+             // tslint:disable-next-line: no-console
+            console.log('2 response form getOTP : ' + response)
             if (response.data.result.response === 'SUCCESS') {
               res
                 .status(200)
