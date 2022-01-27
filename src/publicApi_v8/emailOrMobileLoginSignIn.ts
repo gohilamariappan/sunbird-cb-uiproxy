@@ -108,25 +108,21 @@ emailOrMobileLogin.post('/generateOtp', async (req, res) => {
             _.find(userSearch.data.result.response.content, 'userId'),
             'userId'
           )
-            const response = await getOTP(
+          const response = await getOTP(
               userUUId,
               email ? email : mobileNumber,
               email ? 'email' : 'phone'
             )
              // tslint:disable-next-line: no-console
-            console.log('2 response form getOTP : ' + response)
-            if (response.data.result.response === 'SUCCESS') {
+          console.log('2 response form getOTP : ' + response)
+          if (response.data.result.response === 'SUCCESS') {
               res
                 .status(200)
                 .send({ message: 'Success ! Please verify the OTP .' })
             }
         }
       } else {
-        res.status(400).json({
-          msg: NOT_USER_FOUND,
-          status: 'error',
-          status_code: 400,
-        })
+        res.status(400).send({ message: 'Sorry ! Please contact administrator.' })
       }
     } else if (!req.body.mobileNumber || !req.body.email) {
       res.status(400).json({

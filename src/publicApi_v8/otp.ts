@@ -23,7 +23,6 @@ export const getOTP = async (
     method: 'POST',
     url: API_END_POINTS.generateOtp,
   })
-  logInfo('genreate otp response' + JSON.stringify(otpResponse))
   return otpResponse
 }
 
