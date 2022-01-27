@@ -14,7 +14,7 @@ export const getOTP = async (
                                 userType: string
                               ) => {
   logInfo('generate otp endpoints for kong', API_END_POINTS.generateOtp)
-  return await axios({
+  return axios({
     ...axiosRequestConfig,
     data: {
       request: { userId: userUUId, key: userKey, type: userType },

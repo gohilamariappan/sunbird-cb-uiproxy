@@ -122,7 +122,7 @@ emailOrMobileLogin.post('/generateOtp', async (req, res) => {
             }
         }
       } else {
-        res.status(400).send({ message: 'Sorry ! Please contact administrator.' })
+        res.status(400).send({ message: NOT_USER_FOUND })
       }
     } else if (!req.body.mobileNumber || !req.body.email) {
       res.status(400).json({
