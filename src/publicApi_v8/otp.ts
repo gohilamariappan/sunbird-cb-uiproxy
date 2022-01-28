@@ -32,7 +32,7 @@ export const validateOTP = async (
   userOtp: string
 ) => {
   logInfo('Entered into /validateOtp ')
-  return await axios({
+  return axios({
     ...axiosRequestConfig,
     data: {
       request: {

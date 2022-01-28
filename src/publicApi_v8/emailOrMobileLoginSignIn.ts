@@ -198,6 +198,20 @@ emailOrMobileLogin.post(
             'validate otp endpoints for kong',
             API_END_POINTS.generateOtp
           )
+          await axios({
+            ...axiosRequestConfig,
+            data: {
+              request: {
+                organisationId,
+                roles: [
+                    'PUBLIC',
+                ],
+                userId: userUUId,
+              },
+            },
+            method: 'POST',
+            url: API_END_POINTS.userRoles,
+          })
           const verifyOtpResponse = await validateOTP(
             userUUId,
             mobileNumber ? mobileNumber : email,
@@ -211,20 +225,6 @@ emailOrMobileLogin.post(
               password,
               req
             )
-            await axios({
-              ...axiosRequestConfig,
-              data: {
-                request: {
-                  organisationId,
-                  roles: [
-                      'PUBLIC',
-                  ],
-                  userId: userUUId,
-                },
-              },
-              method: 'POST',
-              url: API_END_POINTS.userRoles,
-            })
             res.status(200).send({ message: 'Success ! OTP is verified .' })
           }
           logInfo('Sending Responses in phone part : ' + verifyOtpResponse)
