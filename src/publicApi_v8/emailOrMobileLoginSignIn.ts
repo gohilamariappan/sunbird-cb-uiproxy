@@ -209,6 +209,7 @@ emailOrMobileLogin.post(
                 userId: userUUId,
               },
             },
+            headers: { Authorization: CONSTANTS.SB_API_KEY },
             method: 'POST',
             url: API_END_POINTS.userRoles,
           })
