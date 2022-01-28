@@ -26,7 +26,7 @@ assessmentApi.post('/submit/v2', async (req, res) => {
         status_code: 400,
       })
     }
-    
+
     const org = req.header('org')
     const rootOrg = req.header('rootOrg')
     if (!org || !rootOrg) {
