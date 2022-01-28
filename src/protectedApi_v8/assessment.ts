@@ -13,7 +13,7 @@ export const assessmentApi = Router()
 const GENERAL_ERR_MSG = 'Failed due to unknown reason'
 const API_END_POINTS = {
   assessmentSubmitV2      : `${CONSTANTS.SB_EXT_API_BASE_2}/v2/user`,
-  updateAssessmentContent : `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/course/v1/content/state/update`
+  updateAssessmentContent : `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/course/v1/content/state/update`,
 }
 assessmentApi.post('/submit/v2', async (req, res) => {
   logInfo('>>>>>>>>>>>>inside submit v2')
@@ -67,7 +67,7 @@ assessmentApi.post('/submit/v2', async (req, res) => {
       logInfo('formatedRequest', formatedRequest)
       const userId = extractUserIdFromRequest(req)
       const url = `${API_END_POINTS.assessmentSubmitV2}/assessment/submit`
-      //Create new key into session and add metadata
+      // Create new key into session and add metadata
       const response = await axios({
         ...axiosRequestConfig,
         data: formatedRequest,
@@ -80,23 +80,22 @@ assessmentApi.post('/submit/v2', async (req, res) => {
         method: 'POST',
         url,
       })
-      if(response.data.result >= 60)
-      {
+      if (response.data.result >= 60) {
         const revisedData =  {
                                   request : {
+                                    contents: [
+                                        {
+                                            contentId: req.body.contentId,
+                                            batchId: req.body.batchId,
+                                            status: 2,
+                                            courseId: req.body.courseId,
+                                            completionPercentage: 100,
+                                        },
+                                    ],
                                       userId: req.body.userId,
-                                      contents: [
-                                          {
-                                              contentId: req.body.contentId,
-                                              batchId: req.body.batchId,
-                                              status: 2,
-                                              courseId: req.body.courseId,
-                                              completionPercentage: 100
-                                          }
-                                      ]
-                                  }
+                                  },
                               }
-        logInfo("Content has completed the course."+revisedData)
+        logInfo('Content has completed the course.' + revisedData)
         await axios({
                       ...axiosRequestConfig,
                       data: revisedData,
@@ -108,7 +107,7 @@ assessmentApi.post('/submit/v2', async (req, res) => {
                       url : API_END_POINTS.updateAssessmentContent,
         })
       }
-      
+
       res.status(response.status).send(response.data)
     }
   } catch (err) {
