@@ -32,7 +32,7 @@ export const validateOTP = async (
   userOtp: string
 ) => {
   logInfo('Entered into /validateOtp ')
-  const verifyOtpResponse = await axios({
+  return await axios({
     ...axiosRequestConfig,
     data: {
       request: {
@@ -46,6 +46,4 @@ export const validateOTP = async (
     method: 'POST',
     url: API_END_POINTS.verifyOtp,
   })
-  logInfo('verify OTP response : ' + verifyOtpResponse)
-  return verifyOtpResponse
 }
