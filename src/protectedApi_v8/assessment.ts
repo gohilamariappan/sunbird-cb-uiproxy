@@ -78,7 +78,7 @@ assessmentApi.post('/submit/v2', async (req, res) => {
                         Authorization: CONSTANTS.SB_API_KEY,
                         'x-authenticated-user-token': accessToken,
                       },
-                      method: 'POST',
+                      method: 'PATCH',
                       url : API_END_POINTS.updateAssessmentContent,
         })
       }
