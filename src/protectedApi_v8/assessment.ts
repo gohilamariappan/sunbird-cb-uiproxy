@@ -85,11 +85,11 @@ assessmentApi.post('/submit/v2', async (req, res) => {
                                   request : {
                                     contents: [
                                         {
-                                            contentId: req.body.contentId,
                                             batchId: req.body.batchId,
-                                            status: 2,
-                                            courseId: req.body.courseId,
                                             completionPercentage: 100,
+                                            contentId: req.body.contentId,
+                                            courseId: req.body.courseId,
+                                            status: 2,
                                         },
                                     ],
                                       userId: req.body.userId,
