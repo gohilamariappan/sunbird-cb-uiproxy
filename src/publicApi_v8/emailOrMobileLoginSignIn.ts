@@ -17,7 +17,7 @@ const API_END_POINTS = {
           generateOtp: `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/otp/v1/generate`,
           generateToken: `${CONSTANTS.HTTPS_HOST}/auth/realms/sunbird/protocol/openid-connect/token`,
           searchSb: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/private/user/v1/search`,
-          userRoles : `${CONSTANTS.LEARNER_SERVICE_API_BASE}/api/user/private/v1/assign/role`,
+          userRoles : `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/user/private/v1/assign/role`,
           verifyOtp: `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/otp/v1/verify`,
 }
 
@@ -189,7 +189,7 @@ emailOrMobileLogin.post(
             'userId'
           )
           const organisationId = _.get(
-            _.find(userSearch.data.result.response.content, 'organisationId'),
+            _.find(userSearch.data.result.response.content[0].organisations, 'organisationId'),
             'organisationId'
           )
           logInfo('User Id : ', userUUId)
