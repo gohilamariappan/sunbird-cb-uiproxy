@@ -188,12 +188,12 @@ emailOrMobileLogin.post(
             _.find(userSearch.data.result.response.content, 'userId'),
             'userId'
           )
-          const organisationId = _.get(
+          const orgId = _.get(
             _.find(userSearch.data.result.response.content[0].organisations, 'organisationId'),
             'organisationId'
           )
           logInfo('User Id : ', userUUId)
-          logInfo('organisationId : ', organisationId)
+          logInfo('organisationId : ', orgId)
           logInfo(
             'validate otp endpoints for kong',
             API_END_POINTS.generateOtp
@@ -202,7 +202,7 @@ emailOrMobileLogin.post(
             ...axiosRequestConfig,
             data: {
               request: {
-                organisationId,
+                organisationId:orgId,
                 roles: [
                     'PUBLIC',
                 ],
