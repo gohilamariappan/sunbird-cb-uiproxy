@@ -26,34 +26,7 @@ assessmentApi.post('/submit/v2', async (req, res) => {
         status_code: 400,
       })
     }
-    if (!req.body.userId) {
-      res.status(400).json({
-        msg: 'User Id can not be empty',
-        status: 'error',
-        status_code: 400,
-      })
-    }
-    if (!req.body.batchId) {
-      res.status(400).json({
-        msg: 'Batch Id can not be empty',
-        status: 'error',
-        status_code: 400,
-      })
-    }
-    if (!req.body.contentId) {
-      res.status(400).json({
-        msg: 'Content Id can not be empty',
-        status: 'error',
-        status_code: 400,
-      })
-    }
-    if (!req.body.courseId) {
-      res.status(400).json({
-        msg: 'Course Id can not be empty',
-        status: 'error',
-        status_code: 400,
-      })
-    }
+    
     const org = req.header('org')
     const rootOrg = req.header('rootOrg')
     if (!org || !rootOrg) {
@@ -80,7 +53,7 @@ assessmentApi.post('/submit/v2', async (req, res) => {
         method: 'POST',
         url,
       })
-      if (response.data.result >= 60) {
+      if (response.data.result >= response.data.passpercentage) {
         const revisedData =  {
                                   request : {
                                     contents: [
