@@ -215,11 +215,11 @@ emailOrMobileLogin.post(
               ...axiosRequestConfig,
               data: {
                 request: {
-                  userId: userUUId,
-                  organisationId: organisationId,
+                  organisationId,
                   roles: [
-                      "PUBLIC"
-                  ]
+                      'PUBLIC',
+                  ],
+                  userId: userUUId,
                 },
               },
               method: 'POST',
