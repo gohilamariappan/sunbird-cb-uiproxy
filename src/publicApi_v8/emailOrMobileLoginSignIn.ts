@@ -189,7 +189,7 @@ emailOrMobileLogin.post(
             'userId'
           )
           const organisationId = _.get(
-            _.find(userSearch.data.result.response.content, 'organisationId'),
+            _.find(userSearch.data.result.response.content[0].organisations, 'organisationId'),
             'organisationId'
           )
           logInfo('User Id : ', userUUId)
