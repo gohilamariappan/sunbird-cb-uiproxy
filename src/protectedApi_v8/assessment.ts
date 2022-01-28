@@ -54,7 +54,7 @@ assessmentApi.post('/submit/v2', async (req, res) => {
         method: 'POST',
         url,
       })
-          const revisedData =  {
+      const revisedData =  {
             request : {
               contents: [
                   {
@@ -68,9 +68,9 @@ assessmentApi.post('/submit/v2', async (req, res) => {
                 userId: req.body.userId,
             },
         }
-          logInfo('Content has completed the course.' + revisedData)
-      if (response.data.result >= response.data.passpercentage) {
-       
+      logInfo('Content has completed the course.' + revisedData)
+      if (response.data.result >= response.data.passPercent) {
+
         await axios({
                       ...axiosRequestConfig,
                       data: revisedData,
@@ -86,7 +86,7 @@ assessmentApi.post('/submit/v2', async (req, res) => {
       res.status(response.status).send(response.data)
     }
   } catch (err) {
-    logError('submitassessment  failed' + err)
+    logError('submitassessment  failed >>>>>' + err)
     res.status(500).send({
         error: err,
         message : GENERAL_ERR_MSG,
