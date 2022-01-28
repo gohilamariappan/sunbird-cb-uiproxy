@@ -41,7 +41,8 @@ emailOrMobileLogin.post('/signup', async (req, res) => {
     // tslint:disable-next-line: no-any
     let profile: any = {}
     let isUserExist = {}
-    let newUserDetails = {}
+    // tslint:disable-next-line: no-any
+    let newUserDetails :any = {}
     logInfo('Req body', req.body)
     isUserExist = await fetchUserBymobileorEmail(email, 'email')
     if (!isUserExist) {
@@ -58,12 +59,23 @@ emailOrMobileLogin.post('/signup', async (req, res) => {
         handleCreateUserError
       )
       if (newUserDetails) {
-        res.status(200).json({
-          msg: 'user created successfully',
-          status: 'success',
-          status_code: 200,
-        })
-      }
+        const userUUId = newUserDetails.result.userId
+        const response = await getOTP(
+            userUUId,
+            email, 
+            'email'
+          )
+           // tslint:disable-next-line: no-console
+        console.log('response form getOTP : ' + response)
+        if (response.data.result.response === 'SUCCESS') {
+            res.status(200).json({
+              msg: 'user created successfully',
+              status: 'success',
+              status_code: 200,
+              userUUId: newUserDetails.result.userId,
+            })
+          }
+        
     } else {
       logInfo('Email already exists.')
       res.status(400).json({
@@ -73,7 +85,8 @@ emailOrMobileLogin.post('/signup', async (req, res) => {
       })
       return
     }
-  } catch (error) {
+  } 
+  }catch (error) {
     res.status(401).send({
       error: 'error while creating user !!',
     })
@@ -170,66 +183,27 @@ emailOrMobileLogin.post(
         const email = req.body.email
         const validOtp = req.body.otp
         const password = req.body.password
-        const userSearch = await axios({
-          ...axiosRequestConfig,
-          data: {
-            request: {
-              filters: mobileNumber
-                ? { phone: mobileNumber.toLowerCase() }
-                : { email: email.toLowerCase() },
-              query: '',
-            },
-          },
-          method: 'POST',
-          url: API_END_POINTS.searchSb,
-        })
-        if (userSearch.data.result.response.count > 0) {
-          const userUUId = _.get(
-            _.find(userSearch.data.result.response.content, 'userId'),
-            'userId'
+        const userUUId = req.body.userUUId
+        const verifyOtpResponse = await validateOTP(
+          userUUId,
+          mobileNumber ? mobileNumber : email,
+          email ? 'email' : 'phone',
+          validOtp
+        )
+        
+        if (verifyOtpResponse.data.result.response === 'SUCCESS') {
+          logInfo('opt verify : ')
+          await authorizationV2Api(
+            email ? email : mobileNumber,
+            password,
+            req
           )
-          const orgId = _.get(
-            _.find(userSearch.data.result.response.content[0].organisations, 'organisationId'),
-            'organisationId'
-          )
-          logInfo('User Id : ', userUUId)
-          logInfo('organisationId : ', orgId)
-          logInfo(
-            'validate otp endpoints for kong',
-            API_END_POINTS.generateOtp
-          )
-          await axios({
-            ...axiosRequestConfig,
-            data: {
-              request: {
-                organisationId: orgId,
-                roles: [
-                    'PUBLIC',
-                ],
-                userId: userUUId,
-              },
-            },
-            headers: { Authorization: CONSTANTS.SB_API_KEY },
-            method: 'POST',
-            url: API_END_POINTS.userRoles,
-          })
-          const verifyOtpResponse = await validateOTP(
-            userUUId,
-            mobileNumber ? mobileNumber : email,
-            email ? 'email' : 'phone',
-            validOtp
-          )
-          if (verifyOtpResponse.data.result.response === 'SUCCESS') {
-            logInfo('opt verify : ')
-            await authorizationV2Api(
-              email ? email : mobileNumber,
-              password,
-              req
-            )
-            res.status(200).send({ message: 'Success ! OTP is verified .' })
-          }
-          logInfo('Sending Responses in phone part : ' + verifyOtpResponse)
+          setTimeout(()=>{
+            updateRoles(userUUId)
+          },5000)
+          res.status(200).send({ message: 'Success ! OTP is verified .' })
         }
+        logInfo('Sending Responses in phone part : ' + verifyOtpResponse)
       } else {
         res.status(400).json({
           msg: EMAIL_OR_MOBILE_ERROR_MSG,
@@ -257,7 +231,8 @@ emailOrMobileLogin.post('/registerUserWithMobile', async (req, res) => {
     // tslint:disable-next-line: no-any
     let profile: any = {}
     let isUserExist = {}
-    let newUserDetails = {}
+     // tslint:disable-next-line: no-any
+    let newUserDetails:any = {}
     logInfo('Req body', req.body)
     isUserExist = await fetchUserBymobileorEmail(phone, 'phone')
     if (!isUserExist) {
@@ -272,14 +247,26 @@ emailOrMobileLogin.post('/registerUserWithMobile', async (req, res) => {
       newUserDetails = await createuserWithmobileOrEmail(profile).catch(
         handleCreateUserError
       )
+      if(newUserDetails){
+        const userUUId = newUserDetails.result.userId
+        const response = await getOTP(
+            userUUId,
+            phone, 
+            'phone'
+          )
+           // tslint:disable-next-line: no-console
+        console.log('response form getOTP : ' + response)
+        if (response.data.result.response === 'SUCCESS') {
+            res.status(200).json({
+              msg: 'user created successfully',
+              status: 'success',
+              status_code: 200,
+              userUUId: newUserDetails.result.userId,
+            })
+          }
       logInfo('Sending Responses in phone part : ' + newUserDetails)
-      if (newUserDetails) {
-        res.status(200).json({
-          msg: 'user created successfully',
-          status: 'success',
-          status_code: 200,
-        })
       }
+     
     } else {
       logInfo('Mobile no. already exists.')
       res.status(400).json({
@@ -343,6 +330,30 @@ const fetchUserBymobileorEmail = async (
   }
 }
 // tslint:disable-next-line: no-any
+const updateRoles = async (userUUId: string) => {
+  try {
+    const response = await axios({
+      ...axiosRequestConfig,
+      data: {
+        request: {
+          organisationId: '0134142791060684801',
+          roles: [
+              'PUBLIC',
+          ],
+          userId: userUUId,
+        },
+      },
+      headers: { Authorization: CONSTANTS.SB_API_KEY },
+      method: 'POST',
+      url: API_END_POINTS.userRoles,
+    })
+    return response
+  }catch(err) {
+    logError('update roles failed ')
+    return 'false'
+  }
+}
+
 const createuserWithmobileOrEmail = async (accountDetails: any) => {
   if (!accountDetails.fname || accountDetails.fname === '') {
     throw new Error('USER_NAME_NOT_PRESENT')
