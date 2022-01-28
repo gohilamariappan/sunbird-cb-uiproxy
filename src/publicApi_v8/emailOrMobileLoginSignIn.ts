@@ -17,7 +17,7 @@ const API_END_POINTS = {
           generateOtp: `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/otp/v1/generate`,
           generateToken: `${CONSTANTS.HTTPS_HOST}/auth/realms/sunbird/protocol/openid-connect/token`,
           searchSb: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/private/user/v1/search`,
-          userRoles : `${CONSTANTS.LEARNER_SERVICE_API_BASE}/api/user/private/v1/assign/role`,
+          userRoles : `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/user/private/v1/assign/role`,
           verifyOtp: `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/otp/v1/verify`,
 }
 
@@ -211,6 +211,20 @@ emailOrMobileLogin.post(
               password,
               req
             )
+            await axios({
+              ...axiosRequestConfig,
+              data: {
+                request: {
+                  organisationId,
+                  roles: [
+                      'PUBLIC',
+                  ],
+                  userId: userUUId,
+                },
+              },
+              method: 'POST',
+              url: API_END_POINTS.userRoles,
+            })
             res.status(200).send({ message: 'Success ! OTP is verified .' })
           }
           logInfo('Sending Responses in phone part : ' + verifyOtpResponse)
