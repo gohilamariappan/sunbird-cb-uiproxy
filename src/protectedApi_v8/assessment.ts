@@ -41,6 +41,7 @@ assessmentApi.post('/submit/v2', async (req, res) => {
       const userId = extractUserIdFromRequest(req)
       const url = `${API_END_POINTS.assessmentSubmitV2}/assessment/submit`
       // Create new key into session and add metadata
+      const accessToken = extractUserToken(req)
       const response = await axios({
         ...axiosRequestConfig,
         data: formatedRequest,
@@ -48,33 +49,34 @@ assessmentApi.post('/submit/v2', async (req, res) => {
           Authorization: CONSTANTS.SB_API_KEY,
           rootOrg,
           userId,
-          'x-authenticated-user-token': extractUserToken(req),
+          'x-authenticated-user-token': accessToken,
         },
         method: 'POST',
         url,
       })
-      if (response.data.result >= response.data.passpercentage) {
-        const revisedData =  {
-                                  request : {
-                                    contents: [
-                                        {
-                                            batchId: req.body.batchId,
-                                            completionPercentage: 100,
-                                            contentId: req.body.contentId,
-                                            courseId: req.body.courseId,
-                                            status: 2,
-                                        },
-                                    ],
-                                      userId: req.body.userId,
-                                  },
-                              }
-        logInfo('Content has completed the course.' + revisedData)
+      const revisedData =  {
+            request : {
+              contents: [
+                  {
+                      batchId: req.body.batchId,
+                      completionPercentage: 100,
+                      contentId: req.body.contentId,
+                      courseId: req.body.courseId,
+                      status: 2,
+                  },
+              ],
+                userId: req.body.userId,
+            },
+        }
+      logInfo('Content has completed the course.' + revisedData)
+      if (response.data.result >= response.data.passPercent) {
+
         await axios({
                       ...axiosRequestConfig,
                       data: revisedData,
                       headers: {
                         Authorization: CONSTANTS.SB_API_KEY,
-                        'x-authenticated-user-token': extractUserToken(req),
+                        'x-authenticated-user-token': accessToken,
                       },
                       method: 'POST',
                       url : API_END_POINTS.updateAssessmentContent,
@@ -84,10 +86,10 @@ assessmentApi.post('/submit/v2', async (req, res) => {
       res.status(response.status).send(response.data)
     }
   } catch (err) {
-    logError('submitassessment  failed' + err)
-    res.status((err && err.response && err.response.status) || 500).send(
-      (err && err.response && err.response.data) || {
-        error: GENERAL_ERR_MSG,
+    logError('submitassessment  failed >>>>>' + err)
+    res.status(500).send({
+        error: err,
+        message : GENERAL_ERR_MSG,
       }
     )
   }
