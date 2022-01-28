@@ -12,7 +12,8 @@ import {
 export const assessmentApi = Router()
 const GENERAL_ERR_MSG = 'Failed due to unknown reason'
 const API_END_POINTS = {
-  assessmentSubmitV2: `${CONSTANTS.SB_EXT_API_BASE_2}/v2/user`,
+  assessmentSubmitV2      : `${CONSTANTS.SB_EXT_API_BASE_2}/v2/user`,
+  updateAssessmentContent : `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/course/v1/content/state/update`
 }
 assessmentApi.post('/submit/v2', async (req, res) => {
   logInfo('>>>>>>>>>>>>inside submit v2')
@@ -20,7 +21,35 @@ assessmentApi.post('/submit/v2', async (req, res) => {
     logInfo('Check Submit V2 : ', req.body.artifactUrl)
     if (!req.body.artifactUrl) {
       res.status(400).json({
-        msg: 'artifact Url can not be empty',
+        msg: 'Artifact Url can not be empty',
+        status: 'error',
+        status_code: 400,
+      })
+    }
+    if (!req.body.userId) {
+      res.status(400).json({
+        msg: 'User Id can not be empty',
+        status: 'error',
+        status_code: 400,
+      })
+    }
+    if (!req.body.batchId) {
+      res.status(400).json({
+        msg: 'Batch Id can not be empty',
+        status: 'error',
+        status_code: 400,
+      })
+    }
+    if (!req.body.contentId) {
+      res.status(400).json({
+        msg: 'Content Id can not be empty',
+        status: 'error',
+        status_code: 400,
+      })
+    }
+    if (!req.body.courseId) {
+      res.status(400).json({
+        msg: 'Course Id can not be empty',
         status: 'error',
         status_code: 400,
       })
@@ -38,6 +67,7 @@ assessmentApi.post('/submit/v2', async (req, res) => {
       logInfo('formatedRequest', formatedRequest)
       const userId = extractUserIdFromRequest(req)
       const url = `${API_END_POINTS.assessmentSubmitV2}/assessment/submit`
+      //Create new key into session and add metadata
       const response = await axios({
         ...axiosRequestConfig,
         data: formatedRequest,
@@ -50,6 +80,35 @@ assessmentApi.post('/submit/v2', async (req, res) => {
         method: 'POST',
         url,
       })
+      if(response.data.result >= 60)
+      {
+        const revisedData =  {
+                                  request : {
+                                      userId: req.body.userId,
+                                      contents: [
+                                          {
+                                              contentId: req.body.contentId,
+                                              batchId: req.body.batchId,
+                                              status: 2,
+                                              courseId: req.body.courseId,
+                                              completionPercentage: 100
+                                          }
+                                      ]
+                                  }
+                              }
+        logInfo("Content has completed the course."+revisedData)
+        await axios({
+                      ...axiosRequestConfig,
+                      data: revisedData,
+                      headers: {
+                        Authorization: CONSTANTS.SB_API_KEY,
+                        'x-authenticated-user-token': extractUserToken(req),
+                      },
+                      method: 'POST',
+                      url : API_END_POINTS.updateAssessmentContent,
+        })
+      }
+      
       res.status(response.status).send(response.data)
     }
   } catch (err) {
