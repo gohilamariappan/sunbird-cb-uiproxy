@@ -42,7 +42,7 @@ emailOrMobileLogin.post('/signup', async (req, res) => {
     let profile: any = {}
     let isUserExist = {}
     // tslint:disable-next-line: no-any
-    let newUserDetails :any = {}
+    let newUserDetails: any = {}
     logInfo('Req body', req.body)
     isUserExist = await fetchUserBymobileorEmail(email, 'email')
     if (!isUserExist) {
@@ -62,7 +62,7 @@ emailOrMobileLogin.post('/signup', async (req, res) => {
         const userUUId = newUserDetails.result.userId
         const response = await getOTP(
             userUUId,
-            email, 
+            email,
             'email'
           )
            // tslint:disable-next-line: no-console
@@ -75,7 +75,7 @@ emailOrMobileLogin.post('/signup', async (req, res) => {
               userUUId: newUserDetails.result.userId,
             })
           }
-        
+
     } else {
       logInfo('Email already exists.')
       res.status(400).json({
@@ -85,8 +85,16 @@ emailOrMobileLogin.post('/signup', async (req, res) => {
       })
       return
     }
-  } 
-  }catch (error) {
+  }else {
+    logInfo('Email already exists.')
+    res.status(400).json({
+      msg: 'Email id  already exists.',
+      status: 'error',
+      status_code: 400,
+    })
+    return
+  }
+  } catch (error) {
     res.status(401).send({
       error: 'error while creating user !!',
     })
@@ -190,7 +198,7 @@ emailOrMobileLogin.post(
           email ? 'email' : 'phone',
           validOtp
         )
-        
+
         if (verifyOtpResponse.data.result.response === 'SUCCESS') {
           logInfo('opt verify : ')
           await authorizationV2Api(
@@ -198,9 +206,9 @@ emailOrMobileLogin.post(
             password,
             req
           )
-          setTimeout(()=>{
+          setTimeout(() => {
             updateRoles(userUUId)
-          },5000)
+          }, 5000)
           res.status(200).send({ message: 'Success ! OTP is verified .' })
         }
         logInfo('Sending Responses in phone part : ' + verifyOtpResponse)
@@ -232,7 +240,7 @@ emailOrMobileLogin.post('/registerUserWithMobile', async (req, res) => {
     let profile: any = {}
     let isUserExist = {}
      // tslint:disable-next-line: no-any
-    let newUserDetails:any = {}
+    let newUserDetails: any = {}
     logInfo('Req body', req.body)
     isUserExist = await fetchUserBymobileorEmail(phone, 'phone')
     if (!isUserExist) {
@@ -247,11 +255,11 @@ emailOrMobileLogin.post('/registerUserWithMobile', async (req, res) => {
       newUserDetails = await createuserWithmobileOrEmail(profile).catch(
         handleCreateUserError
       )
-      if(newUserDetails){
+      if (newUserDetails) {
         const userUUId = newUserDetails.result.userId
         const response = await getOTP(
             userUUId,
-            phone, 
+            phone,
             'phone'
           )
            // tslint:disable-next-line: no-console
@@ -264,9 +272,9 @@ emailOrMobileLogin.post('/registerUserWithMobile', async (req, res) => {
               userUUId: newUserDetails.result.userId,
             })
           }
-      logInfo('Sending Responses in phone part : ' + newUserDetails)
+        logInfo('Sending Responses in phone part : ' + newUserDetails)
       }
-     
+
     } else {
       logInfo('Mobile no. already exists.')
       res.status(400).json({
@@ -332,7 +340,7 @@ const fetchUserBymobileorEmail = async (
 // tslint:disable-next-line: no-any
 const updateRoles = async (userUUId: string) => {
   try {
-    const response = await axios({
+    return await axios({
       ...axiosRequestConfig,
       data: {
         request: {
@@ -347,13 +355,12 @@ const updateRoles = async (userUUId: string) => {
       method: 'POST',
       url: API_END_POINTS.userRoles,
     })
-    return response
-  }catch(err) {
+  } catch (err) {
     logError('update roles failed ')
     return 'false'
   }
 }
-
+// tslint:disable-next-line: no-any
 const createuserWithmobileOrEmail = async (accountDetails: any) => {
   if (!accountDetails.fname || accountDetails.fname === '') {
     throw new Error('USER_NAME_NOT_PRESENT')
