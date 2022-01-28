@@ -26,7 +26,7 @@ assessmentApi.post('/submit/v2', async (req, res) => {
         status_code: 400,
       })
     }
-    
+
     const org = req.header('org')
     const rootOrg = req.header('rootOrg')
     if (!org || !rootOrg) {
@@ -85,9 +85,9 @@ assessmentApi.post('/submit/v2', async (req, res) => {
     }
   } catch (err) {
     logError('submitassessment  failed' + err)
-    res.status((err && err.response && err.response.status) || 500).send(
-      (err && err.response && err.response.data) || {
-        error: GENERAL_ERR_MSG,
+    res.status(500).send({
+        error: err,
+        message : GENERAL_ERR_MSG
       }
     )
   }
