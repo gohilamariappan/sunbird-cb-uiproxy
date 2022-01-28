@@ -7,7 +7,6 @@ import qs from 'querystring'
 import { axiosRequestConfig } from '../configs/request.config'
 import { CONSTANTS } from '../utils/env'
 import { logError, logInfo } from '../utils/logger'
-import { authorizationV2Api } from './authorizationV2Api'
 import { getOTP, validateOTP } from './otp'
 import { getCurrentUserRoles } from './rolePermission'
 const API_END_POINTS = {
@@ -22,7 +21,7 @@ const API_END_POINTS = {
 }
 
 const GENERAL_ERROR_MSG = 'Failed due to unknown reason'
-const EMAIL_OR_MOBILE_ERROR_MSG = 'Mobile no. or EmailId can not be empty'
+const EMAIL_OR_MOBILE_ERROR_MSG = 'Mobile no. or Email Id can not be empty'
 const NOT_USER_FOUND = 'User not found.'
 const AUTH_FAIL = 'Authentication failed ! Please check credentials and try again.'
 const AUTHENTICATED = 'Success ! User is sucessfully authenticated.'
@@ -85,7 +84,7 @@ emailOrMobileLogin.post('/signup', async (req, res) => {
       })
       return
     }
-  }else {
+  } else {
     logInfo('Email already exists.')
     res.status(400).json({
       msg: 'Email id  already exists.',
@@ -190,8 +189,7 @@ emailOrMobileLogin.post(
         const mobileNumber = req.body.mobileNumber
         const email = req.body.email
         const validOtp = req.body.otp
-        const password = req.body.password
-        const userUUId = req.body.userUUId
+        const userUUId = req.body.userUUId || req.body.userUUID
         const verifyOtpResponse = await validateOTP(
           userUUId,
           mobileNumber ? mobileNumber : email,
@@ -201,11 +199,11 @@ emailOrMobileLogin.post(
 
         if (verifyOtpResponse.data.result.response === 'SUCCESS') {
           logInfo('opt verify : ')
-          await authorizationV2Api(
-            email ? email : mobileNumber,
-            password,
-            req
-          )
+          // await authorizationV2Api(
+          //   email ? email : mobileNumber,
+          //   password,
+          //   req
+          // )
           setTimeout(() => {
             updateRoles(userUUId)
           }, 5000)
@@ -355,8 +353,9 @@ const updateRoles = async (userUUId: string) => {
       method: 'POST',
       url: API_END_POINTS.userRoles,
     })
+   
   } catch (err) {
-    logError('update roles failed ')
+    logError('update roles failed '+ err)
     return 'false'
   }
 }
