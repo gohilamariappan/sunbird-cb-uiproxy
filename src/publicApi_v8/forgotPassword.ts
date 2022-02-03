@@ -12,6 +12,9 @@ const API_END_POINTS = {
   verifyOtp: `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/otp/v1/verify`,
 }
 
+const PASSWORD_RESET_FAIL = "Sorry ! There is some issue in resetting your account. Please contact admin."
+const VERIFY_OTP_FAIL = "Sorry ! There is some issue in verifying your account. Please try after sometime." 
+
 export const forgotPassword = Router()
 
 forgotPassword.post('/reset/proxy/password', async (req, res) => {
@@ -20,9 +23,6 @@ forgotPassword.post('/reset/proxy/password', async (req, res) => {
     logInfo('Entered into try block ')
     const sbUsername = req.body.userName
     const userType = await emailOrMobile(sbUsername)
-
-    logInfo('User type : ', userType)
-    logInfo('UserName : ', sbUsername)
     logInfo('Entered into try block userName : ', sbUsername)
     if (userType === 'email') {
       logInfo('Entered into email ')
@@ -39,7 +39,6 @@ forgotPassword.post('/reset/proxy/password', async (req, res) => {
       })
 
       if (searchresponse.data.result.response.count > 0) {
-        logInfo('Inside email type checking..')
         const userUUId = _.get(
           _.find(searchresponse.data.result.response.content, 'userId'),
           'userId'
@@ -111,7 +110,7 @@ forgotPassword.post('/reset/proxy/password', async (req, res) => {
     return
   } catch (err) {
     logError('ERROR in Searching Users : ' + err)
-    res.status(500).send('Error Ocurred : ' + err)
+    res.status(500).send( { message : PASSWORD_RESET_FAIL, status : "failed"} )
   }
 })
 
@@ -183,8 +182,8 @@ forgotPassword.post('/verifyOtp', async (req, res) => {
     }
     return
   } catch (err) {
-    logError('ERROR in Searching Users : ' + err)
-    res.status(500).send('Error Ocurred : ' + err)
+    logError('ERROR in verifying otp : ' + err)
+    res.status(500).send({ message : VERIFY_OTP_FAIL, status : "failed"})
   }
 })
 

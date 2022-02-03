@@ -22,6 +22,7 @@ const API_END_POINTS = {
 
 const GENERAL_ERROR_MSG = 'Failed due to unknown reason'
 const VALIDATION_FAIL = 'Please provide correct otp and try again.'
+const OTP_GENERATE_FAIL = 'Please provide correct otp and try again.'
 const CREATION_FAIL = 'Sorry ! User not created. Please try again in sometime.'
 const VALIDATION_SUCCESS = 'Otp is successfully validated.'
 const EMAIL_OR_MOBILE_ERROR_MSG = 'Mobile no. or Email Id can not be empty'
@@ -97,10 +98,10 @@ emailOrMobileLogin.post('/signup', async (req, res) => {
     return
   }
   } catch (error) {
-    logInfo("Error in user creation >>>>>>"+ error)
+    logInfo('Error in user creation >>>>>>' + error)
     res.status(500).send({
       message : CREATION_FAIL,
-      status : "failed"
+      status : 'failed',
     })
   }
 })
@@ -158,9 +159,10 @@ emailOrMobileLogin.post('/generateOtp', async (req, res) => {
       })
     }
   } catch (error) {
-    logInfo('error' + error)
+    logInfo('Generate otp  error >> ' + error)
     res.status(500).send({
-      error: GENERAL_ERROR_MSG,
+      message: OTP_GENERATE_FAIL,
+      status:"failed"
     })
   }
 })
