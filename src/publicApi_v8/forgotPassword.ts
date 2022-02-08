@@ -12,8 +12,8 @@ const API_END_POINTS = {
   verifyOtp: `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/otp/v1/verify`,
 }
 
-const PASSWORD_RESET_FAIL = "Sorry ! There is some issue in resetting your account. Please contact admin."
-const VERIFY_OTP_FAIL = "Sorry ! There is some issue in verifying your account. Please try after sometime." 
+const PASSWORD_RESET_FAIL = 'Sorry ! There is some issue in resetting your account. Please contact admin.'
+const VERIFY_OTP_FAIL = 'Sorry ! There is some issue in verifying your account. Please try after sometime.'
 
 export const forgotPassword = Router()
 
@@ -110,7 +110,7 @@ forgotPassword.post('/reset/proxy/password', async (req, res) => {
     return
   } catch (err) {
     logError('ERROR in Searching Users : ' + err)
-    res.status(500).send( { message : PASSWORD_RESET_FAIL, status : "failed"} )
+    res.status(500).send( { message : PASSWORD_RESET_FAIL, status : 'failed'} )
   }
 })
 
@@ -155,8 +155,11 @@ forgotPassword.post('/verifyOtp', async (req, res) => {
           res.status(200).send(sendResponse.data.result)
         } else {
           logInfo('otp verify is not working ')
+          res
+          .status(400)
+          .send('OTP is not valid')
         }
-        
+
       }
     } else if (userType === 'phone') {
       logInfo('Entered inside email')
@@ -190,10 +193,13 @@ forgotPassword.post('/verifyOtp', async (req, res) => {
           })
           logInfo('Success ! Recover password working for phone.. ')
           res.status(200).send(sendResponse.data.result)
-        }else {
+        } else {
           logInfo('otp verify is not working ')
+          res
+          .status(400)
+          .send('OTP is not valid')
         }
-        
+
       }
     } else {
       logError('Error in Usertype : Neither validated email nor phone ')
@@ -204,7 +210,7 @@ forgotPassword.post('/verifyOtp', async (req, res) => {
     return
   } catch (err) {
     logError('ERROR in verifying otp : ' + err)
-    res.status(500).send({ message : VERIFY_OTP_FAIL, status : "failed"})
+    res.status(500).send({ message : VERIFY_OTP_FAIL, status : 'failed'})
   }
 })
 
