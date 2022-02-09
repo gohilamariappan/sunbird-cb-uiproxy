@@ -393,6 +393,7 @@ profileDeatailsApi.patch('/updateUser', async (req, res) => {
             req.body.request.profileDetails.profileReq.personalDetails.regNurseRegMidwifeNumber = '[NA]'
         }
         req.body.request.profileDetails.profileReq.personalDetails= _.omitBy(req.body.request.profileDetails.profileReq.personalDetails, (v) => _.isUndefined(v) || _.isNull(v) || _.isEmpty(v))
+        logInfo(JSON.stringify(req.body))
         const response = await axios.patch(API_END_POINTS.kongUpdateUser, req.body, {
             ...axiosRequestConfig,
             headers: {
