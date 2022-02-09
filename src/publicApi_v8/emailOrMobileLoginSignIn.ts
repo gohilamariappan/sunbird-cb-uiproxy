@@ -162,7 +162,7 @@ emailOrMobileLogin.post('/generateOtp', async (req, res) => {
     logInfo('Generate otp  error >> ' + error)
     res.status(500).send({
       message: OTP_GENERATE_FAIL,
-      status:"failed"
+      status: 'failed',
     })
   }
 })
