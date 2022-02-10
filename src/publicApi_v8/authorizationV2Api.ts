@@ -19,9 +19,9 @@ export const authorizationV2Api = async (
 ) => {
 
   const encodedData = qs.stringify({
-    client_id: 'portal',
+    client_id: 'lms',
     client_secret: `${CONSTANTS.KEYCLOAK_CLIENT_SECRET}`,
-    grant_type: 'password',
+    grant_type: 'client_credentials',
     password,
     username,
   })

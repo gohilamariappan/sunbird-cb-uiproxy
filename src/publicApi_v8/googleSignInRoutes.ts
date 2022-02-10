@@ -58,9 +58,9 @@ googleAuth.post('/callback', async (req: any, res: any) => {
       const password = CONSTANTS.ES_PASSWORD
       const username = googleProfile.emailId
       const encodedData = qs.stringify({
-        client_id: 'portal',
+        client_id: 'lms',
         client_secret: `${CONSTANTS.KEYCLOAK_CLIENT_SECRET}`,
-        grant_type: 'password',
+        grant_type: 'client_credentials',
         password,
         username,
       })
