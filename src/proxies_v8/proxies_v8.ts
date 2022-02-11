@@ -25,7 +25,11 @@ import {
   scormProxyCreatorRoute
 } from '../utils/proxyCreator'
 import { extractUserIdFromRequest, extractUserToken } from '../utils/requestExtract'
-
+declare module 'axios' {
+  export interface AxiosRequestConfig {
+      maxBodyLength?: any;
+  }
+}
 const API_END_POINTS = {
   contentNotificationEmail: `${CONSTANTS.NOTIFICATION_SERVIC_API_BASE}/v1/notification/send/sync`,
   logoutKeycloak : `${CONSTANTS.HTTPS_HOST}/auth/realms/sunbird/protocol/openid-connect/logout`,
@@ -128,6 +132,8 @@ proxiesV8.post('/upload/action/*', (req, res) => {
                         rootorg: 'aastar',
                   ...formData.getHeaders(),
                 },
+                maxContentLength: Infinity,
+                maxBodyLength: Infinity,
                 method: 'post',
                 url: `${CONSTANTS.HTTPS_HOST}` + targetUrl  ,
     })
