@@ -27,7 +27,7 @@ import {
 import { extractUserIdFromRequest, extractUserToken } from '../utils/requestExtract'
 declare module 'axios' {
   export interface AxiosRequestConfig {
-      maxBodyLength?: any;
+      maxBodyLength?: number
   }
 }
 const API_END_POINTS = {
@@ -132,8 +132,8 @@ proxiesV8.post('/upload/action/*', (req, res) => {
                         rootorg: 'aastar',
                   ...formData.getHeaders(),
                 },
-                maxContentLength: Infinity,
                 maxBodyLength: Infinity,
+                maxContentLength: Infinity,
                 method: 'post',
                 url: `${CONSTANTS.HTTPS_HOST}` + targetUrl  ,
     })
