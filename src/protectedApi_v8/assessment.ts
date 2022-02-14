@@ -21,12 +21,25 @@ assessmentApi.post('/submit/v2', async (req, res) => {
     logInfo('Check Submit V2 : ', req.body.artifactUrl)
     if (!req.body.artifactUrl) {
       res.status(400).json({
-        msg: 'Artifact Url can not be empty',
+        msg: 'Warning ! Artifact Url can not be empty.',
         status: 'error',
         status_code: 400,
       })
     }
-
+    if (!req.body.courseId) {
+      res.status(400).json({
+        msg: 'Warning ! Course Id can not be empty.',
+        status: 'error',
+        status_code: 400,
+      })
+    }
+    if (!req.body.batchId) {
+      res.status(400).json({
+        msg: 'Warning ! Batch Id can not be empty.',
+        status: 'error',
+        status_code: 400,
+      })
+    }
     const org = req.header('org')
     const rootOrg = req.header('rootOrg')
     if (!org || !rootOrg) {
@@ -65,7 +78,7 @@ assessmentApi.post('/submit/v2', async (req, res) => {
                       status: 2,
                   },
               ],
-                userId: req.body.userId,
+              userId: req.body.userId ? req.body.userId : userId,
             },
         }
       logInfo('Content has completed the course.' + revisedData)

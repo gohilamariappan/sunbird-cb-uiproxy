@@ -21,6 +21,10 @@ const API_END_POINTS = {
 }
 
 const GENERAL_ERROR_MSG = 'Failed due to unknown reason'
+const VALIDATION_FAIL = 'Please provide correct otp and try again.'
+const OTP_GENERATE_FAIL = 'Please provide correct otp and try again.'
+const CREATION_FAIL = 'Sorry ! User not created. Please try again in sometime.'
+const VALIDATION_SUCCESS = 'Otp is successfully validated.'
 const EMAIL_OR_MOBILE_ERROR_MSG = 'Mobile no. or Email Id can not be empty'
 const NOT_USER_FOUND = 'User not found.'
 const AUTH_FAIL = 'Authentication failed ! Please check credentials and try again.'
@@ -94,8 +98,10 @@ emailOrMobileLogin.post('/signup', async (req, res) => {
     return
   }
   } catch (error) {
-    res.status(401).send({
-      error: 'error while creating user !!',
+    logInfo('Error in user creation >>>>>>' + error)
+    res.status(500).send({
+      message : CREATION_FAIL,
+      status : 'failed',
     })
   }
 })
@@ -153,9 +159,10 @@ emailOrMobileLogin.post('/generateOtp', async (req, res) => {
       })
     }
   } catch (error) {
-    logInfo('error' + error)
+    logInfo('Generate otp  error >> ' + error)
     res.status(500).send({
-      error: GENERAL_ERROR_MSG,
+      message: OTP_GENERATE_FAIL,
+      status: 'failed',
     })
   }
 })
@@ -207,7 +214,7 @@ emailOrMobileLogin.post(
           setTimeout(() => {
             updateRoles(userUUId)
           }, 5000)
-          res.status(200).send({ message: 'Success ! OTP is verified .' })
+          res.status(200).send({ message : VALIDATION_SUCCESS , status : 'success'  })
         }
         logInfo('Sending Responses in phone part : ' + verifyOtpResponse)
       } else {
@@ -219,7 +226,8 @@ emailOrMobileLogin.post(
       }
     } catch (error) {
       res.status(500).send({
-        error: GENERAL_ERROR_MSG,
+        message: VALIDATION_FAIL,
+        status: 'failed',
       })
     }
   }
@@ -417,7 +425,7 @@ emailOrMobileLogin.post('/auth', async (req: any, res) => {
       try {
           const encodedData = qs.stringify({
                                               client_id: 'portal',
-                                              client_secret: `${CONSTANTS.KEYCLOAK_CLIENT_SECRET}`,
+                                              // client_secret: `${CONSTANTS.KEYCLOAK_CLIENT_SECRET}`,
                                               grant_type: 'password',
                                               password,
                                               username,
