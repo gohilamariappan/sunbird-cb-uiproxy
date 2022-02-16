@@ -410,24 +410,25 @@ const createuserWithmobileOrEmail = async (accountDetails: any) => {
 // tslint:disable-next-line: no-any
 emailOrMobileLogin.post('/auth', async (req: any, res) => {
   res.clearCookie('connect.sid')
-  req.session.regenerate( async function(err:any) {
-    if(err){
+  // tslint:disable-next-line: no-any
+  req.session.regenerate( async (err: any) => {
+    if (err) {
       res.send(401)
     }
     // will have a new session here
     try {
-    
+
       if (req.body.mobileNumber || req.body.email) {
         logInfo('Entered into /login/auth endpoint >>> ')
         const mobileNumber = req.body.mobileNumber
         const email        = req.body.email
         const password     = req.body.password
         const username = mobileNumber ? mobileNumber : email
-  
+
         logInfo('Step i : mobileNumber response value :->' + mobileNumber)
         logInfo('Step ii : email response value :->' + email)
         logInfo('Step iii : password response value :->' + password)
-  
+
         try {
             const encodedData = qs.stringify({
                                                 client_id: 'portal',
@@ -437,7 +438,7 @@ emailOrMobileLogin.post('/auth', async (req: any, res) => {
                                                 username,
                                               })
             logInfo('Entered into authorization part.' + encodedData)
-  
+
             const authTokenResponse = await axios({
                 ...axiosRequestConfig,
                 data: encodedData,
@@ -447,9 +448,9 @@ emailOrMobileLogin.post('/auth', async (req: any, res) => {
                 method: 'POST',
                 url: API_END_POINTS.generateToken,
               })
-  
+
             logInfo('Entered into authTokenResponse :' + authTokenResponse)
-  
+
             if (authTokenResponse.data) {
               const accessToken = authTokenResponse.data.access_token
               // tslint:disable-next-line: no-any
@@ -461,26 +462,26 @@ emailOrMobileLogin.post('/auth', async (req: any, res) => {
               req.session.grant =  {access_token: {content: decodedToken, token : accessToken}}
               logInfo('Success ! Entered into usertokenResponse..')
               await getCurrentUserRoles(req, accessToken)
-  
+
               res.status(200).json({
                 msg: AUTHENTICATED,
                 status: 'success',
               })
-  
+
             } else {
               res.status(302).json({
                 msg: AUTH_FAIL,
                 status: 'error',
               })
             }
-  
+
         } catch (e) {
           logInfo('Error throwing Cookie : ' + e)
           res.status(400).send({
             error: AUTH_FAIL,
           })
         }
-  
+
       } else if (!req.body.mobileNumber || !req.body.email) {
         res.status(400).json({
           msg: EMAIL_OR_MOBILE_ERROR_MSG,
@@ -495,5 +496,5 @@ emailOrMobileLogin.post('/auth', async (req: any, res) => {
       })
     }
   })
- 
+
 })
