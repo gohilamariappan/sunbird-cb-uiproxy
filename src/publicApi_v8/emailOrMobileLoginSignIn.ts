@@ -410,83 +410,90 @@ const createuserWithmobileOrEmail = async (accountDetails: any) => {
 // tslint:disable-next-line: no-any
 emailOrMobileLogin.post('/auth', async (req: any, res) => {
   res.clearCookie('connect.sid')
-  try {
+  req.session.regenerate( async function(err:any) {
+    if(err){
+      res.send(401)
+    }
+    // will have a new session here
+    try {
     
-    if (req.body.mobileNumber || req.body.email) {
-      logInfo('Entered into /login/auth endpoint >>> ')
-      const mobileNumber = req.body.mobileNumber
-      const email        = req.body.email
-      const password     = req.body.password
-      const username = mobileNumber ? mobileNumber : email
-
-      logInfo('Step i : mobileNumber response value :->' + mobileNumber)
-      logInfo('Step ii : email response value :->' + email)
-      logInfo('Step iii : password response value :->' + password)
-
-      try {
-          const encodedData = qs.stringify({
-                                              client_id: 'portal',
-                                              // client_secret: `${CONSTANTS.KEYCLOAK_CLIENT_SECRET}`,
-                                              grant_type: 'password',
-                                              password,
-                                              username,
-                                            })
-          logInfo('Entered into authorization part.' + encodedData)
-
-          const authTokenResponse = await axios({
-              ...axiosRequestConfig,
-              data: encodedData,
-              headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-              },
-              method: 'POST',
-              url: API_END_POINTS.generateToken,
-            })
-
-          logInfo('Entered into authTokenResponse :' + authTokenResponse)
-
-          if (authTokenResponse.data) {
-            const accessToken = authTokenResponse.data.access_token
-            // tslint:disable-next-line: no-any
-            const decodedToken: any = jwt_decode(accessToken)
-            const decodedTokenArray = decodedToken.sub.split(':')
-            const userId = decodedTokenArray[decodedTokenArray.length - 1]
-            req.session.userId = userId
-            req.kauth = {grant: {access_token: {content: decodedToken, token : accessToken}}}
-            req.session.grant =  {access_token: {content: decodedToken, token : accessToken}}
-            logInfo('Success ! Entered into usertokenResponse..')
-            await getCurrentUserRoles(req, accessToken)
-
-            res.status(200).json({
-              msg: AUTHENTICATED,
-              status: 'success',
-            })
-
-          } else {
-            res.status(302).json({
-              msg: AUTH_FAIL,
-              status: 'error',
-            })
-          }
-
-      } catch (e) {
-        logInfo('Error throwing Cookie : ' + e)
-        res.status(400).send({
-          error: AUTH_FAIL,
+      if (req.body.mobileNumber || req.body.email) {
+        logInfo('Entered into /login/auth endpoint >>> ')
+        const mobileNumber = req.body.mobileNumber
+        const email        = req.body.email
+        const password     = req.body.password
+        const username = mobileNumber ? mobileNumber : email
+  
+        logInfo('Step i : mobileNumber response value :->' + mobileNumber)
+        logInfo('Step ii : email response value :->' + email)
+        logInfo('Step iii : password response value :->' + password)
+  
+        try {
+            const encodedData = qs.stringify({
+                                                client_id: 'portal',
+                                                // client_secret: `${CONSTANTS.KEYCLOAK_CLIENT_SECRET}`,
+                                                grant_type: 'password',
+                                                password,
+                                                username,
+                                              })
+            logInfo('Entered into authorization part.' + encodedData)
+  
+            const authTokenResponse = await axios({
+                ...axiosRequestConfig,
+                data: encodedData,
+                headers: {
+                  'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                method: 'POST',
+                url: API_END_POINTS.generateToken,
+              })
+  
+            logInfo('Entered into authTokenResponse :' + authTokenResponse)
+  
+            if (authTokenResponse.data) {
+              const accessToken = authTokenResponse.data.access_token
+              // tslint:disable-next-line: no-any
+              const decodedToken: any = jwt_decode(accessToken)
+              const decodedTokenArray = decodedToken.sub.split(':')
+              const userId = decodedTokenArray[decodedTokenArray.length - 1]
+              req.session.userId = userId
+              req.kauth = {grant: {access_token: {content: decodedToken, token : accessToken}}}
+              req.session.grant =  {access_token: {content: decodedToken, token : accessToken}}
+              logInfo('Success ! Entered into usertokenResponse..')
+              await getCurrentUserRoles(req, accessToken)
+  
+              res.status(200).json({
+                msg: AUTHENTICATED,
+                status: 'success',
+              })
+  
+            } else {
+              res.status(302).json({
+                msg: AUTH_FAIL,
+                status: 'error',
+              })
+            }
+  
+        } catch (e) {
+          logInfo('Error throwing Cookie : ' + e)
+          res.status(400).send({
+            error: AUTH_FAIL,
+          })
+        }
+  
+      } else if (!req.body.mobileNumber || !req.body.email) {
+        res.status(400).json({
+          msg: EMAIL_OR_MOBILE_ERROR_MSG,
+          status: 'error',
+          status_code: 400,
         })
       }
-
-    } else if (!req.body.mobileNumber || !req.body.email) {
-      res.status(400).json({
-        msg: EMAIL_OR_MOBILE_ERROR_MSG,
-        status: 'error',
-        status_code: 400,
+    } catch (error) {
+      logInfo('error' + error)
+      res.status(500).send({
+        error: GENERAL_ERROR_MSG,
       })
     }
-  } catch (error) {
-    logInfo('error' + error)
-    res.status(500).send({
-      error: GENERAL_ERROR_MSG,
-    })
-  }
+  })
+ 
 })
