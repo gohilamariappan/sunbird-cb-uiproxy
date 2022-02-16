@@ -409,8 +409,9 @@ const createuserWithmobileOrEmail = async (accountDetails: any) => {
 // login endpoint for public users
 // tslint:disable-next-line: no-any
 emailOrMobileLogin.post('/auth', async (req: any, res) => {
-
+  res.clearCookie('connect.sid')
   try {
+    
     if (req.body.mobileNumber || req.body.email) {
       logInfo('Entered into /login/auth endpoint >>> ')
       const mobileNumber = req.body.mobileNumber
