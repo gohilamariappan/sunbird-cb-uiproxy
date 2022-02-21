@@ -11,6 +11,10 @@ node() {
             stage('Checkout') {
                 cleanWs()
                 checkout scm
+                commit_hash = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
+                env.commit_id = sh(script: "echo " + "uiproxy" + "_" + commit_hash + "_" + env.BUILD_NUMBER, returnStdout: true).trim()
+                echo "${env.commit_id}"
+
                 }
         }
             stage('docker-pre-Build') {
@@ -26,7 +30,7 @@ node() {
                 '''
         }
       
-  /*            stage('SonarQube analysis') {
+              stage('SonarQube analysis') {
                
                   sh 'cd $docker_file_path && npm install'
              
@@ -47,16 +51,13 @@ node() {
    					}
   
   }
-}  */
+} 
 
             stage('docker-build') {
                 sh '''
-                   commit_id=$(git rev-parse --short HEAD)
-                   echo $commit_id> commit_id.txt
                    cd $docker_file_path
                    pwd
                    docker build -f Dockerfile -t $docker_server/$docker_repo:$commit_id .
-                   docker tag $docker_server/$docker_repo:$commit_id $docker_server/$docker_repo:$image_tag
                    '''
         }
 
@@ -64,11 +65,8 @@ node() {
 
                sh '''
                   pwd
-                  commit_id=$(git rev-parse --short HEAD)
                   docker push $docker_server/$docker_repo:$commit_id
-                  docker push $docker_server/$docker_repo:$image_tag
                   docker rmi -f $docker_server/$docker_repo:$commit_id
-                  docker rmi -f $docker_server/$docker_repo:$image_tag
                   rm -rf dist
                   rm -rf dist.zip
 
