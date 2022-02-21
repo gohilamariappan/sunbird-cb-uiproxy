@@ -73,6 +73,12 @@ node() {
                   '''
 
                     }
+              stage('ArchiveArtifacts') {
+	       	   sh ("echo ${commit_id} > commit_id.txt")	     
+                    archiveArtifacts "commit_id.txt" 
+                    currentBuild.description = "${commit_id}"
+        }
+
                  }
     catch (err) {
         currentBuild.result = "FAILURE"
