@@ -33,6 +33,7 @@ const checkIsStaticRoute = (REQ_URL: any) => {
         '/assets/',
         '/content-plugins/',
         '/editors/',
+        '/content/',
     ]
     // tslint:disable-next-line: no-any
     return _.some(excludePath, (path: any) => _.includes(REQ_URL, path))
@@ -294,8 +295,6 @@ export function apiWhiteListLogger() {
             next()
             return
         }
-        logInfo('1.Api whitelist Logger : ' + req.path)
-        logInfo('2.Api whitelist Logger : ' + JSON.stringify(req.session))
         if (!_.includes(req.path, '/resource') && (req.session)) {
                 if (!('userRoles' in req.session) || (('userRoles' in req.session) && (req.session.userRoles.length === 0))) {
                     logError('Portal_API_WHITELIST_LOGGER: User needs to authenticated themselves')

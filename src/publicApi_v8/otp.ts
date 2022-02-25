@@ -9,12 +9,12 @@ const API_END_POINTS = {
   verifyOtp: `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/otp/v1/verify`,
 }
 export const getOTP = async (
-  userUUId: string,
-  userKey: string,
-  userType: string
-) => {
+                                userUUId: string,
+                                userKey: string,
+                                userType: string
+                              ) => {
   logInfo('generate otp endpoints for kong', API_END_POINTS.generateOtp)
-  const otpResponse = await axios({
+  return axios({
     ...axiosRequestConfig,
     data: {
       request: { userId: userUUId, key: userKey, type: userType },
@@ -23,8 +23,6 @@ export const getOTP = async (
     method: 'POST',
     url: API_END_POINTS.generateOtp,
   })
-  logInfo('genreate otp response' + JSON.stringify(otpResponse))
-  return otpResponse
 }
 
 export const validateOTP = async (
@@ -34,7 +32,7 @@ export const validateOTP = async (
   userOtp: string
 ) => {
   logInfo('Entered into /validateOtp ')
-  const verifyOtpResponse = await axios({
+  return axios({
     ...axiosRequestConfig,
     data: {
       request: {
@@ -48,6 +46,4 @@ export const validateOTP = async (
     method: 'POST',
     url: API_END_POINTS.verifyOtp,
   })
-  logInfo('verify OTP response : ' + verifyOtpResponse)
-  return verifyOtpResponse
 }

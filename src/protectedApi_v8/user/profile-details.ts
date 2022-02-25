@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { Router } from 'express'
 import * as fs from 'fs'
+import _ from 'lodash'
 import { IPersonalDetails, ISBUser, ISunbirdbUserResponse} from '../../../src/models/user.model'
 import { axiosRequestConfig, axiosRequestConfigLong, axiosRequestConfigVeryLong } from '../../configs/request.config'
 import { CONSTANTS } from '../../utils/env'
@@ -388,6 +389,13 @@ profileDeatailsApi.post('/createUser', async (req, res) => {
 
 profileDeatailsApi.patch('/updateUser', async (req, res) => {
     try {
+          // tslint:disable-next-line: max-line-length
+        if (req.body.request.profileDetails.profileReq.personalDetails && !req.body.request.profileDetails.profileReq.personalDetails.regNurseRegMidwifeNumber){
+            req.body.request.profileDetails.profileReq.personalDetails.regNurseRegMidwifeNumber = '[NA]'
+        }
+          // tslint:disable-next-line: max-line-length
+        req.body.request.profileDetails.profileReq.personalDetails = _.omitBy(req.body.request.profileDetails.profileReq.personalDetails, (v) => _.isUndefined(v) || _.isNull(v) || _.isEmpty(v))
+        logInfo(JSON.stringify(req.body))
         const response = await axios.patch(API_END_POINTS.kongUpdateUser, req.body, {
             ...axiosRequestConfig,
             headers: {

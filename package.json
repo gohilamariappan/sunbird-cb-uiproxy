@@ -11,7 +11,7 @@
     "scan": "gulp scan",
     "serve": "node ./index.js",
     "start:nodemon": "nodemon --config nodemon/nodemon.json",
-    "start:dev": "nodemon --config nodemon/nodemon-dev.json",
+    "start:dev": "nodemon --config nodemon/nodemon-aastar-dev.json",
     "start:igot": "nodemon --config nodemon/nodemon-igot-stage.json",
     "start": "node index.js"
   },
@@ -44,7 +44,7 @@
     "http-proxy": "^1.17.0",
     "jwt-decode": "^3.1.2",
     "keycloak-admin": "^1.13.0",
-    "keycloak-connect": "^3.4.3",
+    "keycloak-connect": "^7.0.1",
     "lodash": "^4.17.21",
     "morgan": "^1.9.1",
     "node-xlsx": "^0.15.0",

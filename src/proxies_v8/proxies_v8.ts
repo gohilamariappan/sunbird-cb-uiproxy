@@ -3,12 +3,14 @@ import elasticsearch from 'elasticsearch'
 import express from 'express'
 import { UploadedFile } from 'express-fileupload'
 import FormData from 'form-data'
+import request from 'request'
 import { axiosRequestConfig } from '../configs/request.config'
 import { CONSTANTS } from '../utils/env'
 import { logInfo } from '../utils/logger'
 import {
-  ilpProxyCreatorRoute,
+  getContentProxyCreatorRoute,
   // proxyCreatorDiscussion,
+  ilpProxyCreatorRoute,
   proxyContent,
   proxyContentLearnerVM,
   proxyCreatorDownloadCertificate,
@@ -18,17 +20,20 @@ import {
   proxyCreatorRoute,
   proxyCreatorSunbird,
   proxyCreatorSunbirdSearch,
+  proxyCreatorToAppentUserId,
   proxyHierarchyKnowledge,
   scormProxyCreatorRoute
 } from '../utils/proxyCreator'
 import { extractUserIdFromRequest, extractUserToken } from '../utils/requestExtract'
-
+declare module 'axios' {
+  export interface AxiosRequestConfig {
+      maxBodyLength?: number
+  }
+}
 const API_END_POINTS = {
   contentNotificationEmail: `${CONSTANTS.NOTIFICATION_SERVIC_API_BASE}/v1/notification/send/sync`,
+  logoutKeycloak : `${CONSTANTS.HTTPS_HOST}/auth/realms/sunbird/protocol/openid-connect/logout`,
 }
-
-const accessToken = 'x-authenticated-user-token'
-const authenticatedUserId = 'x-authenticated-userid'
 
 const client = new elasticsearch.Client({
   hosts: ['http://10.1.2.138:9200'],
@@ -64,44 +69,88 @@ proxiesV8.get('/learning-analytics', (req, res) => {
   })
 })
 
-proxiesV8.post('/upload/*', (req, res) => {
+proxiesV8.get('/getContent',
+      getContentProxyCreatorRoute(express.Router())
+)
+
+proxiesV8.get('/getContents/*', (req, res) => {
+  const path = removePrefix('/proxies/v8/getContents/', req.originalUrl)
+  const sunbirdUrl = 'https://sunbirdcontent.s3-ap-south-1.amazonaws.com/' + path
+  logInfo('New getcontents sunbird URL >>>>>>>>>>> ', sunbirdUrl)
+  return request(sunbirdUrl).pipe(res)
+}
+)
+
+proxiesV8.get('/logout/user', (_req, res) => {
+
+  const keycloakUrl = API_END_POINTS.logoutKeycloak
+  const redirectUrl = `https://${CONSTANTS.HTTPS_HOST}` + '/public/home'
+  res.clearCookie('connect.sid')
+  axios({
+    ...axiosRequestConfig,
+              headers: {
+                // tslint:disable-next-line:max-line-length
+                Authorization: 'bearer ' + extractUserToken(_req),
+                org: 'aastar',
+                rootorg: 'aastar',
+              },
+              method: 'get',
+              url: keycloakUrl,
+  })
+  .then((response) => {
+   logInfo('Success IN LOGOUT USER >>>>>>>>>>>' + response)
+   res.clearCookie('connect.sid')
+   res.redirect(200, redirectUrl)
+
+  })
+  .catch((error) => {
+    logInfo('Error IN LOGOUT USER : >>>>>>>>>>>>>>>>>>>>>.', error)
+    return res.send('Attention ! Error in logging out user..' + error)
+  })
+})
+
+proxiesV8.post('/upload/action/*', (req, res) => {
+  // console.log("Entered >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"+JSON.stringify(req.files))
   if (req.files && req.files.data) {
-    const url = removePrefix('/proxies/v8/upload', req.originalUrl)
+    const url = removePrefix('/proxies/v8/upload/action/upload/content/v3/', req.originalUrl)
     const file: UploadedFile = req.files.data as UploadedFile
     const formData = new FormData()
     formData.append('file', Buffer.from(file.data), {
       contentType: file.mimetype,
       filename: file.name,
     })
-    formData.submit(
-      {
-        headers: {
-          // tslint:disable-next-line:max-line-length
-          Authorization: CONSTANTS.SB_API_KEY,
-          accessToken: extractUserToken(req),
-          authenticatedUserId: extractUserIdFromRequest(req),
-          org: 'dopt',
-          rootorg: 'igot',
-        },
-        host: 'knowledge-mw-service',
-        path: url,
-        port: 5000,
-      },
-      (err, response) => {
+    const targetUrl  = '/api/private/content/v3/upload/' + url
+    logInfo('URL >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>' + targetUrl)
 
-        response.on('data', (data) => {
-          if (!err && (response.statusCode === 200 || response.statusCode === 201)) {
-            res.send(JSON.parse(data.toString('utf8')))
-          } else {
-            res.send(data.toString('utf8'))
-          }
-        })
-        if (err) {
-          res.send(err)
-        }
-
+    axios({
+      ...axiosRequestConfig,
+                data : formData,
+                headers: {
+                        // tslint:disable-next-line:max-line-length
+                        Authorization: CONSTANTS.SB_API_KEY,
+                        accessToken: extractUserToken(req),
+                        org: 'aastar',
+                        rootorg: 'aastar',
+                  ...formData.getHeaders(),
+                },
+                maxBodyLength: Infinity,
+                maxContentLength: Infinity,
+                method: 'post',
+                url: `${CONSTANTS.HTTPS_HOST}` + targetUrl  ,
+    })
+    .then((response) => {
+      const output = {
+            artifactUrl : response.data.result.artifactUrl,
+            content_url : response.data.result.content_url,
+            identifier : response.data.result.identifier,
+            status : response.data.params.status,
       }
-    )
+      return res.send(output)
+    })
+    .catch((error) => {
+      return res.send(error)
+    })
+
   } else {
     res.send('File not found')
   }
@@ -213,32 +262,9 @@ proxiesV8.use('/read/content-progres/*',
   // tslint:disable-next-line: max-line-length
   proxyCreatorSunbirdSearch(express.Router(), `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/course/v1/content/state/read`)
 )
-proxiesV8.use('/api/user/v2/read', async (req, res) => {
-      logInfo('Entered into read api')
-      logInfo('1.Const values >>', accessToken)
-      logInfo('2.Const values >>', authenticatedUserId)
-      const readApiResponse = await axios({
-              ...axiosRequestConfig,
-              data: {
-                headers: {
-                  // tslint:disable-next-line:max-line-length
-                  Authorization: CONSTANTS.SB_API_KEY,
-                  accessToken: extractUserToken(req),
-                  authenticatedUserId: extractUserIdFromRequest(req),
-                  org: req.headers.org,
-                  rootOrg: req.headers.rootOrg,
-                },
-              },
-              method: 'GET',
-              url:  `${CONSTANTS.KONG_API_BASE}/user/v2/read/`,
-            })
-      logInfo('readApiResponse >>>>>>' + readApiResponse)
-      if (!readApiResponse) {
-              res.status(400).send('Failed to get read api data')
-            } else {
-              res.status(200).send('Read api is working..')
-            }
-  })
+proxiesV8.use('/api/user/v2/read',
+  proxyCreatorToAppentUserId(express.Router(), `${CONSTANTS.KONG_API_BASE}/user/v2/read/`)
+)
 
 proxiesV8.use([
   '/action/questionset/v1/*',

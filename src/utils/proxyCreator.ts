@@ -70,10 +70,18 @@ export function proxyCreatorRoute(route: Router, targetUrl: string, timeout = 10
     }
     // tslint:disable-next-line: no-console
     console.log('REQ_URL_ORIGINAL', req.originalUrl)
-    // tslint:disable-next-line: no-console
-    console.log('REQ_URL', req.url)
     proxyCreator(timeout).web(req, res, {
       target: targetUrl,
+    })
+  })
+  return route
+}
+
+export function getContentProxyCreatorRoute(route: Router): Router {
+  route.all('/*', (req, res) => {
+    const baseUrl = removePrefix('https', req.query.artificatUrl)
+    proxyCreator().web(req, res, {
+      target: 'http' + baseUrl,
     })
   })
   return route
@@ -101,8 +109,6 @@ export function scormProxyCreatorRoute(route: Router, baseUrl: string): Router {
 export function proxyCreatorLearner(route: Router, targetUrl: string, _timeout = 10000): Router {
   route.all('/*', (req, res) => {
 
-    // tslint:disable-next-line: no-console
-    console.log('REQ_URL_ORIGINAL proxyCreatorLearner', req.originalUrl)
     const url = removePrefix(`${PROXY_SLUG}/learner`, req.originalUrl)
     logInfo('Final URL: ', targetUrl + url)
     proxy.web(req, res, {
@@ -171,7 +177,7 @@ export function proxyHierarchyKnowledge(route: Router, targetUrl: string, _timeo
   return route
 }
 
-export function proxyCreatorUpload(route: Router, targetUrl: string, _timeout = 10000): Router {
+export function proxyCreatorUpload(route: Router, targetUrl: string, _timeout = 10000000): Router {
   route.all('/*', (req, res) => {
     const url = removePrefix(`${PROXY_SLUG}/action`, req.originalUrl)
     // tslint:disable-next-line: no-console
@@ -240,7 +246,7 @@ export function proxyContent(route: Router, targetUrl: string, _timeout = 10000)
   route.all('/*', (req, res) => {
     const url = removePrefix(`${PROXY_SLUG}/private`, req.originalUrl)
     // tslint:disable-next-line: no-console
-    console.log('REQ_URL_ORIGINAL proxyCreatorUpload', targetUrl)
+    console.log('REQ_URL_ORIGINAL proxyCreatorUpload >>>>', targetUrl)
     proxy.web(req, res, {
       changeOrigin: true,
       ignorePath: true,

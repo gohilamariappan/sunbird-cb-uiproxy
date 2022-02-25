@@ -175,7 +175,11 @@ export class Server {
     }
   }
   private serverProxies() {
+<<<<<<< HEAD
     logInfo('Entered into Server proxies/v8..')
+=======
+    logInfo('Entered into proxies/v8' + this.keycloak)
+>>>>>>> 992b88930fdb4fe558c9391446451695083eaefa
     if (this.keycloak) {
       logInfo('Entered into proxies/v8')
       this.app.use('/proxies/v8', this.keycloak.protect, proxiesV8)

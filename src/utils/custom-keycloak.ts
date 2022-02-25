@@ -13,7 +13,6 @@ export class CustomKeycloak {
   private multiTenantKeycloak = new Map<string, keycloakConnect>()
 
   constructor(sessionConfig: expressSession.SessionOptions) {
-    logInfo('1. Entered into keycloak - custom-keycloak.ts >>>>>>>', CONSTANTS.MULTI_TENANT_KEYCLOAK)
     if (CONSTANTS.MULTI_TENANT_KEYCLOAK) {
       CONSTANTS.MULTI_TENANT_KEYCLOAK.split(';').forEach((v: string) => {
         const domainUrlMap = v.split(',')
@@ -23,7 +22,6 @@ export class CustomKeycloak {
         )
       })
     }
-    logInfo('2. Entered into keycloak - custom-keycloak.ts >>>>>>>')
     this.multiTenantKeycloak.set('common', this.generateKeyCloak(sessionConfig))
   }
 
@@ -33,7 +31,6 @@ export class CustomKeycloak {
     next: express.NextFunction
   ) => {
     const keycloak = this.getKeyCloakObject(req)
-    logInfo('.3 Entered into keycloak - custom-keycloak.ts >>>>>>>' + keycloak)
     const middleware = composable(
       keycloak.middleware({
         admin: '/callback',
@@ -62,7 +59,6 @@ export class CustomKeycloak {
 
   // tslint:disable-next-line: no-any
   authenticated = async (request: any) => {
-    // console.log('Step 3: authenticated function')
     try {
       const userId = request.kauth.grant.access_token.content.sub.split(':')
       request.session.userId = userId[userId.length - 1]
@@ -100,13 +96,12 @@ export class CustomKeycloak {
 // tslint:disable-next-line: no-any
   protect = (req: any, res: express.Response, next: express.NextFunction) => {
     const keycloak = this.getKeyCloakObject(req)
-    logInfo('Entered into custom keycloak req :' + req)
     // tslint:disable-next-line: no-console
-    console.dir('Method 1:Entered into custom keycloak value :' + keycloak)
-    // tslint:disable-next-line: no-console
-    console.table('Method 2:Entered into custom keycloak value :' + keycloak)
-    logInfo('Method 3:Entered into custom keycloak value :' + Object.entries(keycloak))
-    req.kauth.grant = req.session.grant
+    if (req.session.grant) {
+      logInfo('Entered into if statement to set kauth grant ')
+      req.kauth.grant = req.session.grant
+    }
+
     keycloak.protect()(req, res, next)
   };
 

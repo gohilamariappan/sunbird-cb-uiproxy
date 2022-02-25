@@ -55,7 +55,7 @@
     "curly": [true, "ignore-same-line"],
     "deprecation": true,
     "forin": true,
-    "interface-name": [true, "always-prefix"],
+    "interface-name": [false, "always-prefix"],
     "interface-over-type-literal": true,
     "jsdoc-format": true,
     "label-position": true,

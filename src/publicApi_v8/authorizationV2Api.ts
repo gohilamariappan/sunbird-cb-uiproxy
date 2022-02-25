@@ -7,8 +7,8 @@ import { CONSTANTS } from '../utils/env'
 import { logInfo } from '../utils/logger'
 import { getCurrentUserRoles } from './rolePermission'
 const API_END_POINTS = {
-  generateToken: `https://aastrika-sb.idc.tarento.com/auth/realms/sunbird/protocol/openid-connect/token`,
-  verfifyToken: `https://aastrika-sb.idc.tarento.com/auth/realms/sunbird/protocol/openid-connect/userinfo`,
+  generateToken: `${CONSTANTS.HTTPS_HOST}/auth/realms/sunbird/protocol/openid-connect/token`,
+  verfifyToken: `${CONSTANTS.HTTPS_HOST}/auth/realms/sunbird/protocol/openid-connect/userinfo`,
 }
 // tslint:disable-next-line: no-any
 export const authorizationV2Api = async (
@@ -17,16 +17,14 @@ export const authorizationV2Api = async (
   // tslint:disable-next-line: no-any
   request: any
 ) => {
-  logInfo('Entered into authorizationV2Api ')
 
   const encodedData = qs.stringify({
     client_id: 'portal',
-    client_secret: `${CONSTANTS.KEYCLOAK_CLIENT_SECRET}`,
+   // client_secret: `${CONSTANTS.KEYCLOAK_CLIENT_SECRET}`,
     grant_type: 'password',
     password,
     username,
   })
-  logInfo('Entered into authorization part.' + encodedData)
 
   try {
     const authTokenResponse = await axios({
@@ -38,8 +36,6 @@ export const authorizationV2Api = async (
       method: 'POST',
       url: API_END_POINTS.generateToken,
     })
-
-    logInfo('Entered into authTokenResponse :' + authTokenResponse)
 
     const accessToken = authTokenResponse.data.access_token
     // tslint:disable-next-line: no-any
@@ -59,7 +55,6 @@ export const authorizationV2Api = async (
 
         url: API_END_POINTS.verfifyToken,
       })
-      logInfo('userTokenResponse : ' + userTokenResponse)
       if (userTokenResponse.data.name) {
         logInfo('Success ! Entered into usertokenResponse..')
         await getCurrentUserRoles(request, accessToken)

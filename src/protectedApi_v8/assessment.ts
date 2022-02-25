@@ -12,7 +12,8 @@ import {
 export const assessmentApi = Router()
 const GENERAL_ERR_MSG = 'Failed due to unknown reason'
 const API_END_POINTS = {
-  assessmentSubmitV2: `${CONSTANTS.SB_EXT_API_BASE_2}/v2/user`,
+  assessmentSubmitV2      : `${CONSTANTS.SB_EXT_API_BASE_2}/v2/user`,
+  updateAssessmentContent : `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/course/v1/content/state/update`,
 }
 assessmentApi.post('/submit/v2', async (req, res) => {
   logInfo('>>>>>>>>>>>>inside submit v2')
@@ -20,7 +21,21 @@ assessmentApi.post('/submit/v2', async (req, res) => {
     logInfo('Check Submit V2 : ', req.body.artifactUrl)
     if (!req.body.artifactUrl) {
       res.status(400).json({
-        msg: 'artifact Url can not be empty',
+        msg: 'Warning ! Artifact Url can not be empty.',
+        status: 'error',
+        status_code: 400,
+      })
+    }
+    if (!req.body.courseId) {
+      res.status(400).json({
+        msg: 'Warning ! Course Id can not be empty.',
+        status: 'error',
+        status_code: 400,
+      })
+    }
+    if (!req.body.batchId) {
+      res.status(400).json({
+        msg: 'Warning ! Batch Id can not be empty.',
         status: 'error',
         status_code: 400,
       })
@@ -38,6 +53,8 @@ assessmentApi.post('/submit/v2', async (req, res) => {
       logInfo('formatedRequest', formatedRequest)
       const userId = extractUserIdFromRequest(req)
       const url = `${API_END_POINTS.assessmentSubmitV2}/assessment/submit`
+      // Create new key into session and add metadata
+      const accessToken = extractUserToken(req)
       const response = await axios({
         ...axiosRequestConfig,
         data: formatedRequest,
@@ -45,18 +62,51 @@ assessmentApi.post('/submit/v2', async (req, res) => {
           Authorization: CONSTANTS.SB_API_KEY,
           rootOrg,
           userId,
-          'x-authenticated-user-token': extractUserToken(req),
+          'x-authenticated-user-token': accessToken,
         },
         method: 'POST',
         url,
       })
+      const revisedData =  {
+            request : {
+              contents: [
+                  {
+                      batchId: req.body.batchId,
+                      completionPercentage: 100,
+                      contentId: req.body.contentId,
+                      courseId: req.body.courseId,
+                      status: 2,
+                  },
+              ],
+              userId: req.body.userId ? req.body.userId : userId,
+            },
+        }
+      logInfo('Content has completed the course.' + revisedData)
+      // exception for WRAI
+      if (req.body.contentId === 'do_113474390542598144143' || req.body.contentId === 'do_113474390542598144144' ) {
+            response.data.passPercent = 0
+      }
+      if (response.data.result >= response.data.passPercent) {
+
+        await axios({
+                      ...axiosRequestConfig,
+                      data: revisedData,
+                      headers: {
+                        Authorization: CONSTANTS.SB_API_KEY,
+                        'x-authenticated-user-token': accessToken,
+                      },
+                      method: 'PATCH',
+                      url : API_END_POINTS.updateAssessmentContent,
+        })
+      }
+
       res.status(response.status).send(response.data)
     }
   } catch (err) {
-    logError('submitassessment  failed')
-    res.status((err && err.response && err.response.status) || 500).send(
-      (err && err.response && err.response.data) || {
-        error: GENERAL_ERR_MSG,
+    logError('submitassessment  failed >>>>>' + err)
+    res.status(500).send({
+        error: err,
+        message : GENERAL_ERR_MSG,
       }
     )
   }
@@ -137,13 +187,13 @@ const getFormatedRequest = (data: any, requestBody: any) => {
 
   _.forEach(data.questions, (qkey) => {
     _.forEach(requestBody.questions, (reqKey) => {
-      if (qkey.questionType === 'mcq-sca' || qkey.questionType === 'fitb') {
+      if (qkey.questionType === 'mcq-sca' || qkey.questionType === 'fitb' ||  qkey.questionType === 'mcq-mca' ) {
         _.forEach(qkey.options, (qoptKey) => {
           _.forEach(reqKey.options, (optKey) => {
             if (optKey.optionId === qoptKey.optionId) {
               if (
                 qkey.questionType === 'mcq-sca' ||
-                qkey.questionType === 'fitb'
+                qkey.questionType === 'fitb' || qkey.questionType === 'mcq-mca'
               ) {
                 _.set(optKey, 'isCorrect', _.get(qoptKey, 'isCorrect'))
                 _.set(optKey, 'text', _.get(qoptKey, 'text'))
@@ -157,6 +207,6 @@ const getFormatedRequest = (data: any, requestBody: any) => {
       }
     })
   })
-  logInfo('requestBody', JSON.stringify(requestBody))
+  logInfo('requestBody to submit the assessment ', JSON.stringify(requestBody))
   return requestBody
 }
