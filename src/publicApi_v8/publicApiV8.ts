@@ -9,6 +9,7 @@ import { homePage } from './home'
 import { publicContentApi } from './publicContent'
 import { signup } from './signup'
 import { publicTnc } from './tnc'
+import { validateCertificate } from './certificateValidate'
 export const publicApiV8 = express.Router()
 
 publicApiV8.get('/', (_req, res) => {
@@ -34,3 +35,4 @@ publicApiV8.use('/google/', googleAuth)
 publicApiV8.use('/forgot-password/', forgotPassword)
 publicApiV8.use('/publicContent/', publicContentApi)
 publicApiV8.use('/login/', emailOrMobileLogin)
+publicApiV8.use('/certificate/', validateCertificate)
