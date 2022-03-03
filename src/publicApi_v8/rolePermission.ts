@@ -24,16 +24,16 @@ const ROLE = [
 ]
 
 // tslint:disable-next-line: no-any
-export const setRolesData = async(reqObj: any, body: any) => {
+export const setRolesData = async (reqObj: any, body: any) => {
   // tslint:disable-next-line: no-any
   const userData: any = body
-  const fullName = userData.result.response.firstName + " " + userData.result.response.lastName
+  const fullName = userData.result.response.firstName + ' ' + userData.result.response.lastName
   const userName = userData.result.response.userName
   const discussionReponse = await fetchnodebbUserDetails( userData.result.response.id, userName, fullName, userData.result.response)
-  //logInfo('>>>> userData >>>>>>>>>>>> ' + JSON.stringify(userData))
+  // logInfo('>>>> userData >>>>>>>>>>>> ' + JSON.stringify(userData))
   logInfo('>>>> Discussion forum >>>>>>>>>>>> ' + discussionReponse)
   logInfo('userData' + JSON.stringify(userData))
-  
+
   if (reqObj.session) {
     reqObj.session.userId = userData.result.response.id
       ? userData.result.response.id

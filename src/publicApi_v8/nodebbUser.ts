@@ -8,37 +8,34 @@ const API_END_POINTS = {
 // tslint:disable-next-line: no-any
 export const fetchnodebbUserDetails = async (
   identifier: string,
-  userName : string,
-  fullname : string,
+  userName: string,
+  fullname: string,
   // tslint:disable-next-line: no-any
   req: any
 ) => {
 
-  try { 
-    logInfo("Entered into Nodebb User details >>>>>>"+ req)
+  try {
+    logInfo('Entered into Nodebb User details >>>>>>' + req)
     const formatedData =  {
                             request : {
+                              fullname,
+                              identifier,
                               username: userName,
-                              identifier: identifier,
-                              fullname: fullname
-                                
                             },
                         }
-     logInfo("Entered into Nodebb User details 2 >>>>>>"+ JSON.stringify(formatedData))
+    logInfo('Entered into Nodebb User details 2 >>>>>>' + JSON.stringify(formatedData))
     const response = await axios({
       ...axiosRequestConfig,
       data: formatedData,
       headers: {
                   Authorization: CONSTANTS.SB_API_KEY,
-                  "Content-Type":"application/json"
+                  'Content-Type': 'application/json',
                 },
                 method: 'POST',
-                url:API_END_POINTS.createOrFetchUser,
+                url: API_END_POINTS.createOrFetchUser,
               })
 
-     const fetchUidResponse = response.data.result.userId.uid
-    //util.inspect(response, depth=2)
-    return fetchUidResponse
+    return response.data.result.userId.uid
   } catch (e) {
     logInfo('Error throwing Cookie : ' + e)
     return false
