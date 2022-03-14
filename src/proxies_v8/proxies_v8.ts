@@ -110,7 +110,6 @@ proxiesV8.get('/logout/user', (_req, res) => {
 })
 
 proxiesV8.post('/upload/action/*', (req, res) => {
-  // console.log("Entered >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"+JSON.stringify(req.files))
   if (req.files && req.files.data) {
     const url = removePrefix('/proxies/v8/upload/action/upload/content/v3/', req.originalUrl)
     const file: UploadedFile = req.files.data as UploadedFile

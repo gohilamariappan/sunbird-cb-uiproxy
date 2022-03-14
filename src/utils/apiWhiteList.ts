@@ -1,7 +1,7 @@
-const _                 = require('lodash')
-const uuidv1            = require('uuid/v1')
-const { pathToRegexp }  = require('path-to-regexp')
-const dateFormat        = require('dateformat')
+const _ = require('lodash')
+const uuidv1 = require('uuid/v1')
+const { pathToRegexp } = require('path-to-regexp')
+const dateFormat = require('dateformat')
 
 import { NextFunction, Request, Response } from 'express'
 import { CONSTANTS } from './env'
@@ -34,6 +34,7 @@ const checkIsStaticRoute = (REQ_URL: any) => {
         '/content-plugins/',
         '/editors/',
         '/content/',
+        '/learning-analytics',
     ]
     // tslint:disable-next-line: no-any
     return _.some(excludePath, (path: any) => _.includes(REQ_URL, path))
@@ -63,7 +64,7 @@ const urlChecks = {
         }
     },
     // tslint:disable-next-line: no-any
-    SCOPE_CHECK : (resolve: any, reject: any, req: Request, rolesForURL: any, REQ_URL: any) => {
+    SCOPE_CHECK: (resolve: any, reject: any, req: Request, rolesForURL: any, REQ_URL: any) => {
         logInfo('Portal_API_WHITELIST_SCOPE_CHECK : Middleware for URL [ ' + REQ_URL + ' ]')
         const orgData = (_.get(req, 'session.orgs')) ? _.get(req, 'session.orgs') : []
         const orgId = (_.get(req, 'query.orgId')) ? _.get(req, 'query.orgId') : ''
@@ -105,28 +106,28 @@ const urlChecks = {
  * @since release-3.1.0
  */
 // tslint:disable-next-line: no-any
-const executeChecks = async (req: Request, res: Response , next: NextFunction, checksToExecute: any = []) => {
+const executeChecks = async (req: Request, res: Response, next: NextFunction, checksToExecute: any = []) => {
     try {
         // tslint:disable-next-line: no-any
         await (Promise as any).allSettled(checksToExecute)
-        // tslint:disable-next-line: no-any
-        .then((pSuccess: any) => {
-            if (pSuccess) {
-                const _isRejected = _.find(pSuccess, {status: 'rejected'})
-                if (_isRejected) {
-                    throw new Error(_isRejected.reason)
+            // tslint:disable-next-line: no-any
+            .then((pSuccess: any) => {
+                if (pSuccess) {
+                    const _isRejected = _.find(pSuccess, { status: 'rejected' })
+                    if (_isRejected) {
+                        throw new Error(_isRejected.reason)
+                    } else {
+                        next()
+                    }
                 } else {
-                    next()
+                    throw new Error('API whitelisting validation failed')
                 }
-            } else {
-                throw new Error('API whitelisting validation failed')
-            }
-        })
-        // tslint:disable-next-line: no-any
-        .catch((pError: any) => {
-            logError(pError)
-            respond403(req, res)
-        })
+            })
+            // tslint:disable-next-line: no-any
+            .catch((pError: any) => {
+                logError(pError)
+                respond403(req, res)
+            })
     } catch (error) {
         logError(error)
         respond403(req, res)
@@ -145,23 +146,23 @@ const respond403 = (req: Request, res: Response) => {
     logError(err.msg)
     res.status(403)
     res.send(
-    {
-        id: 'api.error',
-        ver: '1.0',
-        // tslint:disable-next-line: object-literal-sort-keys
-        ts: dateFormat(new Date(), 'yyyy-mm-dd HH:MM:ss:lo'),
-        params:
         {
-            resmsgid: uuidv1(),
+            id: 'api.error',
+            ver: '1.0',
             // tslint:disable-next-line: object-literal-sort-keys
-            msgid: null,
-            status: 'failed',
-            err: 'FORBIDDEN_ERROR',
-            errmsg: 'Forbidden: API WHITELIST Access is denied',
-        },
-        responseCode: 'FORBIDDEN',
-        result: {},
-    })
+            ts: dateFormat(new Date(), 'yyyy-mm-dd HH:MM:ss:lo'),
+            params:
+            {
+                resmsgid: uuidv1(),
+                // tslint:disable-next-line: object-literal-sort-keys
+                msgid: null,
+                status: 'failed',
+                err: 'FORBIDDEN_ERROR',
+                errmsg: 'Forbidden: API WHITELIST Access is denied',
+            },
+            responseCode: 'FORBIDDEN',
+            result: {},
+        })
     res.end()
 }
 
@@ -175,24 +176,24 @@ const respond419 = (req: Request, res: Response) => {
         res.status(419)
         res.setHeader('location', redirectToLogin(req))
         res.send(
-        {
-            id: 'api.error',
-            ver: '1.0',
-            // tslint:disable-next-line: object-literal-sort-keys
-            ts: dateFormat(new Date(), 'yyyy-mm-dd HH:MM:ss:lo'),
-            params:
             {
-                resmsgid: uuidv1(),
+                id: 'api.error',
+                ver: '1.0',
                 // tslint:disable-next-line: object-literal-sort-keys
-                msgid: null,
-                status: 'failed',
-                err: 'UNAUTHORIZED_ERROR',
-                errmsg: 'UNAUTHORIZED: Access is denied',
-            },
-            responseCode: 'UNAUTHORIZED',
-            redirectUrl: redirectToLogin(req),
-            result: {},
-        })
+                ts: dateFormat(new Date(), 'yyyy-mm-dd HH:MM:ss:lo'),
+                params:
+                {
+                    resmsgid: uuidv1(),
+                    // tslint:disable-next-line: object-literal-sort-keys
+                    msgid: null,
+                    status: 'failed',
+                    err: 'UNAUTHORIZED_ERROR',
+                    errmsg: 'UNAUTHORIZED: Access is denied',
+                },
+                responseCode: 'UNAUTHORIZED',
+                redirectUrl: redirectToLogin(req),
+                result: {},
+            })
     }
 
     res.end()
@@ -242,9 +243,9 @@ export const isAllowed = () => {
                         urlChecksNeeded.forEach((CHECK: any) => {
                             // tslint:disable-next-line: no-shadowed-variable
                             checksToExecute.push(new Promise((res, rej) => {
-                            if (_.get(URL_RULE_OBJ, CHECK) && typeof urlChecks[CHECK] === 'function') {
-                                urlChecks[CHECK](res, rej, req, URL_RULE_OBJ[CHECK], REQ_URL)
-                            }
+                                if (_.get(URL_RULE_OBJ, CHECK) && typeof urlChecks[CHECK] === 'function') {
+                                    urlChecks[CHECK](res, rej, req, URL_RULE_OBJ[CHECK], REQ_URL)
+                                }
                             }))
                         })
                         executeChecks(req, res, next, checksToExecute)
@@ -291,17 +292,19 @@ const validateAPI = (req: Request, res: Response, next: NextFunction) => {
 
 export function apiWhiteListLogger() {
     return (req: Request, res: Response, next: NextFunction) => {
-        if (req.path === '/' || checkIsStaticRoute(req.path) ||     _.includes(req.path , 'public') ) {
+        if (req.path === '/' || checkIsStaticRoute(req.path) || _.includes(req.path, 'public')) {
             next()
             return
         }
         if (!_.includes(req.path, '/resource') && (req.session)) {
-                if (!('userRoles' in req.session) || (('userRoles' in req.session) && (req.session.userRoles.length === 0))) {
-                    logError('Portal_API_WHITELIST_LOGGER: User needs to authenticated themselves')
-                    respond419(req, res)
-                } else {
-                    logInfo('In WhilteList Call========' + req.path)
-                    validateAPI(req, res, next)  }
-            } else {  next()  }
+            if (!('userRoles' in req.session) || (('userRoles' in req.session) && (req.session.userRoles.length === 0))) {
+                logError('Portal_API_WHITELIST_LOGGER: User needs to authenticated themselves')
+                respond419(req, res)
+            } else {
+                logInfo('In WhilteList Call========' + req.path)
+                validateAPI(req, res, next)
+            }
+        } else { next() }
+
     }
 }

@@ -10,6 +10,7 @@ import { publicContentApi } from './publicContent'
 import { signup } from './signup'
 import { publicTnc } from './tnc'
 import { validateCertificate } from './certificateValidate'
+
 export const publicApiV8 = express.Router()
 
 publicApiV8.get('/', (_req, res) => {
