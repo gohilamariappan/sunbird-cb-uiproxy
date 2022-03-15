@@ -124,7 +124,6 @@ export function proxyCreatorLearner(route: Router, targetUrl: string, _timeout =
 export function proxyCreatorSunbird(route: Router, targetUrl: string, _timeout = 10000): Router {
     // tslint:disable-next-line: no-any
   route.all('/*', (req: any, res) => {
-
     // tslint:disable-next-line: no-console
     console.log('REQ_URL_ORIGINAL proxyCreatorSunbird', req.originalUrl)
     const url = removePrefix(`${PROXY_SLUG}`, req.originalUrl) + '?_uid=' + req.session.nodebbUid
