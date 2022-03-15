@@ -31,8 +31,6 @@ export const setRolesData = async (reqObj: any, body: any) => {
   const userName = userData.result.response.userName
   const discussionReponse = await fetchnodebbUserDetails( userData.result.response.id, userName, fullName, userData.result.response)
   // logInfo('>>>> userData >>>>>>>>>>>> ' + JSON.stringify(userData))
-  logInfo('>>>> Discussion forum >>>>>>>>>>>> ' + discussionReponse)
-  logInfo('userData' + JSON.stringify(userData))
 
   if (reqObj.session) {
     reqObj.session.userId = userData.result.response.id

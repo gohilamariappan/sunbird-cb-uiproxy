@@ -19,7 +19,7 @@ proxy.on('proxyReq', (proxyReq: any, req: any, _res: any, _options: any) => {
   proxyReq.setHeader('x-authenticated-user-token', extractUserToken(req))
   proxyReq.setHeader('x-authenticated-userid', extractUserIdFromRequest(req))
 
-   // condition has been added to set the session in nodebb req header 
+   // condition has been added to set the session in nodebb req header
   // condition don't require for nodebb as of now, we manage authentication through API key and uid will be passed for each req.
   // if (req.originalUrl.includes('/discussion') && !req.originalUrl.includes('/discussion/user/v1/create')) {
   //   proxyReq.setHeader('Authorization', 'Bearer ' + req.session.nodebb_authorization_token)
@@ -122,11 +122,13 @@ export function proxyCreatorLearner(route: Router, targetUrl: string, _timeout =
 }
 
 export function proxyCreatorSunbird(route: Router, targetUrl: string, _timeout = 10000): Router {
-  route.all('/*', (req, res) => {
+    // tslint:disable-next-line: no-any
+  route.all('/*', (req: any, res) => {
 
     // tslint:disable-next-line: no-console
     console.log('REQ_URL_ORIGINAL proxyCreatorSunbird', req.originalUrl)
-    const url = removePrefix(`${PROXY_SLUG}`, req.originalUrl)
+    const url = removePrefix(`${PROXY_SLUG}`, req.originalUrl) + '?_uid=' + req.session.nodebbUid
+    logInfo('Final Url for target >>>>>>>>>', targetUrl + url)
     proxy.web(req, res, {
       changeOrigin: true,
       ignorePath: true,
