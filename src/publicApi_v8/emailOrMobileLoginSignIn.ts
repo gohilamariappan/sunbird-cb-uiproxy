@@ -33,6 +33,7 @@ const AUTHENTICATED = 'Success ! User is sucessfully authenticated.'
 export const emailOrMobileLogin = Router()
 emailOrMobileLogin.post('/signup', async (req, res) => {
   try {
+    logInfo("Entered into signup >>>>>", req.body.email)
     if (!req.body.email) {
       res.status(400).json({
         msg: 'Email id. can not be empty',
@@ -58,6 +59,7 @@ emailOrMobileLogin.post('/signup', async (req, res) => {
         psw: password,
         type: 'email',
       }
+      logInfo("Checking profile data "+ profile )
       newUserDetails = await createuserWithmobileOrEmail(profile).catch(
         handleCreateUserError
       )
