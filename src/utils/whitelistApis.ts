@@ -915,11 +915,11 @@ export const API_LIST = {
       ROLE_CHECK: [ROLE.PUBLIC],
     },
     '/protected/v8/workflowhandler/historyByApplicationIdAndWfId/:applicationId/:wfId':
-      {
-        checksNeeded: [CHECK.ROLE],
-        // tslint:disable-next-line: object-literal-sort-keys
-        ROLE_CHECK: [ROLE.PUBLIC],
-      },
+    {
+      checksNeeded: [CHECK.ROLE],
+      // tslint:disable-next-line: object-literal-sort-keys
+      ROLE_CHECK: [ROLE.PUBLIC],
+    },
     '/protected/v8/workflowhandler/workflowProcess/:wfId': {
       checksNeeded: [CHECK.ROLE],
       // tslint:disable-next-line: object-literal-sort-keys
@@ -1071,6 +1071,62 @@ export const API_LIST = {
       // tslint:disable-next-line: object-literal-sort-keys
       ROLE_CHECK: [ROLE.PUBLIC],
     },
+    '/proxies/v8/action/framework/v3/read/:id': {
+      checksNeeded: [CHECK.ROLE],
+      // tslint:disable-next-line: object-literal-sort-keys
+      ROLE_CHECK: [
+        ROLE.PUBLIC,
+      ],
+    },
+    '/proxies/v8/action/framework/v3/category/master/create': {
+      checksNeeded: [CHECK.ROLE],
+      // tslint:disable-next-line: object-literal-sort-keys
+      ROLE_CHECK: [
+        ROLE.PUBLIC,
+      ],
+    },
+    '/proxies/v8/action/framework/v3/category/master/search': {
+      checksNeeded: [CHECK.ROLE],
+      // tslint:disable-next-line: object-literal-sort-keys
+      ROLE_CHECK: [
+        ROLE.PUBLIC,
+      ],
+    },
+    '/proxies/v8/action/framework/v3/category/master/read/:id': {
+      checksNeeded: [CHECK.ROLE],
+      // tslint:disable-next-line: object-literal-sort-keys
+      ROLE_CHECK: [
+        ROLE.PUBLIC,
+      ],
+    },
+    '/proxies/v8/action/framework/v3/category/create': {
+      checksNeeded: [CHECK.ROLE],
+      // tslint:disable-next-line: object-literal-sort-keys
+      ROLE_CHECK: [
+        ROLE.PUBLIC,
+      ],
+    },
+    '/proxies/v8/action/framework/v3/category/read/:id': {
+      checksNeeded: [CHECK.ROLE],
+      // tslint:disable-next-line: object-literal-sort-keys
+      ROLE_CHECK: [
+        ROLE.PUBLIC,
+      ],
+    },
+    '/proxies/v8/action/framework/v3/category/retire/:id': {
+      checksNeeded: [CHECK.ROLE],
+      // tslint:disable-next-line: object-literal-sort-keys
+      ROLE_CHECK: [
+        ROLE.PUBLIC,
+      ],
+    },
+    '/proxies/v8/action/framework/v3/term/create': {
+      checksNeeded: [CHECK.ROLE],
+      // tslint:disable-next-line: object-literal-sort-keys
+      ROLE_CHECK: [
+        ROLE.PUBLIC,
+      ],
+    }
   },
   URL_PATTERN: [
     '/authApi/action/content/hierarchy/:do_id',
@@ -1279,5 +1335,13 @@ export const API_LIST = {
     '/public/v8/homePage/searchV6',
     '/public/v8/forgot-password/verify',
     '/proxies/v8/LA/api/la/contentanalytics/:contentId/:type',
+    '/proxies/v8/action/framework/v3/read/:id',
+    '/proxies/v8/action/framework/v3/category/master/create',
+    '/proxies/v8/action/framework/v3/category/master/search',
+    '/proxies/v8/action/framework/v3/category/master/read/:id',
+    '/proxies/v8/action/framework/v3/category/create',
+    '/proxies/v8/action/framework/v3/category/read/:id',
+    '/proxies/v8/action/framework/v3/category/retire/:id',
+    '/proxies/v8/action/framework/v3/term/create'
   ],
 }
