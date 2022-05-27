@@ -1131,7 +1131,7 @@ export const API_LIST = {
       ROLE_CHECK: [
         ROLE.PUBLIC,
       ],
-    }
+    },
   },
   URL_PATTERN: [
     '/authApi/action/content/hierarchy/:do_id',
@@ -1160,7 +1160,7 @@ export const API_LIST = {
     '/proxies/v8/org/v1/update',
     '/proxies/v8/discussion/topic/:id/:slug',
     '/proxies/v8/discussion/topic/:tid/:tid/:slug',
-    //'/proxies/v8/discussion/v2/posts/:id/vote',
+    // '/proxies/v8/discussion/v2/posts/:id/vote',
     '/proxies/v8/discussion/v2/posts/:id',
     '/proxies/v8/discussion/v2/posts/:id/bookmark',
     '/proxies/v8/learner/course/v1/user/enrollment/list/:id',
@@ -1348,6 +1348,6 @@ export const API_LIST = {
     '/proxies/v8/action/framework/v3/category/create',
     '/proxies/v8/action/framework/v3/category/read/:id',
     '/proxies/v8/action/framework/v3/category/retire/:id',
-    '/proxies/v8/action/framework/v3/term/create'
+    '/proxies/v8/action/framework/v3/term/create',
   ],
 }

@@ -124,26 +124,21 @@ export function proxyCreatorLearner(route: Router, targetUrl: string, _timeout =
 export function proxyCreatorSunbird(route: Router, targetUrl: string, _timeout = 10000): Router {
     // tslint:disable-next-line: no-any
   route.all('/*', (req: any, res) => {
-    let url;
+    let url
     // tslint:disable-next-line: no-console
     console.log('REQ_URL_ORIGINAL proxyCreatorSunbird', req.originalUrl)
 
-    if(req.originalUrl.includes('discussion/topic'))
-    {
-      let topic=req.originalUrl.toString().split("/");
-      if(topic[5] == topic[6])
-      {
-        req.originalUrl = topic[0]+"/"+topic[1]+"/"+topic[2]+"/"+topic[3]+"/"+topic[4]+"/"+topic[5]+"/"+topic[7]
+    if (req.originalUrl.includes('discussion/topic')) {
+      const topic = req.originalUrl.toString().split('/')
+      if (topic[5] === topic[6]) {
+        req.originalUrl = topic[0] + '/' + topic[1] + '/' + topic[2] + '/' + topic[3] + '/' + topic[4] + '/' + topic[5] + '/' + topic[7]
       }
-      logInfo("Updated req.originalUrl >>> "+ req.originalUrl)
+      logInfo('Updated req.originalUrl >>> ' + req.originalUrl)
 
     }
-    if(req.originalUrl.includes('?'))
-    {
+    if (req.originalUrl.includes('?')) {
       url = removePrefix(`${PROXY_SLUG}`, req.originalUrl) + '&_uid=' + req.session.nodebbUid
-    }
-    else
-    {
+    } else {
       url = removePrefix(`${PROXY_SLUG}`, req.originalUrl) + '?_uid=' + req.session.nodebbUid
     }
     logInfo('Final Url for target >>>>>>>>>', targetUrl + url)
