@@ -127,6 +127,17 @@ export function proxyCreatorSunbird(route: Router, targetUrl: string, _timeout =
     let url;
     // tslint:disable-next-line: no-console
     console.log('REQ_URL_ORIGINAL proxyCreatorSunbird', req.originalUrl)
+
+    if(req.originalUrl.includes('discussion/topic'))
+    {
+      let topic=req.originalUrl.toString().split("/");
+      if(topic[5] == topic[6])
+      {
+        req.originalUrl = topic[0]+"/"+topic[1]+"/"+topic[2]+"/"+topic[3]+"/"+topic[4]+"/"+topic[5]+"/"+topic[7]
+      }
+      logInfo("Updated req.originalUrl >>> "+ req.originalUrl)
+
+    }
     if(req.originalUrl.includes('?'))
     {
       url = removePrefix(`${PROXY_SLUG}`, req.originalUrl) + '&_uid=' + req.session.nodebbUid
