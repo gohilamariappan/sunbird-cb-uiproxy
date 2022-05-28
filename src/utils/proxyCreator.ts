@@ -155,20 +155,15 @@ export function proxyCreatorKnowledge(route: Router, targetUrl: string, _timeout
   route.all('/*', (req, res) => {
 
     const url = removePrefix(`${PROXY_SLUG}`, req.originalUrl)
-    if (url.includes('hierarchy/add')) 
-    {
-      let updateSlug = "/private/content/v3/hierarchy/add"
-      logInfo("Targeturl value >>>>>>>>> "+targetUrl+updateSlug)
-      // tslint:disable-next-line: no-console
-      console.log('REQ_URL_ORIGINAL proxyCreatorKnowledge', targetUrl + url)
+    if (url.includes('hierarchy/add')) {
+      const updateSlug = '/private/content/v3/hierarchy/add'
+      logInfo('Targeturl value >>>>>>>>> ' + targetUrl + updateSlug)
       proxy.web(req, res, {
                             changeOrigin: true,
                             ignorePath: true,
                             target: targetUrl + updateSlug,
                           })
-    }
-    else
-    {
+    } else {
       // tslint:disable-next-line: no-console
       console.log('REQ_URL_ORIGINAL proxyCreatorKnowledge', targetUrl + url)
       proxy.web(req, res, {
@@ -176,7 +171,7 @@ export function proxyCreatorKnowledge(route: Router, targetUrl: string, _timeout
                         ignorePath: true,
                         target: targetUrl + url,
                       })
-    
+
     }
   })
   return route
