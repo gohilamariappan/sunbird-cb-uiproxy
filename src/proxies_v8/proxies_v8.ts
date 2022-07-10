@@ -147,8 +147,8 @@ proxiesV8.post('/upload/action/*', (req, res) => {
       return res.send(output)
     })
     .catch((error) => {
-      logInfo("Error on Upload :"+ error)
-      return res.send("Error while uploading ..")
+      logInfo('Error on Upload :' + error)
+      return res.send('Error while uploading ..')
     })
 
   } else {

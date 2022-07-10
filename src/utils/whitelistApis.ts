@@ -473,17 +473,17 @@ export const API_LIST = {
       // tslint:disable-next-line: object-literal-sort-keys
       ROLE_CHECK: [ROLE.PUBLIC],
     },
-    '/protected/v8/admin/userRegistration/bulkUploadData':{
+    '/protected/v8/admin/userRegistration/bulkUploadData': {
       checksNeeded: [CHECK.ROLE],
       // tslint:disable-next-line: object-literal-sort-keys
       ROLE_CHECK: [ROLE.PUBLIC],
     },
-    '/protected/v8/admin/bulk-upload/create-users':{
+    '/protected/v8/admin/bulk-upload/create-users': {
       checksNeeded: [CHECK.ROLE],
       // tslint:disable-next-line: object-literal-sort-keys
       ROLE_CHECK: [ROLE.PUBLIC],
     },
-    '/proxies/v8/admin/bulk-upload/create-users':{
+    '/proxies/v8/admin/bulk-upload/create-users': {
       checksNeeded: [CHECK.ROLE],
       // tslint:disable-next-line: object-literal-sort-keys
       ROLE_CHECK: [ROLE.PUBLIC],
