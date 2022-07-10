@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import { bannerApi } from './banner'
-import { userRegistrationApi } from './userRegistration'
 import { bulkUploadUserApi } from './bulkUploadUser'
+import { userRegistrationApi } from './userRegistration'
 import { userRolesApi } from './userRoles'
 
 export const admin = Router()
