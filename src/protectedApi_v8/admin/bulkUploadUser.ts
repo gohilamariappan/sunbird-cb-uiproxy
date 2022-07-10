@@ -18,7 +18,7 @@ bulkUploadUserApi.post('/create-users', async (req: any, res) => {
         const fileData = req.files.userData.data.toString('utf8')
         logInfo('files recived >>>>>>>>> ' + fileData)
         const lines = fileData.split('\n')
-     logInfo('Linesdata >>>>>' + lines)
+        logInfo('Linesdata >>>>>' + lines)
         const result = []
 
         // NOTE: If your columns contain commas in their values, you'll need
@@ -28,7 +28,7 @@ bulkUploadUserApi.post('/create-users', async (req: any, res) => {
 
             const obj = {}
             const currentline = lines[i].split(',')
-      for (let j = 0; j < headers.length; j++) {
+            for (let j = 0; j < headers.length; j++) {
                 obj[headers[j]] = currentline[j]
             }
 
