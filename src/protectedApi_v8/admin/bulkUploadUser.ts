@@ -42,7 +42,7 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
     const userProcessing = async () => { 
         try{
             let finalPromiseResolve = []
-            let data = await Promise.all(result.map(async (csvObjects:any) => {
+            let data = await (Promise as any).allSettled(result.map(async (csvObjects:any) => {
                 return await simulateFetchData(csvObjects)
             }))
            
