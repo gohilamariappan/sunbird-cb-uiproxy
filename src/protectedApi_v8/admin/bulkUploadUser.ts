@@ -4,6 +4,7 @@ import { Router } from 'express'
 import { axiosRequestConfig } from '../../configs/request.config'
 import { CONSTANTS } from '../../utils/env'
 import { logInfo } from '../../utils/logger'
+import { extractUserToken } from '../../utils/requestExtract'
 
 const API_ENDPOINTS = {
     assignRoleforBulkUsers: `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/user/v1/role/assign`,
@@ -75,6 +76,7 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
                         [csvObjects.type]: csvObjects.phone ? csvObjects.phone : csvObjects.username,
                         password: process.env.PASSWORD,
                         usertype: csvObjects.usertype,
+                        organisationId: csvObjects.organisationId,
                     }
 
                     logInfo('collectData >>>>>' + JSON.stringify(collectData))
@@ -93,7 +95,7 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
                         finalResponse.push(responseUserCreation)
 
                         const roleData = {
-                                    organisationId: csvObjects.organisationId, // Pre-defined organisatin id
+                                    organisationId: responseUserCreation.data.result.organisationId, // Pre-defined organisatin id
                                     roles: [
                                         'PUBLIC',
                                     ],
@@ -102,6 +104,25 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
 
                         logInfo('Entered into Assign role >>' + JSON.stringify(roleData))
 
+                        const responseRoleAssign = await axios({
+                            ...axiosRequestConfig,
+                            data: {
+                                request: {
+                                   roleData
+                                },
+                                url: API_ENDPOINTS.assignRoleforBulkUsers,
+                            },
+                            headers: {
+                                Authorization: CONSTANTS.SB_API_KEY,
+                                // tslint:disable-next-line: all
+                                'x-authenticated-user-token': extractUserToken(req)
+                            },
+                            method: 'POST',
+                        })
+                        logInfo('Role Assigned data >>>> ' + responseRoleAssign)
+                        // logInfo("Final collective data >>>> " + JSON.stringify(responseRoleAssign))
+                        finalResponse.push(responseRoleAssign)
+
                     }
 
                     return finalResponse
@@ -109,9 +130,7 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
 
             } catch (error) {
                 logInfo('Error While Creating the user & assigning role : ' + error)
-                _res.status(500).send({
-                    message: 'Error While Creating the user ',
-                })
+            
             }
 
         }
