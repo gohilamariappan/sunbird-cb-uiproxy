@@ -24,6 +24,7 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
         // logInfo('files recived >>>>>>>>> ' + fileData)
         const lines = fileData.split('\n')
         // logInfo('Linesdata >>>>>' + lines)
+        // tslint:disable-next-line: no-any
         const result: any = []
 
         // NOTE: If your columns contain commas in their values, you'll need
@@ -52,8 +53,8 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
                 // logInfo("Final Data inside user processing >>>>> " + finalPromiseResolve.push(data))
 
                 _res.status(200).send({
+                                            data: data,
                                             message: 'Bulk Upload is Completed ! ',
-                                            data: finalPromiseResolve.push(data),
                                         })
             } catch (error) {
                 logInfo('Calling User Processing  : ' + error)
@@ -95,12 +96,6 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
                         logInfo('Entered into Assign role >>')
                         const responseRoleAssign = await axios({
                             ...axiosRequestConfig,
-                            headers: {
-                                Authorization: CONSTANTS.SB_API_KEY,
-                                // tslint:disable-next-line: all
-                                'x-authenticated-user-token': extractUserToken(req)
-                            },
-                            method: 'POST',
                             data: {
                                 request: {
                                     userId: responseUserCreation.data.result.userId,
@@ -111,6 +106,12 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
                                 },
                                 url: API_ENDPOINTS.assignRoleforBulkUsers,
                             },
+                            headers: {
+                                Authorization: CONSTANTS.SB_API_KEY,
+                                // tslint:disable-next-line: all
+                                'x-authenticated-user-token': extractUserToken(req)
+                            },
+                            method: 'POST',
                         })
                         logInfo('Final collective data >>>> ' + responseRoleAssign)
                         // logInfo("Final collective data >>>> " + JSON.stringify(responseRoleAssign))
