@@ -4,7 +4,6 @@ import { Router } from 'express'
 import { axiosRequestConfig } from '../../configs/request.config'
 import { CONSTANTS } from '../../utils/env'
 import { logInfo } from '../../utils/logger'
-//import { extractUserToken } from '../../utils/requestExtract'
 
 const API_ENDPOINTS = {
     assignRoleforBulkUsers: `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/user/v1/role/assign`,
@@ -102,7 +101,7 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
                                 }
 
                         logInfo('Entered into Assign role >>' + roleData)
-                        
+
                     }
 
                     return finalResponse
