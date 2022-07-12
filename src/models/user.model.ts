@@ -152,4 +152,3 @@ export interface ISunbirdbUserResponse {
   lastName: string
   userId: string
 }
-

@@ -53,7 +53,7 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
                 // logInfo("Final Data inside user processing >>>>> " + finalPromiseResolve.push(data))
 
                 _res.status(200).send({
-                                            data: data,
+                                            data,
                                             message: 'Bulk Upload is Completed ! ',
                                         })
             } catch (error) {
@@ -98,11 +98,11 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
                             ...axiosRequestConfig,
                             data: {
                                 request: {
-                                    userId: responseUserCreation.data.result.userId,
                                     organisationId: csvObjects.organisationId, // Pre-defined organisatin id
                                     roles: [
                                         'PUBLIC',
                                     ],
+                                    userId: responseUserCreation.data.result.userId,
                                 },
                                 url: API_ENDPOINTS.assignRoleforBulkUsers,
                             },
