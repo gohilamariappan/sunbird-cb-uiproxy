@@ -92,29 +92,34 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
                     //  logInfo("Response usercreation >>>>>>>>>>"+ JSON.stringify(responseUserCreation))
                     if (responseUserCreation) {
                         finalResponse.push(responseUserCreation)
-                        logInfo('Entered into Assign role >>')
-                        const responseRoleAssign = await axios({
-                            ...axiosRequestConfig,
-                            data: {
-                                request: {
+
+                        const roleData = {
                                     organisationId: csvObjects.organisationId, // Pre-defined organisatin id
                                     roles: [
                                         'PUBLIC',
                                     ],
                                     userId: responseUserCreation.data.result.userId,
-                                },
-                                url: API_ENDPOINTS.assignRoleforBulkUsers,
-                            },
-                            headers: {
-                                Authorization: CONSTANTS.SB_API_KEY,
-                                // tslint:disable-next-line: all
-                                'x-authenticated-user-token': extractUserToken(req)
-                            },
-                            method: 'POST',
-                        })
-                        logInfo('Final collective data >>>> ' + responseRoleAssign)
-                        // logInfo("Final collective data >>>> " + JSON.stringify(responseRoleAssign))
-                        finalResponse.push(responseRoleAssign)
+                                }
+
+                        logInfo('Entered into Assign role >>'+roleData)
+                        // const responseRoleAssign = await axios({
+                        //     ...axiosRequestConfig,
+                        //     data: {
+                        //         request: {
+                        //            roleData
+                        //         },
+                        //         url: API_ENDPOINTS.assignRoleforBulkUsers,
+                        //     },
+                        //     headers: {
+                        //         Authorization: CONSTANTS.SB_API_KEY,
+                        //         // tslint:disable-next-line: all
+                        //         'x-authenticated-user-token': extractUserToken(req)
+                        //     },
+                        //     method: 'POST',
+                        // })
+                        // logInfo('Final collective data >>>> ' + responseRoleAssign)
+                        // // logInfo("Final collective data >>>> " + JSON.stringify(responseRoleAssign))
+                        // finalResponse.push(responseRoleAssign)
                     }
 
                     return finalResponse
