@@ -10,6 +10,8 @@ const API_ENDPOINTS = {
     assignRoleforBulkUsers: `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/user/v1/role/assign`,
     createUserOfBulkUpload: `${CONSTANTS.KONG_API_BASE}/user/v3/create`,
 }
+
+// tslint:disable-next-line: no-any
 const finalResponse: any = []
 
 export const bulkUploadUserApi = Router()
@@ -136,6 +138,4 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
             message: 'Could not upload the file: ',
         })
     }
-
 })
-
