@@ -74,9 +74,9 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
                         lastName: csvObjects.last_name,
                         // username: csvObjData.username,
                         [csvObjects.type]: csvObjects.phone ? csvObjects.phone : csvObjects.username,
+                        organisationId: csvObjects.organisationId,
                         password: process.env.PASSWORD,
                         usertype: csvObjects.usertype,
-                        organisationId: csvObjects.organisationId,
                     }
 
                     logInfo('collectData >>>>>' + JSON.stringify(collectData))
@@ -108,7 +108,7 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
                             ...axiosRequestConfig,
                             data: {
                                 request: {
-                                   roleData
+                                   roleData,
                                 },
                                 url: API_ENDPOINTS.assignRoleforBulkUsers,
                             },
@@ -130,7 +130,7 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
 
             } catch (error) {
                 logInfo('Error While Creating the user & assigning role : ' + error)
-            
+
             }
 
         }
