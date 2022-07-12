@@ -100,7 +100,7 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
                                     userId: responseUserCreation.data.result.userId,
                                 }
 
-                        logInfo('Entered into Assign role >>' + roleData)
+                        logInfo('Entered into Assign role >>' + JSON.stringify(roleData))
 
                     }
 
