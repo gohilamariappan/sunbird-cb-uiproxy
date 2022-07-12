@@ -101,25 +101,8 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
                                     userId: responseUserCreation.data.result.userId,
                                 }
 
-                        logInfo('Entered into Assign role >>'+roleData)
-                        // const responseRoleAssign = await axios({
-                        //     ...axiosRequestConfig,
-                        //     data: {
-                        //         request: {
-                        //            roleData
-                        //         },
-                        //         url: API_ENDPOINTS.assignRoleforBulkUsers,
-                        //     },
-                        //     headers: {
-                        //         Authorization: CONSTANTS.SB_API_KEY,
-                        //         // tslint:disable-next-line: all
-                        //         'x-authenticated-user-token': extractUserToken(req)
-                        //     },
-                        //     method: 'POST',
-                        // })
-                        // logInfo('Final collective data >>>> ' + responseRoleAssign)
-                        // // logInfo("Final collective data >>>> " + JSON.stringify(responseRoleAssign))
-                        // finalResponse.push(responseRoleAssign)
+                        logInfo('Entered into Assign role >>' + roleData)
+                        
                     }
 
                     return finalResponse
