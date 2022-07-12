@@ -14,6 +14,7 @@ const finalResponse:any = []
 
 export const bulkUploadUserApi = Router()
 
+// tslint:disable-next-line: no-any
 bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
 
     try {
@@ -42,17 +43,18 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
         const userProcessing = async () => {
             try {
                 let finalPromiseResolve = []
+                // tslint:disable-next-line: no-any
                 let data = await (Promise as any).allSettled(result.map(async (csvObjects: any) => {
                     return await simulateFetchData(csvObjects)
                 }))
 
-                logInfo("Data inside user processing >>>>> " + data)
-                logInfo("Final Data inside user processing >>>>> " + finalPromiseResolve.push(data))
+                logInfo("Data inside user processing >>>>> " + JSON.stringify(data))
+                // logInfo("Final Data inside user processing >>>>> " + finalPromiseResolve.push(data))
 
                 _res.status(200).send({
-                    message: 'Bulk Upload is Completed ! ',
-                    data: finalPromiseResolve.push(data)
-                })
+                                            message: 'Bulk Upload is Completed ! ',
+                                            data: finalPromiseResolve.push(data)
+                                        })
             } catch (error) {
                 logInfo('Calling User Processing  : ' + error)
                 _res.status(500).send({
@@ -61,7 +63,7 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
             }
         }
 
-
+        // tslint:disable-next-line: no-any
         const simulateFetchData = async (csvObjects: any) => {
             try {
 
