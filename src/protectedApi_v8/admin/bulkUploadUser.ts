@@ -43,7 +43,6 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
 
         const userProcessing = async () => {
             try {
-                const finalPromiseResolve = []
                 // tslint:disable-next-line: no-any
                 const data = await (Promise as any).allSettled(result.map(async (csvObjects: any) => {
                     return simulateFetchData(csvObjects)
