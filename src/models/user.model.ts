@@ -153,12 +153,3 @@ export interface ISunbirdbUserResponse {
   userId: string
 }
 
-export interface IBulkUploadCSV {
-  email: string
-  firstName: string
-  lastName: string
-  password: string
-  roles: string
-  usertype: string
-}
-

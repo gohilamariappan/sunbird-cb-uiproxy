@@ -1,16 +1,16 @@
 
 import axios from 'axios'
 import { Router } from 'express'
-import { extractUserToken } from '../../utils/requestExtract'
 import { axiosRequestConfig } from '../../configs/request.config'
 import { CONSTANTS } from '../../utils/env'
 import { logInfo } from '../../utils/logger'
+import { extractUserToken } from '../../utils/requestExtract'
 
 const API_ENDPOINTS = {
     assignRoleforBulkUsers: `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/user/v1/role/assign`,
     createUserOfBulkUpload: `${CONSTANTS.KONG_API_BASE}/user/v3/create`,
 }
-const finalResponse:any = []
+const finalResponse: any = []
 
 export const bulkUploadUserApi = Router()
 
@@ -26,7 +26,7 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
 
         // NOTE: If your columns contain commas in their values, you'll need
         const headers = lines[0].split(',')
-        //logInfo('lines.length >>>>>>' + lines.length)
+        // logInfo('lines.length >>>>>>' + lines.length)
         for (let i = 1; i < lines.length; i++) {
 
             const obj = {}
@@ -35,25 +35,23 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
                 obj[headers[j]] = currentline[j]
             }
 
-
             result.push(obj)
         }
 
-
         const userProcessing = async () => {
             try {
-                let finalPromiseResolve = []
+                const finalPromiseResolve = []
                 // tslint:disable-next-line: no-any
-                let data = await (Promise as any).allSettled(result.map(async (csvObjects: any) => {
-                    return await simulateFetchData(csvObjects)
+                const data = await (Promise as any).allSettled(result.map(async (csvObjects: any) => {
+                    return simulateFetchData(csvObjects)
                 }))
 
-                logInfo("Data inside user processing >>>>> " + JSON.stringify(data))
+                logInfo('Data inside user processing >>>>> ' + JSON.stringify(data))
                 // logInfo("Final Data inside user processing >>>>> " + finalPromiseResolve.push(data))
 
                 _res.status(200).send({
                                             message: 'Bulk Upload is Completed ! ',
-                                            data: finalPromiseResolve.push(data)
+                                            data: finalPromiseResolve.push(data),
                                         })
             } catch (error) {
                 logInfo('Calling User Processing  : ' + error)
@@ -66,7 +64,6 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
         // tslint:disable-next-line: no-any
         const simulateFetchData = async (csvObjects: any) => {
             try {
-
 
                 if (csvObjects.first_name) {
 
@@ -81,7 +78,6 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
 
                     logInfo('collectData >>>>>' + JSON.stringify(collectData))
 
-
                     const responseUserCreation = await axios({
                         ...axiosRequestConfig,
                         data: { request: collectData },
@@ -91,10 +87,10 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
                         method: 'POST',
                         url: API_ENDPOINTS.createUserOfBulkUpload,
                     })
-                    //  logInfo("Response usercreation >>>>>>>>>>"+ JSON.stringify(responseUserCreation))                             
+                    //  logInfo("Response usercreation >>>>>>>>>>"+ JSON.stringify(responseUserCreation))
                     if (responseUserCreation) {
                         finalResponse.push(responseUserCreation)
-                        logInfo("Entered into Assign role >>")
+                        logInfo('Entered into Assign role >>')
                         const responseRoleAssign = await axios({
                             ...axiosRequestConfig,
                             headers: {
@@ -114,11 +110,11 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
                                 url: API_ENDPOINTS.assignRoleforBulkUsers,
                             },
                         })
-                        logInfo("Final collective data >>>> " + responseRoleAssign)
+                        logInfo('Final collective data >>>> ' + responseRoleAssign)
                         // logInfo("Final collective data >>>> " + JSON.stringify(responseRoleAssign))
                         finalResponse.push(responseRoleAssign)
                     }
-                    
+
                     return finalResponse
                 }
 
@@ -129,10 +125,9 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
                 })
             }
 
-
         }
         if (result.length > 1) {
-            userProcessing();
+            userProcessing()
         }
 
     } catch (error) {
@@ -142,8 +137,5 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
         })
     }
 
-
 })
-
-
-
+
