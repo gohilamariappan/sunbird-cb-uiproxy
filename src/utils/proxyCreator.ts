@@ -43,24 +43,24 @@ proxy.on('proxyRes', (proxyRes: any, req: any, _res: any, ) => {
 })
 
 // tslint:disable-next-line: no-any
-proxy.on('proxyRes', (_proxyRes, _req, _res ) => {
+proxy.on('proxyRes', (proxyRes: any, req: any, _res: any, ) => {
   // tslint:disable-next-line: no-any
-  // const tempBody: any = []
-  // if (req.originalUrl.includes('/hierarchy') && req.originalUrl.includes('?mode=edit')) {
-  //   // tslint:disable-next-line: no-console
-  //      console.log('Enter into the response of hierarchy')
-  //       // tslint:disable-next-line: no-any
-  //      proxyRes.on('data', (chunk: any) => {
-  //     tempBody.push(chunk)
-  //       })
-  //      proxyRes.on('end', () => {
-  //         const tempdata = tempBody.toString()
-  //         const updateRes = returnData(JSON.parse(tempdata), null, 'hierarchy')
-  //         _res.end(JSON.stringify(updateRes))
-  //     })
-  // } else {
-  //   return _res
-  // }
+  const tempBody: any = []
+  if (req.originalUrl.includes('/hierarchy') && req.originalUrl.includes('?mode=edit')) {
+    // tslint:disable-next-line: no-console
+       console.log('Enter into the response of hierarchy')
+        // tslint:disable-next-line: no-any
+       proxyRes.on('data', (chunk: any) => {
+      tempBody.push(chunk)
+        })
+       proxyRes.on('end', () => {
+          const tempdata = tempBody.toString()
+          const updateRes = returnData(JSON.parse(tempdata), null, 'hierarchy')
+          _res.end(JSON.stringify(updateRes))
+      })
+  } else {
+    return _res
+  }
 })
 
 export function proxyCreatorRoute(route: Router, targetUrl: string, timeout = 10000): Router {
@@ -178,7 +178,7 @@ export function proxyCreatorKnowledge(route: Router, targetUrl: string, _timeout
 }
 
 export function proxyHierarchyKnowledge(route: Router, targetUrl: string, _timeout = 120000): Router {
-
+  
   route.all('/*', (req, res) => {
     const url = removePrefix(`${PROXY_SLUG}`, req.originalUrl)
     if (url.includes('hierarchy/update')) {
@@ -188,6 +188,7 @@ export function proxyHierarchyKnowledge(route: Router, targetUrl: string, _timeo
      // tslint:disable-next-line: no-console
     console.log('REQ_URL_ORIGINAL proxyCreatorKnowledge', targetUrl + url)
     if (req.originalUrl.includes('/hierarchy') && req.originalUrl.includes('?mode=edit')) {
+      logInfo("Target URL >>>>>>"+(targetUrl + url))
       proxy.web(req, res,  {
         changeOrigin: true,
         ignorePath: true,

@@ -103,7 +103,7 @@ export const API_LIST = {
       // tslint:disable-next-line: object-literal-sort-keys
       ROLE_CHECK: [ROLE.PUBLIC],
     },
-    '/proxies/v8/action/content/v3/hierarchy/add':{
+    '/proxies/v8/action/content/v3/hierarchy/add': {
       checksNeeded: [CHECK.ROLE],
       // tslint:disable-next-line: object-literal-sort-keys
       ROLE_CHECK: [ROLE.PUBLIC],
