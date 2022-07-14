@@ -189,20 +189,14 @@ export function proxyHierarchyKnowledge(route: Router, targetUrl: string, _timeo
     console.log('REQ_URL_ORIGINAL proxyCreatorKnowledge', targetUrl + url)
     if (req.originalUrl.includes('/hierarchy') && req.originalUrl.includes('?mode=edit')) {
       logInfo('Target URL >>>>>>' + (targetUrl + url))
-      proxy.web(req, res,  {
-        changeOrigin: true,
-        ignorePath: true,
-        selfHandleResponse : true,
-        target: targetUrl + url,
-      })
-    } else {
+     
       proxy.web(req, res,  {
         changeOrigin: true,
         ignorePath: true,
         target: targetUrl + url,
       })
-    }
-  })
+  }
+})
   return route
 }
 
