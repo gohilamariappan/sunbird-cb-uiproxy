@@ -43,7 +43,7 @@ proxy.on('proxyRes', (proxyRes: any, req: any, _res: any, ) => {
 })
 
 // tslint:disable-next-line: no-any
-proxy.on('proxyRes', (proxyRes: any, req: any, _res: any, ) => {
+proxy.on('proxyRes', (_proxyRes, _req, _res ) => {
   // tslint:disable-next-line: no-any
   // const tempBody: any = []
   // if (req.originalUrl.includes('/hierarchy') && req.originalUrl.includes('?mode=edit')) {
@@ -178,7 +178,7 @@ export function proxyCreatorKnowledge(route: Router, targetUrl: string, _timeout
 }
 
 export function proxyHierarchyKnowledge(route: Router, targetUrl: string, _timeout = 120000): Router {
-  
+
   route.all('/*', (req, res) => {
     const url = removePrefix(`${PROXY_SLUG}`, req.originalUrl)
     if (url.includes('hierarchy/update')) {
