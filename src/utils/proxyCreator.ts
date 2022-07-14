@@ -45,22 +45,22 @@ proxy.on('proxyRes', (proxyRes: any, req: any, _res: any, ) => {
 // tslint:disable-next-line: no-any
 proxy.on('proxyRes', (proxyRes: any, req: any, _res: any, ) => {
   // tslint:disable-next-line: no-any
-  const tempBody: any = []
-  if (req.originalUrl.includes('/hierarchy') && req.originalUrl.includes('?mode=edit')) {
-    // tslint:disable-next-line: no-console
-       console.log('Enter into the response of hierarchy')
-        // tslint:disable-next-line: no-any
-       proxyRes.on('data', (chunk: any) => {
-      tempBody.push(chunk)
-        })
-       proxyRes.on('end', () => {
-          const tempdata = tempBody.toString()
-          const updateRes = returnData(JSON.parse(tempdata), null, 'hierarchy')
-          _res.end(JSON.stringify(updateRes))
-      })
-  } else {
-    return _res
-  }
+  // const tempBody: any = []
+  // if (req.originalUrl.includes('/hierarchy') && req.originalUrl.includes('?mode=edit')) {
+  //   // tslint:disable-next-line: no-console
+  //      console.log('Enter into the response of hierarchy')
+  //       // tslint:disable-next-line: no-any
+  //      proxyRes.on('data', (chunk: any) => {
+  //     tempBody.push(chunk)
+  //       })
+  //      proxyRes.on('end', () => {
+  //         const tempdata = tempBody.toString()
+  //         const updateRes = returnData(JSON.parse(tempdata), null, 'hierarchy')
+  //         _res.end(JSON.stringify(updateRes))
+  //     })
+  // } else {
+  //   return _res
+  // }
 })
 
 export function proxyCreatorRoute(route: Router, targetUrl: string, timeout = 10000): Router {
