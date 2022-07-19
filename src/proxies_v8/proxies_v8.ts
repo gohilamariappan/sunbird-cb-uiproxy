@@ -118,7 +118,7 @@ proxiesV8.post('/upload/action/*', (req, res) => {
       contentType: file.mimetype,
       filename: file.name,
     })
-    const targetUrl  = '/api/private/content/v3/upload/' + url
+    const targetUrl  = '/api/content/v1/upload/' + url
     logInfo('URL >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>' + targetUrl)
 
     axios({
@@ -147,7 +147,8 @@ proxiesV8.post('/upload/action/*', (req, res) => {
       return res.send(output)
     })
     .catch((error) => {
-      return res.send(error)
+      logInfo('Error on Upload :' + error)
+      return res.send('Error while uploading ..')
     })
 
   } else {

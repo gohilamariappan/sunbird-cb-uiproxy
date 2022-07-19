@@ -98,6 +98,11 @@ export const API_LIST = {
       // tslint:disable-next-line: object-literal-sort-keys
       ROLE_CHECK: [ROLE.PUBLIC],
     },
+    '/proxies/v8/course/v1/enrol': {
+      checksNeeded: [CHECK.ROLE],
+      // tslint:disable-next-line: object-literal-sort-keys
+      ROLE_CHECK: [ROLE.PUBLIC],
+    },
     '/proxies/v8/downloadCertificate/:id': {
       checksNeeded: [CHECK.ROLE],
       // tslint:disable-next-line: object-literal-sort-keys
@@ -459,6 +464,26 @@ export const API_LIST = {
       ROLE_CHECK: [ROLE.PUBLIC],
     },
     '/proxies/v8/private/content/v3/update/:do_id': {
+      checksNeeded: [CHECK.ROLE],
+      // tslint:disable-next-line: object-literal-sort-keys
+      ROLE_CHECK: [ROLE.PUBLIC],
+    },
+   '/protected/v8/admin/userRegistration/bulkUpload': {
+      checksNeeded: [CHECK.ROLE],
+      // tslint:disable-next-line: object-literal-sort-keys
+      ROLE_CHECK: [ROLE.PUBLIC],
+    },
+    '/protected/v8/admin/userRegistration/bulkUploadData': {
+      checksNeeded: [CHECK.ROLE],
+      // tslint:disable-next-line: object-literal-sort-keys
+      ROLE_CHECK: [ROLE.PUBLIC],
+    },
+    '/protected/v8/admin/bulk-upload/create-users': {
+      checksNeeded: [CHECK.ROLE],
+      // tslint:disable-next-line: object-literal-sort-keys
+      ROLE_CHECK: [ROLE.PUBLIC],
+    },
+    '/proxies/v8/admin/bulk-upload/create-users': {
       checksNeeded: [CHECK.ROLE],
       // tslint:disable-next-line: object-literal-sort-keys
       ROLE_CHECK: [ROLE.PUBLIC],
@@ -1152,6 +1177,7 @@ export const API_LIST = {
     '/proxies/v8/api/user/v2/read/:id',
     '/proxies/v8/certreg/v2/certs/download/:id',
     '/proxies/v8/course/batch/cert/v1/issue',
+    '/proxies/v8/course/v1/enrol',
     '/proxies/v8/downloadCertificate/:id',
     '/proxies/v8/action/content/v3/hierarchy/add',
     '/proxies/v8/learner/course/v1/batch/create',
@@ -1224,6 +1250,10 @@ export const API_LIST = {
     '/protected/v8/user/profileDetails/test',
     '/protected/v8/resource/',
     '/protected/v8/user/details',
+    '/protected/v8/admin/userRegistration/bulkUpload',
+    '/protected/v8/bulkUploadData/bulkUploadData',
+    '/protected/v8/admin/bulk-upload/create-users',
+    '/proxies/v8/admin/bulk-upload/create-users',
     '/protected/v8/connections/connections/recommended/userDepartment',
     '/protected/v8/discussionHub/categories/:cid/:slug?/:tid?',
     '/protected/v8/discussionHub/topics/recent',
