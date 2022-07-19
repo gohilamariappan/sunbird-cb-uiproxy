@@ -414,12 +414,8 @@ emailOrMobileLogin.post('/auth', async (req: any, res) => {
   res.clearCookie('connect.sid')
   // tslint:disable-next-line: no-any
   req.session.regenerate( async (err: any) => {
-    if (err) {
-      res.send(401)
-    }
     // will have a new session here
     try {
-
       if (req.body.mobileNumber || req.body.email) {
         logInfo('Entered into /login/auth endpoint >>> ')
         const mobileNumber = req.body.mobileNumber
@@ -478,7 +474,7 @@ emailOrMobileLogin.post('/auth', async (req: any, res) => {
             }
 
         } catch (e) {
-          logInfo('Error throwing Cookie : ' + e)
+          logInfo('Error throwing Cookie inside auth route : ' + e)
           res.status(400).send({
             error: AUTH_FAIL,
           })
@@ -496,6 +492,9 @@ emailOrMobileLogin.post('/auth', async (req: any, res) => {
       res.status(500).send({
         error: GENERAL_ERROR_MSG,
       })
+    if (err) {
+      res.send(401)
+    }
     }
   })
 
