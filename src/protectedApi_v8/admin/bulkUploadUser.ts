@@ -1,7 +1,6 @@
 
 import axios from 'axios'
 import { Router } from 'express'
-import fs from 'fs'
 import { axiosRequestConfig } from '../../configs/request.config'
 import { CONSTANTS } from '../../utils/env'
 import { logInfo } from '../../utils/logger'
