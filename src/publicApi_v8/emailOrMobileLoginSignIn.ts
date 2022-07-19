@@ -491,10 +491,10 @@ emailOrMobileLogin.post('/auth', async (req: any, res) => {
       logInfo('error' + error)
       res.status(500).send({
         error: GENERAL_ERROR_MSG,
-      })
-    if (err) {
-      res.send(401)
-    }
+        })
+      if (err) {
+        res.send(401)
+      }
     }
   })
 

@@ -1,6 +1,7 @@
 
 import axios from 'axios'
 import { Router } from 'express'
+import fs from 'fs'
 import { axiosRequestConfig } from '../../configs/request.config'
 import { CONSTANTS } from '../../utils/env'
 import { logInfo } from '../../utils/logger'
@@ -122,15 +123,11 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
                         logInfo('Role Assigned data >>>> ' + responseRoleAssign)
                         // logInfo("Final collective data >>>> " + JSON.stringify(responseRoleAssign))
                         finalResponse.push(responseRoleAssign)
-
                     }
-
                     return finalResponse
                 }
-
             } catch (error) {
                 logInfo('Error While Creating the user & assigning role : ' + error)
-
             }
 
         }
