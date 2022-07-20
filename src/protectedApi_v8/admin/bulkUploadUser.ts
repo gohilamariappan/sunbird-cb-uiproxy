@@ -27,7 +27,7 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
         const fileData = req.files.userData.data.toString('utf8')
         // logInfo('files recived >>>>>>>>> ' + fileData)
         const lines = fileData.split('\n')
-        // logInfo('Linesdata >>>>>' + lines)
+        //logInfo('Linesdata >>>>>' + lines)
         // tslint:disable-next-line: no-any
         const result: any = []
 
@@ -40,6 +40,7 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
             const currentline = lines[i].split(',')
             for (let j = 0; j < headers.length; j++) {
                 obj[headers[j]] = currentline[j]
+                logInfo
                 obj["status"] = "created"
             }
 
