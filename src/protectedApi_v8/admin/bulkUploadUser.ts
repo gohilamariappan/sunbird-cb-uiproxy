@@ -1,12 +1,12 @@
 
 import axios from 'axios'
-import fs from 'fs'
 import { Router } from 'express'
-import { axiosRequestConfig } from '../../configs/request.config'
+import fs from 'fs'
+import { axiosRequestConfig, axiosRequestConfigLong } from '../../configs/request.config'
 import { CONSTANTS } from '../../utils/env'
 import { logInfo } from '../../utils/logger'
 import { extractUserToken } from '../../utils/requestExtract'
-let json2xls = require('json2xls');
+const json2xls = require('json2xls')
 
 const API_ENDPOINTS = {
     assignRoleforBulkUsers: `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/user/v1/role/assign`,
@@ -16,7 +16,7 @@ const API_ENDPOINTS = {
 // tslint:disable-next-line: no-any
 const finalResponse: any = []
 
-const filename = "bulkUserUpload"+Date.now()+".xlsx";
+const filename = 'bulkUserUpload' + Date.now() + '.xlsx'
 
 export const bulkUploadUserApi = Router()
 
@@ -25,9 +25,8 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
 
     try {
         const fileData = req.files.userData.data.toString('utf8')
-        // logInfo('files recived >>>>>>>>> ' + fileData)
+
         const lines = fileData.split('\n')
-        //logInfo('Linesdata >>>>>' + lines)
         // tslint:disable-next-line: no-any
         const result: any = []
 
@@ -40,8 +39,6 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
             const currentline = lines[i].split(',')
             for (let j = 0; j < headers.length; j++) {
                 obj[headers[j]] = currentline[j]
-                logInfo
-                obj["status"] = "created"
             }
 
             result.push(obj)
@@ -55,7 +52,6 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
                 }))
 
                 logInfo('Data inside user processing >>>>> ' + JSON.stringify(data))
-                // logInfo("Final Data inside user processing >>>>> " + finalPromiseResolve.push(data))
 
                 _res.status(200).send({
                                             data,
@@ -72,7 +68,7 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
         // tslint:disable-next-line: no-any
         const simulateFetchData = async (csvObjects: any) => {
             try {
-                logInfo("URL 2 >>>>>> "+API_ENDPOINTS.assignRoleforBulkUsers)
+                logInfo('URL 2 >>>>>> ' + API_ENDPOINTS.assignRoleforBulkUsers)
                 if (csvObjects.first_name) {
 
                     const collectData = {
@@ -85,7 +81,7 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
                         usertype: csvObjects.usertype,
                     }
 
-                    logInfo('collectData >>>>>' + JSON.stringify(collectData))
+                   // logInfo('collectData >>>>>' + JSON.stringify(collectData))
 
                     const responseUserCreation = await axios({
                         ...axiosRequestConfig,
@@ -96,7 +92,7 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
                         method: 'POST',
                         url: API_ENDPOINTS.createUserOfBulkUpload,
                     })
-                    logInfo("Response usercreation >>>>>>>>>>"+ JSON.stringify(responseUserCreation))
+
                     if (responseUserCreation) {
                         finalResponse.push(responseUserCreation)
 
@@ -108,10 +104,10 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
                                     userId: responseUserCreation.data.result.userId,
                                 }
 
-                        logInfo('Entered into Assign role >>' + JSON.stringify(roleData))
+                        // logInfo('Entered into Assign role >>' + JSON.stringify(roleData))
 
                         const responseRoleAssign = await axios({
-                            ...axiosRequestConfig,
+                            ...axiosRequestConfigLong,
                             data: {
                                 request: {
                                    roleData,
@@ -137,9 +133,8 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
 
         }
         if (result.length > 1) {
-            console.log("Result DATA :"+JSON.stringify(result))
-            convert(result)
-            userProcessing()
+           convert(result)
+           userProcessing()
         }
 
     } catch (error) {
@@ -151,9 +146,8 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
 })
 
 // tslint:disable-next-line: no-any
-let convert = async function (result:any) {
-    let xls = json2xls(result)
-    //logInfo("Excel data >>>>>"+xls)
-        await fs.writeFileSync(filename, xls, 'binary');
-  }
-
+const convert = async (result: any) => {
+    const xls = json2xls(result)
+    // logInfo("Excel data >>>>>"+xls)
+    fs.writeFileSync(filename, xls, 'binary')
+}
