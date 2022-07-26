@@ -363,6 +363,7 @@ proxiesV8.use('/discussion/category/list', (req: any, res) => {
       // logInfo("Filtered Data >>>>>>>>>>>>>>>>>>>>"+JSON.stringify(response.data))
       res.send({message: 'Success', data: response.data})
     })
+    // tslint:disable-next-line: only-arrow-functions
     .catch(function(error) {
      logInfo('Error throwing inside Category List Api : ' + error)
      res.send({error: true, message: error})
