@@ -342,32 +342,32 @@ proxiesV8.use('/assets/*',
 // )
 
 // tslint:disable-next-line: no-any
-proxiesV8.use('/discussion/category/list', (req:any, res) => {
-   
+proxiesV8.use('/discussion/category/list', (req: any, res) => {
+
     axios({
               ...axiosRequestConfig,
               data : req.body,
-              headers: { 
-                Authorization: CONSTANTS.SB_API_KEY,
+              headers: {
                 accessToken: extractUserToken(req),
-                'Content-Type': 'application/json'
+                Authorization: CONSTANTS.SB_API_KEY,
+                'Content-Type': 'application/json',
               },
               method: 'post',
-              url: CONSTANTS.SUNBIRD_PROXY_API_BASE+'/discussion/category/list?_uid=' + req.session.nodebbUid,
+              url: CONSTANTS.SUNBIRD_PROXY_API_BASE + '/discussion/category/list?_uid=' + req.session.nodebbUid,
           })
     // tslint:disable-next-line: no-any
-    .then(function (response:any) {
+    // tslint:disable-next-line: only-arrow-functions
+    .then(function(response: any)  {
       // tslint:disable-next-line: no-any
-      response.data.result[0].topics.sort((a:any, b:any) => b.mainPid - a.mainPid)
-      //logInfo("Filtered Data >>>>>>>>>>>>>>>>>>>>"+JSON.stringify(response.data))
-      res.send({"message":"Success", "data":response.data})
+      response.data.result[0].topics.sort((a: any, b: any) => b.mainPid - a.mainPid)
+      // logInfo("Filtered Data >>>>>>>>>>>>>>>>>>>>"+JSON.stringify(response.data))
+      res.send({message: 'Success', data: response.data})
     })
-    .catch(function (error) {
-     logInfo("Error throwing inside Category List Api : "+error);
-      res.send({"error":true, "message": error})
-    });
+    .catch(function(error) {
+     logInfo('Error throwing inside Category List Api : ' + error)
+     res.send({error: true, message: error})
+    })
 })
-
 
 proxiesV8.use('/discussion/*',
   // tslint:disable-next-line: max-line-length
