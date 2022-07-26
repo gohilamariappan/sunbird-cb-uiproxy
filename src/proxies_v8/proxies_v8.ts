@@ -349,14 +349,14 @@ proxiesV8.use('/discussion/category/list', (req: any, res) => {
               data : req.body,
               headers: {
                 'Content-Type': 'application/json',
-                accessToken: extractUserToken(req),
                 Authorization: CONSTANTS.SB_API_KEY,
+                accessToken: extractUserToken(req),
               },
               method: 'post',
               url: CONSTANTS.SUNBIRD_PROXY_API_BASE + '/discussion/category/list?_uid=' + req.session.nodebbUid,
           })
     // tslint:disable-next-line: no-any
-    // tslint:disable-next-line: only-arrow-functions
+    // tslint:disable-next-line: only-arrow-functions,  no-any
     .then(function(response: any)  {
       // tslint:disable-next-line: no-any
       response.data.result[0].topics.sort((a: any, b: any) => b.mainPid - a.mainPid)
