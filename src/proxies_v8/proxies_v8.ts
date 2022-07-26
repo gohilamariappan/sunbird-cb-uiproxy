@@ -348,9 +348,9 @@ proxiesV8.use('/discussion/category/list', (req: any, res) => {
               ...axiosRequestConfig,
               data : req.body,
               headers: {
+                'Content-Type': 'application/json',
                 accessToken: extractUserToken(req),
                 Authorization: CONSTANTS.SB_API_KEY,
-                'Content-Type': 'application/json',
               },
               method: 'post',
               url: CONSTANTS.SUNBIRD_PROXY_API_BASE + '/discussion/category/list?_uid=' + req.session.nodebbUid,
