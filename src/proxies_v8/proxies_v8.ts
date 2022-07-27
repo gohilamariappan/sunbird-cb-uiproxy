@@ -350,7 +350,6 @@ proxiesV8.use('/discussion/category/list', (req: any, res) => {
               headers: {
                 Authorization: CONSTANTS.SB_API_KEY,
                 accessToken: extractUserToken(req),
-                'Content-Type': 'application/json',
               },
               method: 'post',
               url: CONSTANTS.SUNBIRD_PROXY_API_BASE + '/discussion/category/list?_uid=' + req.session.nodebbUid,
