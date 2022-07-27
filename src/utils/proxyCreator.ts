@@ -46,7 +46,7 @@ proxy.on('proxyRes', (proxyRes: any, req: any, _res: any, ) => {
 proxy.on('proxyRes', (proxyRes: any, req: any, _res: any, ) => {
   // tslint:disable-next-line: no-any
   const tempBody: any = []
-  if (req.originalUrl.includes('/hierarchy') && req.originalUrl.includes('?mode=edit&src=sunbird')) {
+  if (req.originalUrl.includes('/hierarchy') && req.originalUrl.includes('?mode=edit')) {
     // tslint:disable-next-line: no-console
        console.log('Enter into the response of hierarchy')
         // tslint:disable-next-line: no-any
