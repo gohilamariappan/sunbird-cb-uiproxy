@@ -178,7 +178,6 @@ export function proxyCreatorKnowledge(route: Router, targetUrl: string, _timeout
 }
 
 export function proxyHierarchyKnowledge(route: Router, targetUrl: string, _timeout = 10000): Router {
-
   route.all('/*', (req, res) => {
     const url = removePrefix(`${PROXY_SLUG}`, req.originalUrl)
     if (url.includes('hierarchy/update')) {
@@ -188,19 +187,20 @@ export function proxyHierarchyKnowledge(route: Router, targetUrl: string, _timeo
      // tslint:disable-next-line: no-console
     console.log('REQ_URL_ORIGINAL proxyCreatorKnowledge', targetUrl + url)
     if (req.originalUrl.includes('/hierarchy') && req.originalUrl.includes('?mode=edit')) {
-      logInfo('Target URL >>>>>>' + (targetUrl + url))
+      proxy.web(req, res,  {
+        changeOrigin: true,
+        ignorePath: true,
+        selfHandleResponse : true,
+        target: targetUrl + url,
+      })
+    } else {
       proxy.web(req, res,  {
         changeOrigin: true,
         ignorePath: true,
         target: targetUrl + url,
       })
-  }
-    proxy.web(req, res,  {
-        changeOrigin: true,
-        ignorePath: true,
-        target: targetUrl + url,
-      })
-})
+    }
+  })
   return route
 }
 
