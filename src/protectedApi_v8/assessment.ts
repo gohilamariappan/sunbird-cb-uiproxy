@@ -83,6 +83,7 @@ assessmentApi.post('/submit/v2', async (req, res) => {
         }
       logInfo('Content has completed the course.' + revisedData)
       // exception for WRAI
+      // tslint:disable-next-line: max-line-length
       if (req.body.contentId === 'do_113474390542598144143' || req.body.contentId === 'do_113474390542598144144' || req.body.contentId === 'do_1135849304134778881218' || req.body.contentId === 'do_1135870134353182721225' ) {
             response.data.passPercent = 0
       }
