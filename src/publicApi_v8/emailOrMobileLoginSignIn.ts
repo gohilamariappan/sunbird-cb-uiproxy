@@ -413,7 +413,7 @@ const createuserWithmobileOrEmail = async (accountDetails: any) => {
 emailOrMobileLogin.post('/auth', async (req: any, res) => {
   res.clearCookie('connect.sid')
   // tslint:disable-next-line: no-any
-  req.session.regenerate( async (err: any) => {
+  req.session.regenerate( async () => {
     // will have a new session here
     try {
       if (req.body.mobileNumber || req.body.email) {
@@ -492,9 +492,6 @@ emailOrMobileLogin.post('/auth', async (req: any, res) => {
       res.status(500).send({
         error: GENERAL_ERROR_MSG,
         })
-      if (err) {
-        res.send(401)
-      }
     }
   })
 
