@@ -46,7 +46,7 @@ proxy.on('proxyRes', (proxyRes: any, req: any, _res: any, ) => {
 proxy.on('proxyRes', (proxyRes: any, req: any, _res: any, ) => {
   // tslint:disable-next-line: no-any
   const tempBody: any = []
-  if (req.originalUrl.includes('/hierarchy') && req.originalUrl.includes('?mode=edit')) {
+  if (req.originalUrl.includes('/hierarchy') && req.originalUrl.includes('?mode=edit&src=sunbird')) {
     // tslint:disable-next-line: no-console
        console.log('Enter into the response of hierarchy')
         // tslint:disable-next-line: no-any
@@ -188,19 +188,19 @@ export function proxyHierarchyKnowledge(route: Router, targetUrl: string, _timeo
      // tslint:disable-next-line: no-console
     console.log('REQ_URL_ORIGINAL proxyCreatorKnowledge', targetUrl + url)
     if (req.originalUrl.includes('/hierarchy') && req.originalUrl.includes('?mode=edit')) {
-      logInfo('Target URL >>>>>>' + (targetUrl + url))
+      proxy.web(req, res,  {
+        changeOrigin: true,
+        ignorePath: true,
+        selfHandleResponse : true,
+        target: targetUrl + url,
+      })
+    } else {
       proxy.web(req, res,  {
         changeOrigin: true,
         ignorePath: true,
         target: targetUrl + url,
       })
-  }
-    proxy.web(req, res,  {
-        changeOrigin: true,
-        ignorePath: true,
-        target: targetUrl + url,
-      })
-})
+    }
   return route
 }
 
