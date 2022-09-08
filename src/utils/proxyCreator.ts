@@ -190,16 +190,15 @@ export function proxyHierarchyKnowledge(route: Router, targetUrl: string, _timeo
       proxy.web(req, res,  {
         changeOrigin: true,
         ignorePath: true,
-        selfHandleResponse : true,
         target: targetUrl + url,
       })
-    } else {
+    } 
       proxy.web(req, res,  {
         changeOrigin: true,
         ignorePath: true,
         target: targetUrl + url,
       })
-    }
+    
   })
   return route
 }
