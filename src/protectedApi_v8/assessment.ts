@@ -84,8 +84,8 @@ assessmentApi.post('/submit/v2', async (req, res) => {
       logInfo('Content has completed the course.' + revisedData)
       // exception for pre-assessments
        // tslint:disable-next-line: max-line-length
-      const assessmentZeroCases = ['do_113474390542598144143','do_113474390542598144144','do_1135849304134778881218','do_11357406890855628811485','do_11357407983906816011501']
-      if(assessmentZeroCases.indexOf(req.body.contentId)>0){
+      const assessmentZeroCases = ['do_113474390542598144143', 'do_113474390542598144144', 'do_1135849304134778881218', 'do_11357406890855628811485', 'do_11357407983906816011501']
+      if (assessmentZeroCases.indexOf(req.body.contentId) > 0) {
         response.data.passPercent = 0
       }
       if (response.data.result >= response.data.passPercent) {
