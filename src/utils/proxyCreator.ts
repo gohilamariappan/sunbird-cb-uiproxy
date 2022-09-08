@@ -177,7 +177,7 @@ export function proxyCreatorKnowledge(route: Router, targetUrl: string, _timeout
   return route
 }
 
-export function proxyHierarchyKnowledge(route: Router, targetUrl: string, _timeout = 10000): Router {
+export function proxyHierarchyKnowledge(route: Router, targetUrl: string, _timeout = 120000): Router {
 
   route.all('/*', (req, res) => {
     const url = removePrefix(`${PROXY_SLUG}`, req.originalUrl)
@@ -192,7 +192,6 @@ export function proxyHierarchyKnowledge(route: Router, targetUrl: string, _timeo
       proxy.web(req, res,  {
         changeOrigin: true,
         ignorePath: true,
-        selfHandleResponse : true,
         target: targetUrl + url,
       })
   }
