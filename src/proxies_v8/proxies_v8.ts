@@ -27,12 +27,12 @@ import {
 import { extractUserIdFromRequest, extractUserToken } from '../utils/requestExtract'
 declare module 'axios' {
   export interface AxiosRequestConfig {
-      maxBodyLength?: number
+    maxBodyLength?: number
   }
 }
 const API_END_POINTS = {
   contentNotificationEmail: `${CONSTANTS.NOTIFICATION_SERVIC_API_BASE}/v1/notification/send/sync`,
-  logoutKeycloak : `${CONSTANTS.HTTPS_HOST}/auth/realms/sunbird/protocol/openid-connect/logout`,
+  logoutKeycloak: `${CONSTANTS.HTTPS_HOST}/auth/realms/sunbird/protocol/openid-connect/logout`,
 }
 
 const client = new elasticsearch.Client({
@@ -70,7 +70,7 @@ proxiesV8.get('/learning-analytics', (req, res) => {
 })
 
 proxiesV8.get('/getContent',
-      getContentProxyCreatorRoute(express.Router())
+  getContentProxyCreatorRoute(express.Router())
 )
 
 proxiesV8.get('/getContents/*', (req, res) => {
@@ -81,32 +81,48 @@ proxiesV8.get('/getContents/*', (req, res) => {
 }
 )
 
-proxiesV8.get('/logout/user', (_req, res) => {
+proxiesV8.get('/logout/user', (req, res, next) => {
 
   const keycloakUrl = API_END_POINTS.logoutKeycloak
   const redirectUrl = `https://${CONSTANTS.HTTPS_HOST}` + '/public/home'
   res.clearCookie('connect.sid')
   axios({
     ...axiosRequestConfig,
-              headers: {
-                // tslint:disable-next-line:max-line-length
-                Authorization: 'bearer ' + extractUserToken(_req),
-                org: 'aastar',
-                rootorg: 'aastar',
-              },
-              method: 'get',
-              url: keycloakUrl,
+    headers: {
+      // tslint:disable-next-line:max-line-length
+      Authorization: 'bearer ' + extractUserToken(req),
+      org: 'aastar',
+      rootorg: 'aastar',
+    },
+    method: 'get',
+    url: keycloakUrl,
   })
-  .then((response) => {
-   logInfo('Success IN LOGOUT USER >>>>>>>>>>>' + response)
-   res.clearCookie('connect.sid')
-   res.redirect(200, redirectUrl)
+    .then((response) => {
+      logInfo('Success IN LOGOUT USER >>>>>>>>>>>' + response)
+      res.clearCookie('connect.sid')
+      if (req.session) {
+        // clear the user from the session object and save.
+        // this will ensure that re-using the old session id
+        // does not have a logged in user
+        req.session.user = null
+        req.session.save(function (err) {
+          if (err) next(err)
+        })
 
-  })
-  .catch((error) => {
-    logInfo('Error IN LOGOUT USER : >>>>>>>>>>>>>>>>>>>>>.', error)
-    return res.send('Attention ! Error in logging out user..' + error)
-  })
+        // regenerate the session, which is good practice to help
+        // guard against forms of session fixation
+        req.session.regenerate(function (err) {
+          if (err) next(err)
+          res.redirect(redirectUrl)
+        })
+
+      }
+
+    })
+    .catch((error) => {
+      logInfo('Error IN LOGOUT USER : >>>>>>>>>>>>>>>>>>>>>.', error)
+      return res.send('Attention ! Error in logging out user..' + error)
+    })
 })
 
 proxiesV8.post('/upload/action/*', (req, res) => {
@@ -118,38 +134,38 @@ proxiesV8.post('/upload/action/*', (req, res) => {
       contentType: file.mimetype,
       filename: file.name,
     })
-    const targetUrl  = '/api/private/content/v3/upload/' + url
+    const targetUrl = '/api/private/content/v3/upload/' + url
     logInfo('URL >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>' + targetUrl)
 
     axios({
       ...axiosRequestConfig,
-                data : formData,
-                headers: {
-                        // tslint:disable-next-line:max-line-length
-                        Authorization: CONSTANTS.SB_API_KEY,
-                        accessToken: extractUserToken(req),
-                        org: 'aastar',
-                        rootorg: 'aastar',
-                  ...formData.getHeaders(),
-                },
-                maxBodyLength: Infinity,
-                maxContentLength: Infinity,
-                method: 'post',
-                url: `${CONSTANTS.HTTPS_HOST}` + targetUrl  ,
+      data: formData,
+      headers: {
+        // tslint:disable-next-line:max-line-length
+        Authorization: CONSTANTS.SB_API_KEY,
+        accessToken: extractUserToken(req),
+        org: 'aastar',
+        rootorg: 'aastar',
+        ...formData.getHeaders(),
+      },
+      maxBodyLength: Infinity,
+      maxContentLength: Infinity,
+      method: 'post',
+      url: `${CONSTANTS.HTTPS_HOST}` + targetUrl,
     })
-    .then((response) => {
-      const output = {
-            artifactUrl : response.data.result.artifactUrl,
-            content_url : response.data.result.content_url,
-            identifier : response.data.result.identifier,
-            status : response.data.params.status,
-      }
-      return res.send(output)
-    })
-    .catch((error) => {
-      logInfo('Error on Upload :' + error)
-      return res.send('Error while uploading ..')
-    })
+      .then((response) => {
+        const output = {
+          artifactUrl: response.data.result.artifactUrl,
+          content_url: response.data.result.content_url,
+          identifier: response.data.result.identifier,
+          status: response.data.params.status,
+        }
+        return res.send(output)
+      })
+      .catch((error) => {
+        logInfo('Error on Upload :' + error)
+        return res.send('Error while uploading ..')
+      })
 
   } else {
     res.send('File not found')
@@ -308,13 +324,13 @@ proxiesV8.use('/user/*',
 )
 
 proxiesV8.use('/certreg/v2/certs/download/*',
-// tslint:disable-next-line: max-line-length
-proxyCreatorDownloadCertificate(express.Router(), `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/certreg/v2/certs/download/`)
+  // tslint:disable-next-line: max-line-length
+  proxyCreatorDownloadCertificate(express.Router(), `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/certreg/v2/certs/download/`)
 )
 
 proxiesV8.use('/course/batch/cert/v1/issue',
-// tslint:disable-next-line: max-line-length
-proxyCreatorSunbirdSearch(express.Router(), `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/course/batch/cert/v1/issue`)
+  // tslint:disable-next-line: max-line-length
+  proxyCreatorSunbirdSearch(express.Router(), `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/course/batch/cert/v1/issue`)
 )
 
 // proxiesV8.use('/api/framework/*',
@@ -343,7 +359,7 @@ proxiesV8.use('/assets/*',
 
 proxiesV8.use('/discussion/*',
   // tslint:disable-next-line: max-line-length
-     proxyCreatorSunbird(express.Router(), `${CONSTANTS.KONG_API_BASE}`)
+  proxyCreatorSunbird(express.Router(), `${CONSTANTS.KONG_API_BASE}`)
 )
 
 function removePrefix(prefix: string, s: string) {

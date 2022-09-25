@@ -10,14 +10,14 @@ import { logError, logInfo } from '../utils/logger'
 import { getOTP, validateOTP } from './otp'
 import { getCurrentUserRoles } from './rolePermission'
 const API_END_POINTS = {
-          createUserWithMobileNo: `${CONSTANTS.KONG_API_BASE}/user/v3/create`,
-          fetchUserByEmail: `${CONSTANTS.KONG_API_BASE}/user/v1/exists/email/`,
-          fetchUserByMobileNo: `${CONSTANTS.KONG_API_BASE}/user/v1/exists/phone/`,
-          generateOtp: `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/otp/v1/generate`,
-          generateToken: `${CONSTANTS.HTTPS_HOST}/auth/realms/sunbird/protocol/openid-connect/token`,
-          searchSb: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/private/user/v1/search`,
-          userRoles : `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/user/private/v1/assign/role`,
-          verifyOtp: `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/otp/v1/verify`,
+  createUserWithMobileNo: `${CONSTANTS.KONG_API_BASE}/user/v3/create`,
+  fetchUserByEmail: `${CONSTANTS.KONG_API_BASE}/user/v1/exists/email/`,
+  fetchUserByMobileNo: `${CONSTANTS.KONG_API_BASE}/user/v1/exists/phone/`,
+  generateOtp: `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/otp/v1/generate`,
+  generateToken: `${CONSTANTS.HTTPS_HOST}/auth/realms/sunbird/protocol/openid-connect/token`,
+  searchSb: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/private/user/v1/search`,
+  userRoles: `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/user/private/v1/assign/role`,
+  verifyOtp: `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/otp/v1/verify`,
 }
 
 const GENERAL_ERROR_MSG = 'Failed due to unknown reason'
@@ -59,28 +59,37 @@ emailOrMobileLogin.post('/signup', async (req, res) => {
         psw: password,
         type: 'email',
       }
-      logInfo('Checking profile data ' + profile )
+      logInfo('Checking profile data ' + profile)
       newUserDetails = await createuserWithmobileOrEmail(profile).catch(
         handleCreateUserError
       )
       if (newUserDetails) {
         const userUUId = newUserDetails.result.userId
         const response = await getOTP(
-            userUUId,
-            email,
-            'email'
-          )
-           // tslint:disable-next-line: no-console
+          userUUId,
+          email,
+          'email'
+        )
+        // tslint:disable-next-line: no-console
         console.log('response form getOTP : ' + response)
         if (response.data.result.response === 'SUCCESS') {
-            res.status(200).json({
-              msg: 'user created successfully',
-              status: 'success',
-              status_code: 200,
-              userUUId: newUserDetails.result.userId,
-            })
-          }
+          res.status(200).json({
+            msg: 'user created successfully',
+            status: 'success',
+            status_code: 200,
+            userUUId: newUserDetails.result.userId,
+          })
+        }
 
+      } else {
+        logInfo('Email already exists.')
+        res.status(400).json({
+          msg: 'Email id  already exists.',
+          status: 'error',
+          status_code: 400,
+        })
+        return
+      }
     } else {
       logInfo('Email already exists.')
       res.status(400).json({
@@ -90,20 +99,11 @@ emailOrMobileLogin.post('/signup', async (req, res) => {
       })
       return
     }
-  } else {
-    logInfo('Email already exists.')
-    res.status(400).json({
-      msg: 'Email id  already exists.',
-      status: 'error',
-      status_code: 400,
-    })
-    return
-  }
   } catch (error) {
     logInfo('Error in user creation >>>>>>' + error)
     res.status(500).send({
-      message : CREATION_FAIL,
-      status : 'failed',
+      message: CREATION_FAIL,
+      status: 'failed',
     })
   }
 })
@@ -138,17 +138,17 @@ emailOrMobileLogin.post('/generateOtp', async (req, res) => {
             'userId'
           )
           const response = await getOTP(
-              userUUId,
-              email ? email : mobileNumber,
-              email ? 'email' : 'phone'
-            )
-             // tslint:disable-next-line: no-console
+            userUUId,
+            email ? email : mobileNumber,
+            email ? 'email' : 'phone'
+          )
+          // tslint:disable-next-line: no-console
           console.log('2 response form getOTP : ' + response)
           if (response.data.result.response === 'SUCCESS') {
-              res
-                .status(200)
-                .send({ message: 'Success ! Please verify the OTP .' })
-            }
+            res
+              .status(200)
+              .send({ message: 'Success ! Please verify the OTP .' })
+          }
         }
       } else {
         res.status(400).send({ message: NOT_USER_FOUND })
@@ -216,7 +216,7 @@ emailOrMobileLogin.post(
           setTimeout(() => {
             updateRoles(userUUId)
           }, 5000)
-          res.status(200).send({ message : VALIDATION_SUCCESS , status : 'success'  })
+          res.status(200).send({ message: VALIDATION_SUCCESS, status: 'success' })
         }
         logInfo('Sending Responses in phone part : ' + verifyOtpResponse)
       } else {
@@ -247,7 +247,7 @@ emailOrMobileLogin.post('/registerUserWithMobile', async (req, res) => {
     // tslint:disable-next-line: no-any
     let profile: any = {}
     let isUserExist = {}
-     // tslint:disable-next-line: no-any
+    // tslint:disable-next-line: no-any
     let newUserDetails: any = {}
     logInfo('Req body', req.body)
     isUserExist = await fetchUserBymobileorEmail(phone, 'phone')
@@ -266,20 +266,20 @@ emailOrMobileLogin.post('/registerUserWithMobile', async (req, res) => {
       if (newUserDetails) {
         const userUUId = newUserDetails.result.userId
         const response = await getOTP(
-            userUUId,
-            phone,
-            'phone'
-          )
-           // tslint:disable-next-line: no-console
+          userUUId,
+          phone,
+          'phone'
+        )
+        // tslint:disable-next-line: no-console
         console.log('response form getOTP : ' + response)
         if (response.data.result.response === 'SUCCESS') {
-            res.status(200).json({
-              msg: 'user created successfully',
-              status: 'success',
-              status_code: 200,
-              userUUId: newUserDetails.result.userId,
-            })
-          }
+          res.status(200).json({
+            msg: 'user created successfully',
+            status: 'success',
+            status_code: 200,
+            userUUId: newUserDetails.result.userId,
+          })
+        }
         logInfo('Sending Responses in phone part : ' + newUserDetails)
       }
 
@@ -354,7 +354,7 @@ const updateRoles = async (userUUId: string) => {
         request: {
           organisationId: '0132317968766894088',
           roles: [
-              'PUBLIC',
+            'PUBLIC',
           ],
           userId: userUUId,
         },
@@ -400,7 +400,7 @@ const createuserWithmobileOrEmail = async (accountDetails: any) => {
     } else {
       throw new Error(
         _.get(response.data, 'params.errmsg') ||
-          _.get(response.data, 'params.err')
+        _.get(response.data, 'params.err')
       )
     }
   } catch (err) {
@@ -410,42 +410,44 @@ const createuserWithmobileOrEmail = async (accountDetails: any) => {
 
 // login endpoint for public users
 // tslint:disable-next-line: no-any
-emailOrMobileLogin.post('/auth', async (req: any, res) => {
-  res.clearCookie('connect.sid')
+emailOrMobileLogin.post('/auth', async (req: any, res, next) => {
+  req.session.user = null;
   // tslint:disable-next-line: no-any
-  req.session.regenerate( async () => {
-    // will have a new session here
-    try {
-      if (req.body.mobileNumber || req.body.email) {
-        logInfo('Entered into /login/auth endpoint >>> ')
-        const mobileNumber = req.body.mobileNumber
-        const email        = req.body.email
-        const password     = req.body.password
-        const username = mobileNumber ? mobileNumber : email
+  req.session.save(function (err: any) {
+    if (err) next(err)
+    req.session.regenerate(async () => {
+      // will have a new session here
+      try {
+        if (req.body.mobileNumber || req.body.email) {
+          logInfo('Entered into /login/auth endpoint >>> ')
+          const mobileNumber = req.body.mobileNumber
+          const email = req.body.email
+          const password = req.body.password
+          const username = mobileNumber ? mobileNumber : email
 
-        logInfo('Step i : mobileNumber response value :->' + mobileNumber)
-        logInfo('Step ii : email response value :->' + email)
-        logInfo('Step iii : password response value :->' + password)
+          logInfo('Step i : mobileNumber response value :->' + mobileNumber)
+          logInfo('Step ii : email response value :->' + email)
+          logInfo('Step iii : password response value :->' + password)
 
-        try {
+          try {
             const encodedData = qs.stringify({
-                                                client_id: 'portal',
-                                                // client_secret: `${CONSTANTS.KEYCLOAK_CLIENT_SECRET}`,
-                                                grant_type: 'password',
-                                                password,
-                                                username,
-                                              })
+              client_id: 'portal',
+              // client_secret: `${CONSTANTS.KEYCLOAK_CLIENT_SECRET}`,
+              grant_type: 'password',
+              password,
+              username,
+            })
             logInfo('Entered into authorization part.' + encodedData)
 
             const authTokenResponse = await axios({
-                ...axiosRequestConfig,
-                data: encodedData,
-                headers: {
-                  'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                method: 'POST',
-                url: API_END_POINTS.generateToken,
-              })
+              ...axiosRequestConfig,
+              data: encodedData,
+              headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+              },
+              method: 'POST',
+              url: API_END_POINTS.generateToken,
+            })
 
             logInfo('Entered into authTokenResponse :' + authTokenResponse)
 
@@ -456,8 +458,8 @@ emailOrMobileLogin.post('/auth', async (req: any, res) => {
               const decodedTokenArray = decodedToken.sub.split(':')
               const userId = decodedTokenArray[decodedTokenArray.length - 1]
               req.session.userId = userId
-              req.kauth = {grant: {access_token: {content: decodedToken, token : accessToken}}}
-              req.session.grant =  {access_token: {content: decodedToken, token : accessToken}}
+              req.kauth = { grant: { access_token: { content: decodedToken, token: accessToken } } }
+              req.session.grant = { access_token: { content: decodedToken, token: accessToken } }
               logInfo('Success ! Entered into usertokenResponse..')
               await getCurrentUserRoles(req, accessToken)
 
@@ -473,26 +475,27 @@ emailOrMobileLogin.post('/auth', async (req: any, res) => {
               })
             }
 
-        } catch (e) {
-          logInfo('Error throwing Cookie inside auth route : ' + e)
-          res.status(400).send({
-            error: AUTH_FAIL,
+          } catch (e) {
+            logInfo('Error throwing Cookie inside auth route : ' + e)
+            res.status(400).send({
+              error: AUTH_FAIL,
+            })
+          }
+
+        } else if (!req.body.mobileNumber || !req.body.email) {
+          res.status(400).json({
+            msg: EMAIL_OR_MOBILE_ERROR_MSG,
+            status: 'error',
+            status_code: 400,
           })
         }
-
-      } else if (!req.body.mobileNumber || !req.body.email) {
-        res.status(400).json({
-          msg: EMAIL_OR_MOBILE_ERROR_MSG,
-          status: 'error',
-          status_code: 400,
+      } catch (error) {
+        logInfo('error' + error)
+        res.status(500).send({
+          error: GENERAL_ERROR_MSG,
         })
       }
-    } catch (error) {
-      logInfo('error' + error)
-      res.status(500).send({
-        error: GENERAL_ERROR_MSG,
-        })
-    }
+    })
   })
 
 })
