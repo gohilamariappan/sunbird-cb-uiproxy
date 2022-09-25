@@ -411,9 +411,9 @@ const createuserWithmobileOrEmail = async (accountDetails: any) => {
 // login endpoint for public users
 // tslint:disable-next-line: no-any
 emailOrMobileLogin.post('/auth', async (req: any, res, next) => {
-  req.session.user = null;
+  req.session.user = null
   // tslint:disable-next-line: no-any
-  req.session.save(function (err: any) {
+  req.session.save(async (err: any) => {
     if (err) next(err)
     req.session.regenerate(async () => {
       // will have a new session here
