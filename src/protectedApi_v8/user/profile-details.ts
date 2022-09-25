@@ -295,18 +295,20 @@ profileDeatailsApi.post('/createUser', async (req, res) => {
                 }
 
                 const sbProfileUpdateReq = {
-                    profileDetails: {
-                        employmentDetails: {
-                            departmentName: sbChannel,
-                        },
-                        personalDetails: {
-                            firstname: sbfirstName_,
-                            primaryEmail: sbemail_,
-                            surname: sblastName_,
-                        },
-                    },
-                    userId: sbUserId,
-                }
+									profileDetails: {
+										profileReq: {
+											employmentDetails: {
+												departmentName: sbChannel,
+											},
+											personalDetails: {
+												firstname: sbfirstName_,
+												primaryEmail: sbemail_,
+												surname: sblastName_,
+											},
+										},
+									},
+									userId: sbUserId,
+								};
 
                 const sbUserProfileUpdateResp = await axios({
                     ...axiosRequestConfig,
