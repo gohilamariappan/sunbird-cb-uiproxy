@@ -1,5 +1,4 @@
 
-
 import axios from 'axios'
 import { Router } from 'express'
 import fs from 'fs'
@@ -55,8 +54,8 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
                 logInfo('Data inside user processing >>>>> ' + data)
 
                 _res.status(200).send({
-                                            status : "success",
                                             message: 'Bulk Upload is Completed ! ',
+                                            status : 'Success',
                                         })
             } catch (error) {
                 logInfo('Calling User Processing  : ' + error)
@@ -93,12 +92,12 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
                             method: 'POST',
                             url: API_ENDPOINTS.createUserOfBulkUpload,
                         })
-    
+
                         if (responseUserCreation) {
                             finalResponse.push(responseUserCreation)
                             try {
                                 const roleData = {
-                                    organisationId: "0132317968766894088", // Pre-defined organisatin id
+                                    organisationId: '0132317968766894088', // Pre-defined organisatin id
                                     roles: [
                                         'PUBLIC',
                                     ],
@@ -117,21 +116,21 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
                                         method: 'POST',
                                         url: API_ENDPOINTS.assignRoleforBulkUsers,
                                     })
-                                    logInfo('Role Assigned data >>>> ' + responseRoleAssign)
-                                    finalResponse.push(responseRoleAssign)     
-                                    logInfo("Final collective data >>>> " + typeof(finalResponse))
+                                logInfo('Role Assigned data >>>> ' + responseRoleAssign)
+                                finalResponse.push(responseRoleAssign)
+                                logInfo('Final collective data >>>> ' + typeof(finalResponse))
 
-                                    return finalResponse
+                                return finalResponse
 
                             } catch (error) {
                                 logInfo('Error While assigning  the role  : ' + error)
                             }
-                           
+
                         }
                     } catch (error) {
                         logInfo('Error While Creating the user in bulkupload failed creating new user  : ' + error)
                     }
-                    
+
                 }
             } catch (error) {
                 logInfo('Error While Creating the user & assigning role in BulkUpload : ' + error)
