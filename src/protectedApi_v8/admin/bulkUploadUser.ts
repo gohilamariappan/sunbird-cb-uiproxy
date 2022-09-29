@@ -51,11 +51,11 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
                     return simulateFetchData(csvObjects)
                 }))
 
-                logInfo('Data inside user processing >>>>> ' + JSON.stringify(data))
+                logInfo('Data inside user processing >>>>> ' + data)
 
                 _res.status(200).send({
-                                            data,
                                             message: 'Bulk Upload is Completed ! ',
+                                            status : 'Success',
                                         })
             } catch (error) {
                 logInfo('Calling User Processing  : ' + error)
@@ -82,53 +82,58 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
                     }
 
                    // logInfo('collectData >>>>>' + JSON.stringify(collectData))
+                    try {
+                        const responseUserCreation = await axios({
+                            ...axiosRequestConfig,
+                            data: { request: collectData },
+                            headers: {
+                                Authorization: CONSTANTS.SB_API_KEY,
+                            },
+                            method: 'POST',
+                            url: API_ENDPOINTS.createUserOfBulkUpload,
+                        })
 
-                    const responseUserCreation = await axios({
-                        ...axiosRequestConfig,
-                        data: { request: collectData },
-                        headers: {
-                            Authorization: CONSTANTS.SB_API_KEY,
-                        },
-                        method: 'POST',
-                        url: API_ENDPOINTS.createUserOfBulkUpload,
-                    })
-
-                    if (responseUserCreation) {
-                        finalResponse.push(responseUserCreation)
-
-                        const roleData = {
-                                    organisationId: responseUserCreation.data.result.organisationId, // Pre-defined organisatin id
+                        if (responseUserCreation) {
+                            finalResponse.push(responseUserCreation)
+                            try {
+                                const roleData = {
+                                    organisationId: '0132317968766894088', // Pre-defined organisatin id
                                     roles: [
                                         'PUBLIC',
                                     ],
                                     userId: responseUserCreation.data.result.userId,
                                 }
 
-                        // logInfo('Entered into Assign role >>' + JSON.stringify(roleData))
+                                logInfo('Entered into Assign role >>' + roleData)
+                                    const responseRoleAssign = await axios({
+                                        ...axiosRequestConfigLong,
+                                        data: { request: roleData },
+                                        headers: {
+                                            Authorization: CONSTANTS.SB_API_KEY,
+                                            // tslint:disable-next-line: all
+                                            'x-authenticated-user-token': extractUserToken(req)
+                                        },
+                                        method: 'POST',
+                                        url: API_ENDPOINTS.assignRoleforBulkUsers,
+                                    })
+                                logInfo('Role Assigned data >>>> ' + responseRoleAssign)
+                                finalResponse.push(responseRoleAssign)
+                                logInfo('Final collective data >>>> ' + typeof(finalResponse))
 
-                        const responseRoleAssign = await axios({
-                            ...axiosRequestConfigLong,
-                            data: {
-                                request: {
-                                   roleData,
-                                },
-                                url: API_ENDPOINTS.assignRoleforBulkUsers,
-                            },
-                            headers: {
-                                Authorization: CONSTANTS.SB_API_KEY,
-                                // tslint:disable-next-line: all
-                                'x-authenticated-user-token': extractUserToken(req)
-                            },
-                            method: 'POST',
-                        })
-                        logInfo('Role Assigned data >>>> ' + responseRoleAssign)
-                        // logInfo("Final collective data >>>> " + JSON.stringify(responseRoleAssign))
-                        finalResponse.push(responseRoleAssign)
+                                return finalResponse
+
+                            } catch (error) {
+                                logInfo('Error While assigning  the role  : ' + error)
+                            }
+
+                        }
+                    } catch (error) {
+                        logInfo('Error While Creating the user in bulkupload failed creating new user  : ' + error)
                     }
-                    return finalResponse
+
                 }
             } catch (error) {
-                logInfo('Error While Creating the user & assigning role : ' + error)
+                logInfo('Error While Creating the user & assigning role in BulkUpload : ' + error)
             }
 
         }
