@@ -1,5 +1,4 @@
 
-
 import axios from 'axios'
 import { Router } from 'express'
 import fs from 'fs'
@@ -57,8 +56,8 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
                 logInfo('Data inside user processing >>>>> ' + data)
 
                 _res.status(200).send({
-                                            status : "success",
                                             message: 'Bulk Upload is Completed ! ',
+                                            status : 'success',
                                         })
             } catch (error) {
                 logInfo('Calling User Processing  : ' + error)
@@ -95,13 +94,13 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
                             method: 'POST',
                             url: API_ENDPOINTS.createUserOfBulkUpload,
                         })
-    
+
                         if (responseUserCreation) {
                             finalResponse.push(responseUserCreation)
-                            
+
                             try {
                                 const roleData = {
-                                    organisationId: "0132317968766894088", // Pre-defined organisatin id
+                                    organisationId: '0132317968766894088', // Pre-defined organisatin id
                                     roles: [
                                         'PUBLIC',
                                     ],
@@ -109,7 +108,7 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
                                 }
 
                                 logInfo('Entered into Assign role >>' + JSON.stringify(roleData))
-                                   
+
                                 const responseRoleAssign = await axios({
                                         ...axiosRequestConfigLong,
                                         data: { request: roleData },
@@ -121,21 +120,20 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
                                         method: 'POST',
                                         url: API_ENDPOINTS.assignRoleforBulkUsers,
                                     })
-                                    logInfo('Role Assigned data >>>> ' + responseRoleAssign)
-                                    finalResponse.push(responseRoleAssign)     
-                                    logInfo("Final collective data >>>> " + typeof(finalResponse))
-                                    
-                                    try
-                                    {
-                                        
+                                logInfo('Role Assigned data >>>> ' + responseRoleAssign)
+                                finalResponse.push(responseRoleAssign)
+                                logInfo('Final collective data >>>> ' + typeof(finalResponse))
+
+                                try {
+
                                     const passwordResetRequest = {
                                         key: 'email',
                                         type: 'email',
                                         userId: responseUserCreation.data.result.userId,
                                       }
-                              
-                                      logInfo('Sending Password reset request -> ' + passwordResetRequest)
-                                      const passwordResetResponse = await axios({
+
+                                    logInfo('Sending Password reset request -> ' + passwordResetRequest)
+                                    const passwordResetResponse = await axios({
                                         ...axiosRequestConfig,
                                         data: { request: passwordResetRequest },
                                         headers: {
@@ -144,9 +142,9 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
                                         method: 'POST',
                                         url: API_ENDPOINTS.kongUserResetPassword,
                                       })
-                                      logInfo('Received response from password reset -> ' + passwordResetResponse)
+                                    logInfo('Received response from password reset -> ' + passwordResetResponse)
 
-                                    try{
+                                    try {
                                         logInfo('Welcome Mail Request body')
                                         const welcomeMailRequest = {
                                             allowedLoging: 'You can use your email to Login. Click on link and activate your account.',
@@ -161,7 +159,7 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
                                             subject: 'Welcome Email',
                                             welcomeMessage: 'Hello',
                                           }
-                                          logInfo('Welcome Mail Request body data' + JSON.stringify(welcomeMailRequest))
+                                        logInfo('Welcome Mail Request body data' + JSON.stringify(welcomeMailRequest))
                                         const welcomeMailResponse = await axios({
                                             ...axiosRequestConfig,
                                             data: { request: welcomeMailRequest },
@@ -171,18 +169,16 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
                                             method: 'POST',
                                             url: API_ENDPOINTS.kongSendWelcomeEmail,
                                             })
-                            
+
                                         if (welcomeMailResponse.data.params.status !== 'success') {
                                             logInfo('Failed to send Welcome Email.')
                                         }
-                                        
+
                                         return finalResponse
-                                    }
-                                    catch(error){
+                                    } catch (error) {
                                         logInfo('Error While sending the mail  : ' + error)
                                     }
-                                }
-                                catch(error){
+                                } catch (error) {
                                     logInfo('Error While resetting password in generating link  : ' + error)
                                 }
 
@@ -193,7 +189,7 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
                     } catch (error) {
                         logInfo('Error While Creating the user  : ' + error)
                     }
-                    
+
                 }
             } catch (error) {
                 logInfo('Error While Creating the user & assigning role : ' + error)
