@@ -11,6 +11,8 @@ const json2xls = require('json2xls')
 const API_ENDPOINTS = {
     assignRoleforBulkUsers: `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/user/v1/role/assign`,
     createUserOfBulkUpload: `${CONSTANTS.KONG_API_BASE}/user/v3/create`,
+    kongSendWelcomeEmail: `${CONSTANTS.KONG_API_BASE}/private/user/v1/notification/email`,
+    kongUserResetPassword: `${CONSTANTS.KONG_API_BASE}/private/user/v1/password/reset`,
 }
 
 // tslint:disable-next-line: no-any
@@ -51,11 +53,11 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
                     return simulateFetchData(csvObjects)
                 }))
 
-                logInfo('Data inside user processing >>>>> ' + JSON.stringify(data))
+                logInfo('Data inside user processing >>>>> ' + data)
 
                 _res.status(200).send({
-                                            data,
                                             message: 'Bulk Upload is Completed ! ',
+                                            status : 'success',
                                         })
             } catch (error) {
                 logInfo('Calling User Processing  : ' + error)
@@ -82,50 +84,112 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
                     }
 
                    // logInfo('collectData >>>>>' + JSON.stringify(collectData))
+                    try {
+                        const responseUserCreation = await axios({
+                            ...axiosRequestConfig,
+                            data: { request: collectData },
+                            headers: {
+                                Authorization: CONSTANTS.SB_API_KEY,
+                            },
+                            method: 'POST',
+                            url: API_ENDPOINTS.createUserOfBulkUpload,
+                        })
 
-                    const responseUserCreation = await axios({
-                        ...axiosRequestConfig,
-                        data: { request: collectData },
-                        headers: {
-                            Authorization: CONSTANTS.SB_API_KEY,
-                        },
-                        method: 'POST',
-                        url: API_ENDPOINTS.createUserOfBulkUpload,
-                    })
+                        if (responseUserCreation) {
+                            finalResponse.push(responseUserCreation)
 
-                    if (responseUserCreation) {
-                        finalResponse.push(responseUserCreation)
-
-                        const roleData = {
-                                    organisationId: responseUserCreation.data.result.organisationId, // Pre-defined organisatin id
+                            try {
+                                const roleData = {
+                                    organisationId: '0132317968766894088', // Pre-defined organisatin id
                                     roles: [
                                         'PUBLIC',
                                     ],
                                     userId: responseUserCreation.data.result.userId,
                                 }
 
-                        // logInfo('Entered into Assign role >>' + JSON.stringify(roleData))
+                                logInfo('Entered into Assign role >>' + JSON.stringify(roleData))
 
-                        const responseRoleAssign = await axios({
-                            ...axiosRequestConfigLong,
-                            data: {
-                                request: {
-                                   roleData,
-                                },
-                                url: API_ENDPOINTS.assignRoleforBulkUsers,
-                            },
-                            headers: {
-                                Authorization: CONSTANTS.SB_API_KEY,
-                                // tslint:disable-next-line: all
-                                'x-authenticated-user-token': extractUserToken(req)
-                            },
-                            method: 'POST',
-                        })
-                        logInfo('Role Assigned data >>>> ' + responseRoleAssign)
-                        // logInfo("Final collective data >>>> " + JSON.stringify(responseRoleAssign))
-                        finalResponse.push(responseRoleAssign)
+                                const responseRoleAssign = await axios({
+                                        ...axiosRequestConfigLong,
+                                        data: { request: roleData },
+                                        headers: {
+                                            Authorization: CONSTANTS.SB_API_KEY,
+                                            // tslint:disable-next-line: all
+                                            'x-authenticated-user-token': extractUserToken(req)
+                                        },
+                                        method: 'POST',
+                                        url: API_ENDPOINTS.assignRoleforBulkUsers,
+                                    })
+                                logInfo('Role Assigned data >>>> ' + responseRoleAssign)
+                                finalResponse.push(responseRoleAssign)
+                                logInfo('Final collective data >>>> ' + typeof(finalResponse))
+
+                                try {
+
+                                    const passwordResetRequest = {
+                                        key: 'email',
+                                        type: 'email',
+                                        userId: responseUserCreation.data.result.userId,
+                                      }
+
+                                    logInfo('Sending Password reset request -> ' + passwordResetRequest)
+                                    const passwordResetResponse = await axios({
+                                        ...axiosRequestConfig,
+                                        data: { request: passwordResetRequest },
+                                        headers: {
+                                          Authorization: CONSTANTS.SB_API_KEY,
+                                        },
+                                        method: 'POST',
+                                        url: API_ENDPOINTS.kongUserResetPassword,
+                                      })
+                                    logInfo('Received response from password reset -> ' + passwordResetResponse)
+
+                                    try {
+                                        logInfo('Welcome Mail Request body')
+                                        const welcomeMailRequest = {
+                                            allowedLoging: 'You can use your email to Login. Click on link and activate your account.',
+                                            body: 'Hello',
+                                            emailTemplateType: 'iGotWelcome',
+                                            firstName: csvObjects.first_name,
+                                            link: passwordResetResponse.data.result.link,
+                                            mode: 'email',
+                                            orgName: 'Sphere test 1',
+                                            recipientEmails: [csvObjects.username],
+                                            setPasswordLink: true,
+                                            subject: 'Welcome Email',
+                                            welcomeMessage: 'Hello',
+                                          }
+                                        logInfo('Welcome Mail Request body data' + JSON.stringify(welcomeMailRequest))
+                                        const welcomeMailResponse = await axios({
+                                            ...axiosRequestConfig,
+                                            data: { request: welcomeMailRequest },
+                                            headers: {
+                                                Authorization: CONSTANTS.SB_API_KEY,
+                                            },
+                                            method: 'POST',
+                                            url: API_ENDPOINTS.kongSendWelcomeEmail,
+                                            })
+
+                                        if (welcomeMailResponse.data.params.status !== 'success') {
+                                            logInfo('Failed to send Welcome Email.')
+                                        }
+
+                                        return finalResponse
+                                    } catch (error) {
+                                        logInfo('Error While sending the mail  : ' + error)
+                                    }
+                                } catch (error) {
+                                    logInfo('Error While resetting password in generating link  : ' + error)
+                                }
+
+                            } catch (error) {
+                                logInfo('Error While assign  the role  : ' + error)
+                            }
+                        }
+                    } catch (error) {
+                        logInfo('Error While Creating the user  : ' + error)
                     }
-                    return finalResponse
+
                 }
             } catch (error) {
                 logInfo('Error While Creating the user & assigning role : ' + error)

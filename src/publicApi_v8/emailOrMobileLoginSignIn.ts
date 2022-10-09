@@ -25,10 +25,13 @@ const VALIDATION_FAIL = 'Please provide correct otp and try again.'
 const OTP_GENERATE_FAIL = 'Please provide correct otp and try again.'
 const CREATION_FAIL = 'Sorry ! User not created. Please try again in sometime.'
 const VALIDATION_SUCCESS = 'Otp is successfully validated.'
+const OTP_MISSING = 'Otp cannnot be blank'
 const EMAIL_OR_MOBILE_ERROR_MSG = 'Mobile no. or Email Id can not be empty'
 const NOT_USER_FOUND = 'User not found.'
-const AUTH_FAIL = 'Authentication failed ! Please check credentials and try again.'
+const AUTH_FAIL =
+  'Authentication failed ! Please check credentials and try again.'
 const AUTHENTICATED = 'Success ! User is sucessfully authenticated.'
+const USER_NOT_CREATED = 'User does not exist please signup and login again'
 
 export const emailOrMobileLogin = Router()
 emailOrMobileLogin.post('/signup', async (req, res) => {
@@ -65,11 +68,7 @@ emailOrMobileLogin.post('/signup', async (req, res) => {
       )
       if (newUserDetails) {
         const userUUId = newUserDetails.result.userId
-        const response = await getOTP(
-          userUUId,
-          email,
-          'email'
-        )
+        const response = await getOTP(userUUId, email, 'email')
         // tslint:disable-next-line: no-console
         console.log('response form getOTP : ' + response)
         if (response.data.result.response === 'SUCCESS') {
@@ -80,7 +79,6 @@ emailOrMobileLogin.post('/signup', async (req, res) => {
             userUUId: newUserDetails.result.userId,
           })
         }
-
       } else {
         logInfo('Email already exists.')
         res.status(400).json({
@@ -199,6 +197,10 @@ emailOrMobileLogin.post(
         const email = req.body.email
         const validOtp = req.body.otp
         const userUUId = req.body.userUUId || req.body.userUUID
+        if (!validOtp) {
+          res.status(400).send({ message: OTP_MISSING, status: 'error' })
+          return
+        }
         const verifyOtpResponse = await validateOTP(
           userUUId,
           mobileNumber ? mobileNumber : email,
@@ -216,7 +218,9 @@ emailOrMobileLogin.post(
           setTimeout(() => {
             updateRoles(userUUId)
           }, 5000)
-          res.status(200).send({ message: VALIDATION_SUCCESS, status: 'success' })
+          res
+            .status(200)
+            .send({ message: VALIDATION_SUCCESS, status: 'success' })
         }
         logInfo('Sending Responses in phone part : ' + verifyOtpResponse)
       } else {
@@ -265,11 +269,7 @@ emailOrMobileLogin.post('/registerUserWithMobile', async (req, res) => {
       )
       if (newUserDetails) {
         const userUUId = newUserDetails.result.userId
-        const response = await getOTP(
-          userUUId,
-          phone,
-          'phone'
-        )
+        const response = await getOTP(userUUId, phone, 'phone')
         // tslint:disable-next-line: no-console
         console.log('response form getOTP : ' + response)
         if (response.data.result.response === 'SUCCESS') {
@@ -282,7 +282,6 @@ emailOrMobileLogin.post('/registerUserWithMobile', async (req, res) => {
         }
         logInfo('Sending Responses in phone part : ' + newUserDetails)
       }
-
     } else {
       logInfo('Mobile no. already exists.')
       res.status(400).json({
@@ -353,9 +352,7 @@ const updateRoles = async (userUUId: string) => {
       data: {
         request: {
           organisationId: '0132317968766894088',
-          roles: [
-            'PUBLIC',
-          ],
+          roles: ['PUBLIC'],
           userId: userUUId,
         },
       },
@@ -363,7 +360,6 @@ const updateRoles = async (userUUId: string) => {
       method: 'POST',
       url: API_END_POINTS.userRoles,
     })
-
   } catch (err) {
     logError('update roles failed ' + err)
     return 'false'
@@ -400,7 +396,7 @@ const createuserWithmobileOrEmail = async (accountDetails: any) => {
     } else {
       throw new Error(
         _.get(response.data, 'params.errmsg') ||
-        _.get(response.data, 'params.err')
+          _.get(response.data, 'params.err')
       )
     }
   } catch (err) {
@@ -424,7 +420,21 @@ emailOrMobileLogin.post('/auth', async (req: any, res, next) => {
           const email = req.body.email
           const password = req.body.password
           const username = mobileNumber ? mobileNumber : email
-
+          const isEmailUserExist = await fetchUserBymobileorEmail(
+            email,
+            'email'
+          )
+          const isMobileUserExist = await fetchUserBymobileorEmail(
+            mobileNumber,
+            'phone'
+          )
+          if (!isEmailUserExist && !isMobileUserExist) {
+            res.status(400).json({
+              msg: USER_NOT_CREATED,
+              status: 'error',
+            })
+            return
+          }
           logInfo('Step i : mobileNumber response value :->' + mobileNumber)
           logInfo('Step ii : email response value :->' + email)
           logInfo('Step iii : password response value :->' + password)
@@ -458,8 +468,14 @@ emailOrMobileLogin.post('/auth', async (req: any, res, next) => {
               const decodedTokenArray = decodedToken.sub.split(':')
               const userId = decodedTokenArray[decodedTokenArray.length - 1]
               req.session.userId = userId
-              req.kauth = { grant: { access_token: { content: decodedToken, token: accessToken } } }
-              req.session.grant = { access_token: { content: decodedToken, token: accessToken } }
+              req.kauth = {
+                grant: {
+                  access_token: { content: decodedToken, token: accessToken },
+                },
+              }
+              req.session.grant = {
+                access_token: { content: decodedToken, token: accessToken },
+              }
               logInfo('Success ! Entered into usertokenResponse..')
               await getCurrentUserRoles(req, accessToken)
 
@@ -467,21 +483,18 @@ emailOrMobileLogin.post('/auth', async (req: any, res, next) => {
                 msg: AUTHENTICATED,
                 status: 'success',
               })
-
             } else {
               res.status(302).json({
                 msg: AUTH_FAIL,
                 status: 'error',
               })
             }
-
           } catch (e) {
             logInfo('Error throwing Cookie inside auth route : ' + e)
             res.status(400).send({
               error: AUTH_FAIL,
             })
           }
-
         } else if (!req.body.mobileNumber || !req.body.email) {
           res.status(400).json({
             msg: EMAIL_OR_MOBILE_ERROR_MSG,
@@ -497,5 +510,4 @@ emailOrMobileLogin.post('/auth', async (req: any, res, next) => {
       }
     })
   })
-
 })
