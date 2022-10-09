@@ -122,7 +122,7 @@ export function proxyCreatorLearner(route: Router, targetUrl: string, _timeout =
 }
 
 export function proxyCreatorSunbird(route: Router, targetUrl: string, _timeout = 10000): Router {
-  logInfo("2 ...............U visited here very soon.")
+  logInfo('2 ...............U visited here very soon.')
     // tslint:disable-next-line: no-any
   route.all('/*', (req: any, res) => {
     let url
@@ -242,22 +242,21 @@ export function proxyCreatorToAppentUserId(route: Router, targetUrl: string, _ti
   route.all('/*', (req, res) => {
 
     const userId = extractUserIdFromRequest(req).split(':')
-    const userIdFromUrl = req.originalUrl.split("/").pop()
-    
-    if(userIdFromUrl == 'read'){
+    const userIdFromUrl = req.originalUrl.split('/').pop()
+
+    if (userIdFromUrl === 'read') {
       logInfo('Read api without userId value >>>>>>>>>>', userIdFromUrl)
       proxy.web(req, res, {
         changeOrigin: true,
         ignorePath: true,
        target: targetUrl + userId[userId.length - 1],
       })
-    }
-    else{
-      
-    logInfo("userId received in Read api  >>>>>>>>>"+ userId)
+    } else {
+
+    logInfo('userId received in Read api  >>>>>>>>>' + userId)
     logInfo('REQ_URL_ORIGINAL proxyCreatorToAppentUserId', req.originalUrl)
-    logInfo("userId Length value >>>>>>>>>>>>>>"+ userId[userId.length - 1]);
-      
+    logInfo('userId Length value >>>>>>>>>>>>>>' + userId[userId.length - 1])
+
     proxy.web(req, res, {
       changeOrigin: true,
       ignorePath: true,
@@ -266,7 +265,7 @@ export function proxyCreatorToAppentUserId(route: Router, targetUrl: string, _ti
     })
 
     }
-    
+
   })
   return route
 }
