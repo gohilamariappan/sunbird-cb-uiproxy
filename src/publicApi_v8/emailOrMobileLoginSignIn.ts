@@ -15,6 +15,7 @@ const API_END_POINTS = {
   fetchUserByMobileNo: `${CONSTANTS.KONG_API_BASE}/user/v1/exists/phone/`,
   generateOtp: `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/otp/v1/generate`,
   generateToken: `${CONSTANTS.HTTPS_HOST}/auth/realms/sunbird/protocol/openid-connect/token`,
+  keycloak_redirect_url: `${CONSTANTS.KEYCLOAK_REDIRECT_URL}`,
   searchSb: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/private/user/v1/search`,
   userRoles: `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/user/private/v1/assign/role`,
   verifyOtp: `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/otp/v1/verify`,
@@ -504,6 +505,83 @@ emailOrMobileLogin.post('/auth', async (req: any, res, next) => {
         }
       } catch (error) {
         logInfo('error' + error)
+        res.status(500).send({
+          error: GENERAL_ERROR_MSG,
+        })
+      }
+    })
+  })
+})
+// tslint:disable-next-line: no-any
+emailOrMobileLogin.post('/authv2/*', async (req: any, res, next) => {
+  req.session.user = null
+  // tslint:disable-next-line: no-any
+  req.session.save(async (err: any) => {
+    if (err) next(err)
+    req.session.regenerate(async () => {
+      // will have a new session here
+      try {
+        logInfo('Entered into /login/authv2 endpoint >>> ')
+        try {
+          const path = req.path
+          const index = path.indexOf('&code=')
+          const code = path.substring(index + 6, index.length)
+          const transformedData = qs.stringify({
+            client_id: 'portal',
+            code,
+            grant_type: 'authorization_code',
+            redirect_uri: API_END_POINTS.keycloak_redirect_url,
+          })
+          logInfo('Entered into authorization part.' + transformedData)
+          const authTokenResponse = await axios({
+            ...axiosRequestConfig,
+            data: transformedData,
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            method: 'POST',
+            url: API_END_POINTS.generateToken,
+          })
+          logInfo('Entered into authTokenResponsev2 :' + authTokenResponse)
+
+          if (authTokenResponse.data) {
+            const accessToken = authTokenResponse.data.access_token
+            // tslint:disable-next-line: no-any
+            const decodedToken: any = jwt_decode(accessToken)
+            const decodedTokenArray = decodedToken.sub.split(':')
+            const userId = decodedTokenArray[decodedTokenArray.length - 1]
+            req.session.userId = userId
+            req.kauth = {
+              grant: {
+                access_token: { content: decodedToken, token: accessToken },
+              },
+            }
+            req.session.grant = {
+              access_token: { content: decodedToken, token: accessToken },
+            }
+            logInfo('Success ! Entered into usertokenResponse..')
+            await getCurrentUserRoles(req, accessToken)
+
+            res.status(200).json({
+              msg: AUTHENTICATED,
+              status: 'success',
+            })
+          } else {
+            res.status(302).json({
+              msg: AUTH_FAIL,
+              status: 'error',
+            })
+          }
+        } catch (e) {
+          logInfo('Error throwing Cookie inside auth route : ' + e)
+
+          res.status(400).send({
+            error: AUTH_FAIL,
+          })
+        }
+      } catch (error) {
+        logInfo('error' + error)
+
         res.status(500).send({
           error: GENERAL_ERROR_MSG,
         })
