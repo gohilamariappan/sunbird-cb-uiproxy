@@ -571,7 +571,7 @@ emailOrMobileLogin.post('/authv2/*', async (req: any, res, next) => {
           }
         } catch (e) {
           logInfo('Error throwing Cookie inside auth route : ' + e)
-          console.log(e)
+
           res.status(400).send({
             error: AUTH_FAIL,
           })
