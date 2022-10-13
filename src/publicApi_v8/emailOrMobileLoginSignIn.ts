@@ -523,9 +523,7 @@ emailOrMobileLogin.post('/authv2/*', async (req: any, res, next) => {
       try {
         logInfo('Entered into /login/authv2 endpoint >>> ')
         try {
-          const path = req.path
-          const index = path.indexOf('&code=')
-          const code = path.substring(index + 6, index.length)
+          const code = req.query.code
           const transformedData = qs.stringify({
             client_id: 'portal',
             code,
@@ -543,7 +541,6 @@ emailOrMobileLogin.post('/authv2/*', async (req: any, res, next) => {
             url: API_END_POINTS.generateToken,
           })
           logInfo('Entered into authTokenResponsev2 :' + authTokenResponse)
-
           if (authTokenResponse.data) {
             const accessToken = authTokenResponse.data.access_token
             // tslint:disable-next-line: no-any
@@ -574,7 +571,7 @@ emailOrMobileLogin.post('/authv2/*', async (req: any, res, next) => {
           }
         } catch (e) {
           logInfo('Error throwing Cookie inside auth route : ' + e)
-
+          console.log(e)
           res.status(400).send({
             error: AUTH_FAIL,
           })
