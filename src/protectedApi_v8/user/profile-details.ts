@@ -2,23 +2,37 @@ import axios from 'axios'
 import { Router } from 'express'
 import * as fs from 'fs'
 import _ from 'lodash'
-import { IPersonalDetails, ISBUser, ISunbirdbUserResponse } from '../../../src/models/user.model'
-import { axiosRequestConfig, axiosRequestConfigLong, axiosRequestConfigVeryLong } from '../../configs/request.config'
+import {
+  IPersonalDetails,
+  ISBUser,
+  ISunbirdbUserResponse,
+} from '../../../src/models/user.model'
+import {
+  axiosRequestConfig,
+  axiosRequestConfigLong,
+  axiosRequestConfigVeryLong,
+} from '../../configs/request.config'
 import { CONSTANTS } from '../../utils/env'
 import { logError, logInfo } from '../../utils/logger'
 import { ERROR } from '../../utils/message'
-import { extractUserIdFromRequest, extractUserToken } from '../../utils/requestExtract'
+import {
+  extractUserIdFromRequest,
+  extractUserToken,
+} from '../../utils/requestExtract'
 
 const uuidv1 = require('uuid/v1')
 const dateFormat = require('dateformat')
 
 const API_END_POINTS = {
-  createOSUserRegistry: (userId: string) => `${CONSTANTS.NETWORK_HUB_SERVICE_BACKEND}/v1/user/create/profile?userId=${userId}`,
+  completeUserInfo: `${CONSTANTS.DECRYPTION_API_BASE}/user_search`,
+  createOSUserRegistry: (userId: string) =>
+    `${CONSTANTS.NETWORK_HUB_SERVICE_BACKEND}/v1/user/create/profile?userId=${userId}`,
   createSb: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/v1/user/signup`,
   createUserRegistry: `${CONSTANTS.USER_PROFILE_API_BASE}/public/v8/profileDetails/createUserRegistry`,
   getMasterLanguages: `${CONSTANTS.USER_PROFILE_API_BASE}/public/v8/profileDetails/getMasterLanguages`,
   getMasterNationalities: `${CONSTANTS.USER_PROFILE_API_BASE}/public/v8/profileDetails/getMasterNationalities`,
-  getOSUserRegistryById: (userId: string) => `${CONSTANTS.NETWORK_HUB_SERVICE_BACKEND}/v1/user/search/profile?userId=${userId}`,
+  getOSUserRegistryById: (userId: string) =>
+    `${CONSTANTS.NETWORK_HUB_SERVICE_BACKEND}/v1/user/search/profile?userId=${userId}`,
   getProfilePageMeta: `${CONSTANTS.USER_PROFILE_API_BASE}/public/v8/profileDetails/getProfilePageMeta`,
   getUserRegistry: `${CONSTANTS.USER_PROFILE_API_BASE}/public/v8/profileDetails/getUserRegistry`,
   getUserRegistryById: `${CONSTANTS.USER_PROFILE_API_BASE}/public/v8/profileDetails/getUserRegistryById`,
@@ -26,7 +40,8 @@ const API_END_POINTS = {
   kongSearchUser: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/private/user/v1/search`,
   kongSendWelcomeEmail: `${CONSTANTS.KONG_API_BASE}/private/user/v1/notification/email`,
   kongUpdateUser: `${CONSTANTS.KONG_API_BASE}/user/private/v1/update`,
-  kongUserRead: (userId: string) => `${CONSTANTS.KONG_API_BASE}/user/v2/read/${userId}`,
+  kongUserRead: (userId: string) =>
+    `${CONSTANTS.KONG_API_BASE}/user/v2/read/${userId}`,
   kongUserResetPassword: `${CONSTANTS.KONG_API_BASE}/private/user/v1/password/reset`,
   // tslint:disable-next-line: object-literal-sort-keys
   migrateRegistry: `${CONSTANTS.USER_PROFILE_API_BASE}/public/v8/profileDetails/migrateRegistry`,
@@ -34,23 +49,32 @@ const API_END_POINTS = {
   searchSb: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/private/user/v1/search`,
   sendWelcomeEmail: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/private/user/v1/notification/email`,
   setUserProfileStatus: `${CONSTANTS.USER_PROFILE_API_BASE}/public/v8/profileDetails/setUserProfileStatus`,
-  updateOSUserRegistry: (userId: string) => `${CONSTANTS.NETWORK_HUB_SERVICE_BACKEND}/v1/user/update/profile?userId=${userId}`,
+  updateOSUserRegistry: (userId: string) =>
+    `${CONSTANTS.NETWORK_HUB_SERVICE_BACKEND}/v1/user/update/profile?userId=${userId}`,
   userProfileStatus: `${CONSTANTS.USER_PROFILE_API_BASE}/public/v8/profileDetails/userProfileStatus`,
-  userRead: (userId: string) => `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/user/v2/read/${userId}`,
+  userRead: (userId: string) =>
+    `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/user/v2/read/${userId}`,
 }
 
 export async function getUserProfileStatus(wid: string) {
   try {
-    const response = await axios.post(API_END_POINTS.userProfileStatus, { wid }, {
-      ...axiosRequestConfig,
-    })
+    const response = await axios.post(
+      API_END_POINTS.userProfileStatus,
+      { wid },
+      {
+        ...axiosRequestConfig,
+      }
+    )
     if (response.data.status) {
       return true
     } else {
       return false
     }
   } catch (err) {
-    logError('ERROR GETTING USER PROFILE STATUS FROM  ${API_END_POINTS.userProfileStatus} >', err)
+    logError(
+      'ERROR GETTING USER PROFILE STATUS FROM  ${API_END_POINTS.userProfileStatus} >',
+      err
+    )
     return false
   }
 }
@@ -61,9 +85,13 @@ profileDeatailsApi.post('/createUserRegistry', async (req, res) => {
   try {
     const userId = extractUserIdFromRequest(req)
     logInfo('Create user registry for', userId)
-    const response = await axios.post(API_END_POINTS.createUserRegistry, { ...req.body, userId }, {
-      ...axiosRequestConfigLong,
-    })
+    const response = await axios.post(
+      API_END_POINTS.createUserRegistry,
+      { ...req.body, userId },
+      {
+        ...axiosRequestConfigLong,
+      }
+    )
     res.status(response.status).json(response.data)
   } catch (err) {
     logError('ERROR CREATING USER REGISTRY >', err)
@@ -76,9 +104,13 @@ profileDeatailsApi.get('/getUserRegistry', async (req, res) => {
   try {
     const userId = extractUserIdFromRequest(req)
     logInfo('Get user registry for', userId)
-    const response = await axios.post(API_END_POINTS.getUserRegistry, { userId }, {
-      ...axiosRequestConfig,
-    })
+    const response = await axios.post(
+      API_END_POINTS.getUserRegistry,
+      { userId },
+      {
+        ...axiosRequestConfig,
+      }
+    )
     res.status(response.status).send(response.data)
   } catch (err) {
     logError('ERROR FETCHING USER REGISTRY >', err)
@@ -95,9 +127,13 @@ profileDeatailsApi.get('/getUserRegistryById/:id', async (req, res) => {
     }
     logInfo('Get user registry for', userId)
 
-    const response = await axios.post(API_END_POINTS.getUserRegistry, { userId }, {
-      ...axiosRequestConfig,
-    })
+    const response = await axios.post(
+      API_END_POINTS.getUserRegistry,
+      { userId },
+      {
+        ...axiosRequestConfig,
+      }
+    )
     res.status(response.status).send(response.data)
   } catch (err) {
     logError('ERROR FETCHING USER REGISTRY >', err)
@@ -128,10 +164,14 @@ profileDeatailsApi.get('/userProfileStatus', async (req, res) => {
 profileDeatailsApi.post('/setUserProfileStatus', async (req, res) => {
   try {
     req.body.wid = extractUserIdFromRequest(req)
-    const response = await axios.post(API_END_POINTS.setUserProfileStatus, req, {
-      ...axiosRequestConfig,
-      headers: req.headers,
-    })
+    const response = await axios.post(
+      API_END_POINTS.setUserProfileStatus,
+      req,
+      {
+        ...axiosRequestConfig,
+        headers: req.headers,
+      }
+    )
     res.status(response.status).send(response.data)
   } catch (err) {
     logError('ERROR SETTING USER PROFILE STATUS >', err)
@@ -178,40 +218,50 @@ profileDeatailsApi.get('/getProfilePageMeta', async (_req, res) => {
 
 // Api to migrate data from eagleUser opensaber  to new userProfile opensaber
 profileDeatailsApi.get('/migrateRegistry', async (req, res) => {
-  const filePath = CONSTANTS.USER_BULK_UPLOAD_DIR || process.cwd() + '/user_upload/'
+  const filePath =
+    CONSTANTS.USER_BULK_UPLOAD_DIR || process.cwd() + '/user_upload/'
   try {
     // tslint:disable-next-line: no-any
-    fs.readFile(filePath + 'migrateRegistry.json', async (err: any, json: any) => {
-      if (!err) {
-        const obj = JSON.parse(json)
-        const widList = obj.widList
-        const userId = extractUserIdFromRequest(req)
+    fs.readFile(
+      filePath + 'migrateRegistry.json',
+      // tslint:disable-next-line: no-any
+      async (err: any, json: any) => {
+        if (!err) {
+          const obj = JSON.parse(json)
+          const widList = obj.widList
+          const userId = extractUserIdFromRequest(req)
 
-        logInfo('migrating the registry')
-        const response = await axios.post(
-          API_END_POINTS.migrateRegistry,
-          { ...req.body, userId, widList },
-          {
-            ...axiosRequestConfigVeryLong,
-          }
-        )
-        res.status(response.status).json(response.data)
-      } else {
-        res.status(500).send(err)
+          logInfo('migrating the registry')
+          const response = await axios.post(
+            API_END_POINTS.migrateRegistry,
+            { ...req.body, userId, widList },
+            {
+              ...axiosRequestConfigVeryLong,
+            }
+          )
+          res.status(response.status).json(response.data)
+        } else {
+          res.status(500).send(err)
+        }
       }
-    })
+    )
   } catch (err) {
     logError('ERROR CREATING USER REGISTRY >', err)
     res.status((err && err.response && err.response.status) || 500).send(err)
   }
 })
 
-const channelParamMissing = 'Channel param is missing in personalDetails. Use DeptName as Channel value.'
+const channelParamMissing =
+  'Channel param is missing in personalDetails. Use DeptName as Channel value.'
 const emailAdressExist = 'Email address already exist'
+const email_or_phone_missing = 'Either email or phone is required'
 const failedToCreateUser = 'Not able to create User in SunBird'
 const failedToReadUser = 'Failed to read newly created user details.'
-const failedToCreateUserInOpenSaber = 'Not able to create User Registry in Opensaber'
+const failedToCreateUserInOpenSaber =
+  'Not able to create User Registry in Opensaber'
 const createUserFailed = 'ERROR CREATING USER >'
+const fetchUserMongodbFailed =
+  'Error while fetching data from decryptionService'
 const failedToUpdateUser = 'Failed to update user profile data.'
 const unknownError = 'Failed due to unknown reason'
 
@@ -229,38 +279,41 @@ profileDeatailsApi.post('/createUser', async (req, res) => {
 
     const searchresponse = await axios({
       ...axiosRequestConfig,
-      data: { request: { query: '', filters: { email: sbemail_.toLowerCase() } } },
+      data: {
+        request: { query: '', filters: { email: sbemail_.toLowerCase() } },
+      },
       headers: {
         Authorization: CONSTANTS.SB_API_KEY,
         // tslint:disable-next-line: all
-        'x-authenticated-user-token': extractUserToken(req),
+        "x-authenticated-user-token": extractUserToken(req),
       },
       method: 'POST',
       url: API_END_POINTS.kongSearchUser,
     })
     if (searchresponse.data.result.response.count > 0) {
-      res.status(400).send(
-        {
-          id: 'api.error.createUser',
-          ver: '1.0',
+      res.status(400).send({
+        id: 'api.error.createUser',
+        ver: '1.0',
+        // tslint:disable-next-line: object-literal-sort-keys
+        ts: dateFormat(new Date(), 'yyyy-mm-dd HH:MM:ss:lo'),
+        params: {
+          resmsgid: uuidv1(),
           // tslint:disable-next-line: object-literal-sort-keys
-          ts: dateFormat(new Date(), 'yyyy-mm-dd HH:MM:ss:lo'),
-          params:
-          {
-            resmsgid: uuidv1(),
-            // tslint:disable-next-line: object-literal-sort-keys
-            msgid: null,
-            status: 'failed',
-            err: 'USR_EMAIL_EXISTS',
-            errmsg: emailAdressExist,
-          },
-          responseCode: 'USR_EMAIL_EXISTS',
-          result: {},
-        })
+          msgid: null,
+          status: 'failed',
+          err: 'USR_EMAIL_EXISTS',
+          errmsg: emailAdressExist,
+        },
+        responseCode: 'USR_EMAIL_EXISTS',
+        result: {},
+      })
       return
     } else {
       const sbUserProfile: Partial<ISBUser> = {
-        channel: sbChannel, email: sbemail_, emailVerified: sbemailVerified_, firstName: sbfirstName_,
+        channel: sbChannel,
+        email: sbemail_,
+        emailVerified: sbemailVerified_,
+        firstName: sbfirstName_,
         lastName: sblastName_,
       }
       const response = await axios({
@@ -269,7 +322,7 @@ profileDeatailsApi.post('/createUser', async (req, res) => {
         headers: {
           Authorization: CONSTANTS.SB_API_KEY,
           // tslint:disable-next-line: all
-          'x-authenticated-user-token': extractUserToken(req),
+          "x-authenticated-user-token": extractUserToken(req),
         },
         method: 'POST',
         url: API_END_POINTS.kongCreateUser,
@@ -284,7 +337,7 @@ profileDeatailsApi.post('/createUser', async (req, res) => {
           headers: {
             Authorization: CONSTANTS.SB_API_KEY,
             // tslint:disable-next-line: all
-            'x-authenticated-user-token': extractUserToken(req),
+            "x-authenticated-user-token": extractUserToken(req),
           },
           method: 'GET',
           url: API_END_POINTS.kongUserRead(sbUserId),
@@ -340,7 +393,9 @@ profileDeatailsApi.post('/createUser', async (req, res) => {
           method: 'POST',
           url: API_END_POINTS.kongUserResetPassword,
         })
-        logInfo('Received response from password reset -> ' + passwordResetResponse)
+        logInfo(
+          'Received response from password reset -> ' + passwordResetResponse
+        )
 
         if (passwordResetResponse.data.params.status === 'success') {
           const welcomeMailRequest = {
@@ -377,7 +432,9 @@ profileDeatailsApi.post('/createUser', async (req, res) => {
         }
 
         const sbUserProfileResponse: Partial<ISunbirdbUserResponse> = {
-          email: sbemail_, firstName: sbfirstName_, lastName: sblastName_,
+          email: sbemail_,
+          firstName: sbfirstName_,
+          lastName: sblastName_,
           userId: sbUserId,
         }
         res.send(sbUserProfileResponse)
@@ -388,22 +445,61 @@ profileDeatailsApi.post('/createUser', async (req, res) => {
     res.status((err && err.response && err.response.status) || 500).send(err)
   }
 })
-
+profileDeatailsApi.post('/completeUserInfo', async (req, res) => {
+  try {
+    const userEmail = req.body.email || null
+    const userPhone = req.body.phone || null
+    if (!userEmail && !userPhone) {
+      res.status(400).json({
+        msg: email_or_phone_missing,
+        status: 'error',
+      })
+      return
+    }
+    const userData = await axios({
+      ...axiosRequestConfig,
+      data: {
+        email: userEmail,
+        phone: userPhone,
+      },
+      method: 'POST',
+      url: API_END_POINTS.completeUserInfo,
+    })
+    res.status(userData.status || 200).send(userData.data)
+  } catch (err) {
+    logError(fetchUserMongodbFailed, err)
+    res
+      .status((err && err.response && err.response.status) || 500)
+      .send(err.message || 'Something went wrong')
+  }
+})
 profileDeatailsApi.patch('/updateUser', async (req, res) => {
   try {
     // tslint:disable-next-line: max-line-length
-    if (req.body.request.profileDetails.profileReq.personalDetails && !req.body.request.profileDetails.profileReq.personalDetails.regNurseRegMidwifeNumber) {
-      req.body.request.profileDetails.profileReq.personalDetails.regNurseRegMidwifeNumber = '[NA]'
+    if (
+      req.body.request.profileDetails.profileReq.personalDetails &&
+      !req.body.request.profileDetails.profileReq.personalDetails
+        .regNurseRegMidwifeNumber
+    ) {
+      req.body.request.profileDetails.profileReq.personalDetails.regNurseRegMidwifeNumber =
+        '[NA]'
     }
     // tslint:disable-next-line: max-line-length
-    req.body.request.profileDetails.profileReq.personalDetails = _.omitBy(req.body.request.profileDetails.profileReq.personalDetails, (v) => _.isUndefined(v) || _.isNull(v) || _.isEmpty(v))
+    req.body.request.profileDetails.profileReq.personalDetails = _.omitBy(
+      req.body.request.profileDetails.profileReq.personalDetails,
+      (v) => _.isUndefined(v) || _.isNull(v) || _.isEmpty(v)
+    )
     logInfo(JSON.stringify(req.body))
-    const response = await axios.patch(API_END_POINTS.kongUpdateUser, req.body, {
-      ...axiosRequestConfig,
-      headers: {
-        Authorization: CONSTANTS.SB_API_KEY,
-      },
-    })
+    const response = await axios.patch(
+      API_END_POINTS.kongUpdateUser,
+      req.body,
+      {
+        ...axiosRequestConfig,
+        headers: {
+          Authorization: CONSTANTS.SB_API_KEY,
+        },
+      }
+    )
     res.status(response.status).send(response.data)
   } catch (err) {
     logError(failedToUpdateUser + err)
@@ -414,7 +510,7 @@ profileDeatailsApi.patch('/updateUser', async (req, res) => {
     )
   }
 })
-
+// tslint:disable-next-line: no-identical-functions
 profileDeatailsApi.post('/createUserV2WithRegistry', async (req, res) => {
   try {
     const sbChannel = req.body.personalDetails.channel
@@ -429,7 +525,9 @@ profileDeatailsApi.post('/createUserV2WithRegistry', async (req, res) => {
 
     const searchresponse = await axios({
       ...axiosRequestConfig,
-      data: { request: { query: '', filters: { email: sbemail_.toLowerCase() } } },
+      data: {
+        request: { query: '', filters: { email: sbemail_.toLowerCase() } },
+      },
       method: 'POST',
       url: API_END_POINTS.searchSb,
     })
@@ -438,7 +536,10 @@ profileDeatailsApi.post('/createUserV2WithRegistry', async (req, res) => {
       return
     } else {
       const sbUserProfile: Partial<ISBUser> = {
-        channel: sbChannel, email: sbemail_, emailVerified: sbemailVerified_, firstName: sbfirstName_,
+        channel: sbChannel,
+        email: sbemail_,
+        emailVerified: sbemailVerified_,
+        firstName: sbfirstName_,
         lastName: sblastName_,
       }
       const response = await axios({
@@ -447,7 +548,7 @@ profileDeatailsApi.post('/createUserV2WithRegistry', async (req, res) => {
         headers: {
           Authorization: CONSTANTS.SB_API_KEY,
           // tslint:disable-next-line: all
-          'x-authenticated-user-token': extractUserToken(req),
+          "x-authenticated-user-token": extractUserToken(req),
         },
         method: 'POST',
         url: API_END_POINTS.createSb,
@@ -476,7 +577,10 @@ profileDeatailsApi.post('/createUserV2WithRegistry', async (req, res) => {
           surname: sblastName_,
           userName: sbUserReadResponse.data.result.response.userName,
         }
-        const userRegistry = getUserRegistry(personalDetailsRegistry, sbChannel)
+        const userRegistry = getUserRegistry(
+          personalDetailsRegistry,
+          sbChannel
+        )
         const userRegistryResponse = await axios({
           ...axiosRequestConfig,
           data: userRegistry,
@@ -490,7 +594,9 @@ profileDeatailsApi.post('/createUserV2WithRegistry', async (req, res) => {
           res.status(500).send(failedToCreateUserInOpenSaber)
         } else {
           const sbUserProfileResponse: Partial<ISunbirdbUserResponse> = {
-            email: sbemail_, firstName: sbfirstName_, lastName: sblastName_,
+            email: sbemail_,
+            firstName: sbfirstName_,
+            lastName: sblastName_,
             userId: sbUserId,
           }
           res.send(sbUserProfileResponse)
@@ -502,7 +608,7 @@ profileDeatailsApi.post('/createUserV2WithRegistry', async (req, res) => {
     res.status((err && err.response && err.response.status) || 500).send(err)
   }
 })
-
+// tslint:disable-next-line: no-identical-functions
 profileDeatailsApi.post('/createUserV2WithoutRegistry', async (req, res) => {
   try {
     const sbChannel = req.body.personalDetails.channel
@@ -517,7 +623,9 @@ profileDeatailsApi.post('/createUserV2WithoutRegistry', async (req, res) => {
 
     const searchresponse = await axios({
       ...axiosRequestConfig,
-      data: { request: { query: '', filters: { email: sbemail_.toLowerCase() } } },
+      data: {
+        request: { query: '', filters: { email: sbemail_.toLowerCase() } },
+      },
       method: 'POST',
       url: API_END_POINTS.searchSb,
     })
@@ -526,7 +634,10 @@ profileDeatailsApi.post('/createUserV2WithoutRegistry', async (req, res) => {
       return
     } else {
       const sbUserProfile: Partial<ISBUser> = {
-        channel: sbChannel, email: sbemail_, emailVerified: sbemailVerified_, firstName: sbfirstName_,
+        channel: sbChannel,
+        email: sbemail_,
+        emailVerified: sbemailVerified_,
+        firstName: sbfirstName_,
         lastName: sblastName_,
       }
       const response = await axios({
@@ -535,7 +646,7 @@ profileDeatailsApi.post('/createUserV2WithoutRegistry', async (req, res) => {
         headers: {
           Authorization: CONSTANTS.SB_API_KEY,
           // tslint:disable-next-line: all
-          'x-authenticated-user-token': extractUserToken(req),
+          "x-authenticated-user-token": extractUserToken(req),
         },
         method: 'POST',
         url: API_END_POINTS.createSb,
@@ -559,7 +670,9 @@ profileDeatailsApi.post('/createUserV2WithoutRegistry', async (req, res) => {
           return
         } else {
           const sbUserProfileResponse: Partial<ISunbirdbUserResponse> = {
-            email: sbemail_, firstName: sbfirstName_, lastName: sblastName_,
+            email: sbemail_,
+            firstName: sbfirstName_,
+            lastName: sblastName_,
             userId: sbUserId,
           }
           res.send(sbUserProfileResponse)
@@ -572,98 +685,115 @@ profileDeatailsApi.post('/createUserV2WithoutRegistry', async (req, res) => {
   }
 })
 
-// tslint:disable-next-line
-profileDeatailsApi.post('/createUserWithoutInvitationEmail', async (req, res) => {
-  try {
-    const sbChannel = req.body.personalDetails.channel
-    if (!sbChannel) {
-      res.status(400).send(channelParamMissing)
-      return
-    }
-    const sbemail_ = req.body.personalDetails.email
-    const sbemailVerified_ = true
-    const sbfirstName_ = req.body.personalDetails.firstName
-    const sblastName_ = req.body.personalDetails.lastName
-
-    const searchresponse = await axios({
-      ...axiosRequestConfig,
-      data: { request: { query: '', filters: { email: sbemail_.toLowerCase() } } },
-      method: 'POST',
-      url: API_END_POINTS.searchSb,
-    })
-    if (searchresponse.data.result.response.count > 0) {
-      res.status(400).send(emailAdressExist)
-      return
-    } else {
-      const sbUserProfile: Partial<ISBUser> = {
-        channel: sbChannel, email: sbemail_, emailVerified: sbemailVerified_, firstName: sbfirstName_,
-        lastName: sblastName_,
+// tslint:disable-next-line: no-identical-functions
+profileDeatailsApi.post(
+  '/createUserWithoutInvitationEmail',
+  // tslint:disable-next-line: no-identical-functions
+  async (req, res) => {
+    try {
+      const sbChannel = req.body.personalDetails.channel
+      if (!sbChannel) {
+        res.status(400).send(channelParamMissing)
+        return
       }
-      const response = await axios({
+      const sbemail_ = req.body.personalDetails.email
+      const sbemailVerified_ = true
+      const sbfirstName_ = req.body.personalDetails.firstName
+      const sblastName_ = req.body.personalDetails.lastName
+
+      const searchresponse = await axios({
         ...axiosRequestConfig,
-        data: { request: sbUserProfile },
-        headers: {
-          Authorization: CONSTANTS.SB_API_KEY,
-          // tslint:disable-next-line: all
-          'x-authenticated-user-token': extractUserToken(req),
+        data: {
+          request: { query: '', filters: { email: sbemail_.toLowerCase() } },
         },
         method: 'POST',
-        url: API_END_POINTS.createSb,
+        url: API_END_POINTS.searchSb,
       })
-      if (response.data.responseCode === 'CLIENT_ERROR') {
-        res.status(400).send(failedToCreateUser)
+      if (searchresponse.data.result.response.count > 0) {
+        res.status(400).send(emailAdressExist)
         return
       } else {
-        const sbUserId = response.data.result.userId
-        const sbUserReadResponse = await axios({
+        const sbUserProfile: Partial<ISBUser> = {
+          channel: sbChannel,
+          email: sbemail_,
+          emailVerified: sbemailVerified_,
+          firstName: sbfirstName_,
+          lastName: sblastName_,
+        }
+        const response = await axios({
           ...axiosRequestConfig,
+          data: { request: sbUserProfile },
           headers: {
             Authorization: CONSTANTS.SB_API_KEY,
             // tslint:disable-next-line: all
-            'x-authenticated-user-token': extractUserToken(req),
-          },
-          method: 'GET',
-          url: API_END_POINTS.userRead(sbUserId),
-        })
-        if (sbUserReadResponse.data.params.status !== 'success') {
-          res.status(500).send(failedToReadUser)
-          return
-        }
-
-        const personalDetailsRegistry: IPersonalDetails = {
-          firstname: sbfirstName_,
-          primaryEmail: sbemail_,
-          surname: sblastName_,
-          userName: sbUserReadResponse.data.result.response.userName,
-        }
-        const userRegistry = getUserRegistry(personalDetailsRegistry, sbChannel)
-        const userRegistryResponse = await axios({
-          ...axiosRequestConfig,
-          data: userRegistry,
-          headers: {
-            wid: sbUserId,
+            "x-authenticated-user-token": extractUserToken(req),
           },
           method: 'POST',
-          url: API_END_POINTS.createOSUserRegistry(sbUserId),
+          url: API_END_POINTS.createSb,
         })
-        if (userRegistryResponse.data === null) {
-          res.status(500).send(failedToCreateUserInOpenSaber)
+        if (response.data.responseCode === 'CLIENT_ERROR') {
+          res.status(400).send(failedToCreateUser)
+          return
         } else {
-          const sbUserProfileResponse: Partial<ISunbirdbUserResponse> = {
-            email: sbemail_, firstName: sbfirstName_, lastName: sblastName_,
-            userId: sbUserId,
+          const sbUserId = response.data.result.userId
+          const sbUserReadResponse = await axios({
+            ...axiosRequestConfig,
+            headers: {
+              Authorization: CONSTANTS.SB_API_KEY,
+              // tslint:disable-next-line: all
+              "x-authenticated-user-token": extractUserToken(req),
+            },
+            method: 'GET',
+            url: API_END_POINTS.userRead(sbUserId),
+          })
+          if (sbUserReadResponse.data.params.status !== 'success') {
+            res.status(500).send(failedToReadUser)
+            return
           }
-          res.send(sbUserProfileResponse)
+
+          const personalDetailsRegistry: IPersonalDetails = {
+            firstname: sbfirstName_,
+            primaryEmail: sbemail_,
+            surname: sblastName_,
+            userName: sbUserReadResponse.data.result.response.userName,
+          }
+          const userRegistry = getUserRegistry(
+            personalDetailsRegistry,
+            sbChannel
+          )
+          const userRegistryResponse = await axios({
+            ...axiosRequestConfig,
+            data: userRegistry,
+            headers: {
+              wid: sbUserId,
+            },
+            method: 'POST',
+            url: API_END_POINTS.createOSUserRegistry(sbUserId),
+          })
+          if (userRegistryResponse.data === null) {
+            res.status(500).send(failedToCreateUserInOpenSaber)
+          } else {
+            const sbUserProfileResponse: Partial<ISunbirdbUserResponse> = {
+              email: sbemail_,
+              firstName: sbfirstName_,
+              lastName: sblastName_,
+              userId: sbUserId,
+            }
+            res.send(sbUserProfileResponse)
+          }
         }
       }
+    } catch (err) {
+      logError(createUserFailed, err)
+      res.status((err && err.response && err.response.status) || 500).send(err)
     }
-  } catch (err) {
-    logError(createUserFailed, err)
-    res.status((err && err.response && err.response.status) || 500).send(err)
   }
-})
+)
 
-function getUserRegistry(personalDetailsRegistry: IPersonalDetails, deptName: string) {
+function getUserRegistry(
+  personalDetailsRegistry: IPersonalDetails,
+  deptName: string
+) {
   return {
     academics: [
       {
