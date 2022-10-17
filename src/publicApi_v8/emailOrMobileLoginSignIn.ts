@@ -522,10 +522,13 @@ emailOrMobileLogin.post('/authv2/*', async (req: any, res, next) => {
       // will have a new session here
       try {
         logInfo('Entered into /login/authv2 endpoint >>> ')
+       
         try {
           const path = req.path
           const index = path.indexOf('&code=')
           const code = path.substring(index + 6, index.length)
+          logInfo('Valdating Code >>> ',code)
+          logInfo('Redirect URI:>>>>', API_END_POINTS.keycloak_redirect_url)
           const transformedData = qs.stringify({
             client_id: 'portal',
             code,
