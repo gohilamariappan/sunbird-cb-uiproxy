@@ -12,8 +12,8 @@ import {
 export const assessmentApi = Router()
 const GENERAL_ERR_MSG = 'Failed due to unknown reason'
 const API_END_POINTS = {
-  assessmentSubmitV2      : `${CONSTANTS.SB_EXT_API_BASE_2}/v2/user`,
-  updateAssessmentContent : `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/course/v1/content/state/update`,
+  assessmentSubmitV2: `${CONSTANTS.SB_EXT_API_BASE_2}/v2/user`,
+  updateAssessmentContent: `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/course/v1/content/state/update`,
 }
 assessmentApi.post('/submit/v2', async (req, res) => {
   logInfo('>>>>>>>>>>>>inside submit v2')
@@ -67,38 +67,58 @@ assessmentApi.post('/submit/v2', async (req, res) => {
         method: 'POST',
         url,
       })
-      const revisedData =  {
-            request : {
-              contents: [
-                  {
-                      batchId: req.body.batchId,
-                      completionPercentage: 100,
-                      contentId: req.body.contentId,
-                      courseId: req.body.courseId,
-                      status: 2,
-                  },
-              ],
-              userId: req.body.userId ? req.body.userId : userId,
+      const revisedData = {
+        request: {
+          contents: [
+            {
+              batchId: req.body.batchId,
+              completionPercentage: 100,
+              contentId: req.body.contentId,
+              courseId: req.body.courseId,
+              status: 2,
             },
-        }
+          ],
+          userId: req.body.userId ? req.body.userId : userId,
+        },
+      }
       logInfo('Content has completed the course.' + revisedData)
       // exception for pre-assessments
-       // tslint:disable-next-line: max-line-length
-      const assessmentZeroCases = ['do_113474390542598144143', 'do_113474390542598144144', 'do_1135849304134778881218', 'do_11357406890855628811485', 'do_11357407983906816011501', 'do_11363374472452505611136','do_1135849304134778881218', 'do_1136196375912202241920','do_1136196375912202241920','do_11363162331070464011096','do_11363237170624102411122','do_1136131879061176321784']
+      // tslint:disable-next-line: max-line-length
+      const assessmentZeroCases = [
+        'do_113474390542598144143',
+        'do_113474390542598144144',
+        'do_1135849304134778881218',
+        'do_11357406890855628811485',
+        'do_11357407983906816011501',
+        'do_11363374472452505611136',
+        'do_1135849304134778881218',
+        'do_1136196375912202241920',
+        'do_1136196375912202241920',
+        'do_11363162331070464011096',
+        'do_11363237170624102411122',
+        'do_1136131879061176321784',
+        'do_11364359967729254411225',
+        'do_11364361767574732811236',
+        'do_11364354964428390411199',
+        'do_11364352865782169611191',
+        'do_11364358297626214411209',
+        'do_11364849088283443211275',
+        'do_11364359355564851211217',
+        'do_11364850667644518411277',
+      ]
       if (assessmentZeroCases.indexOf(req.body.contentId) > 0) {
         response.data.passPercent = 0
       }
       if (response.data.result >= response.data.passPercent) {
-
         await axios({
-                      ...axiosRequestConfig,
-                      data: revisedData,
-                      headers: {
-                        Authorization: CONSTANTS.SB_API_KEY,
-                        'x-authenticated-user-token': accessToken,
-                      },
-                      method: 'PATCH',
-                      url : API_END_POINTS.updateAssessmentContent,
+          ...axiosRequestConfig,
+          data: revisedData,
+          headers: {
+            Authorization: CONSTANTS.SB_API_KEY,
+            'x-authenticated-user-token': accessToken,
+          },
+          method: 'PATCH',
+          url: API_END_POINTS.updateAssessmentContent,
         })
       }
 
@@ -107,10 +127,9 @@ assessmentApi.post('/submit/v2', async (req, res) => {
   } catch (err) {
     logError('submitassessment  failed >>>>>' + err)
     res.status(500).send({
-        error: err,
-        message : GENERAL_ERR_MSG,
-      }
-    )
+      error: err,
+      message: GENERAL_ERR_MSG,
+    })
   }
 })
 assessmentApi.post('/get', async (req, res) => {
@@ -189,13 +208,18 @@ const getFormatedRequest = (data: any, requestBody: any) => {
 
   _.forEach(data.questions, (qkey) => {
     _.forEach(requestBody.questions, (reqKey) => {
-      if (qkey.questionType === 'mcq-sca' || qkey.questionType === 'fitb' ||  qkey.questionType === 'mcq-mca' ) {
+      if (
+        qkey.questionType === 'mcq-sca' ||
+        qkey.questionType === 'fitb' ||
+        qkey.questionType === 'mcq-mca'
+      ) {
         _.forEach(qkey.options, (qoptKey) => {
           _.forEach(reqKey.options, (optKey) => {
             if (optKey.optionId === qoptKey.optionId) {
               if (
                 qkey.questionType === 'mcq-sca' ||
-                qkey.questionType === 'fitb' || qkey.questionType === 'mcq-mca'
+                qkey.questionType === 'fitb' ||
+                qkey.questionType === 'mcq-mca'
               ) {
                 _.set(optKey, 'isCorrect', _.get(qoptKey, 'isCorrect'))
                 _.set(optKey, 'text', _.get(qoptKey, 'text'))
