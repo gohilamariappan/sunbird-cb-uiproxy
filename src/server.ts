@@ -200,9 +200,15 @@ export class Server {
   }
   private resetCookies() {
     this.app.use('/reset', (_req, res) => {
-      logInfo('==========================\nCLEARING RES COOKIES')
-      res.clearCookie('connect.sid')
-      res.status(200).send()
+      logInfo('CLEARING RES COOKIES')
+      res.clearCookie('connect.sid', { path: '/' })
+      const host = _req.get('host')
+      let redirectUrl = '/public/logout'
+      logInfo('Reset Cookies... received host value ' + host)
+      if (host === `${CONSTANTS.HTTPS_HOST}`) {
+        redirectUrl = '/public/home'
+      }
+      res.redirect(redirectUrl)
     })
   }
 }
