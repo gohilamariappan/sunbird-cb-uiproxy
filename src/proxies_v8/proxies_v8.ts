@@ -84,7 +84,7 @@ proxiesV8.get('/getContents/*', (req, res) => {
 proxiesV8.get('/logout/user', (req, res, next) => {
 
   const keycloakUrl = API_END_POINTS.logoutKeycloak
-  const redirectUrl = `https://${CONSTANTS.HTTPS_HOST}` + '/public/home'
+  const redirectUrl = `${CONSTANTS.HTTPS_HOST}` + '/public/home'
   res.clearCookie('connect.sid')
   axios({
     ...axiosRequestConfig,
