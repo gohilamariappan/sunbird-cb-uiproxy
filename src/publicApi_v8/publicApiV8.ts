@@ -2,6 +2,7 @@ import express from 'express'
 import { CONSTANTS } from '../utils/env'
 import { proxyCreatorRoute } from '../utils/proxyCreator'
 import { validateCertificate } from './certificateValidate'
+import { publicCompetencyUser } from './competencyUser'
 import { customSignUp } from './customSignup'
 import { emailOrMobileLogin } from './emailOrMobileLoginSignIn'
 import { forgotPassword } from './forgotPassword'
@@ -26,7 +27,7 @@ publicApiV8.use(
     CONSTANTS.WEB_HOST_PROXY + '/web-hosted/web-client-public-assets'
   )
 )
-
+publicApiV8.use('/competency', publicCompetencyUser)
 publicApiV8.use('/tnc', publicTnc)
 publicApiV8.use('/signup', signup)
 publicApiV8.use('/homePage', homePage)
