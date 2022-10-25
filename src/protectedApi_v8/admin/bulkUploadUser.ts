@@ -73,12 +73,12 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
                         channel: csvObjects.channel,
                         firstName: csvObjects.first_name,
                         lastName: csvObjects.last_name,
-                        username: csvObjects.username,
                         [csvObjects.type]: csvObjects.phone ? csvObjects.phone : csvObjects.username,
                         organisationId: csvObjects.organisationId,
                         password: process.env.PASSWORD,
-                        usertype: csvObjects.usertype,
                         rootorgid : csvObjects.organisationId,
+                        username: csvObjects.username,
+                        usertype: csvObjects.usertype,
                     }
                     logInfo('collectData 22222 >>>>>' + JSON.stringify(collectData))
                     try {
