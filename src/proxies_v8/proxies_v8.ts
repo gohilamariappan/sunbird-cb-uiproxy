@@ -81,48 +81,32 @@ proxiesV8.get('/getContents/*', (req, res) => {
 }
 )
 
-proxiesV8.get('/logout/user', (req, res, next) => {
+proxiesV8.get('/logout/user', (_req, res) => {
 
   const keycloakUrl = API_END_POINTS.logoutKeycloak
   const redirectUrl = `${CONSTANTS.HTTPS_HOST}` + '/public/home'
+
   res.clearCookie('connect.sid')
   axios({
     ...axiosRequestConfig,
-    headers: {
-      // tslint:disable-next-line:max-line-length
-      Authorization: 'bearer ' + extractUserToken(req),
-      org: 'aastar',
-      rootorg: 'aastar',
-    },
-    method: 'get',
-    url: keycloakUrl,
+              headers: {
+                // tslint:disable-next-line:max-line-length
+                Authorization: 'bearer ' + extractUserToken(_req),
+                org: 'aastar',
+                rootorg: 'aastar',
+              },
+              method: 'get',
+              url: keycloakUrl,
   })
-    .then((response) => {
-      logInfo('Success IN LOGOUT USER >>>>>>>>>>>' + response)
-      res.clearCookie('connect.sid')
-      if (req.session) {
-        // clear the user from the session object and save.
-        // this will ensure that re-using the old session id
-        // does not have a logged in user
-        req.session.user = null
-        req.session.save((err) => {
-          if (err) next(err)
-        })
-
-        // regenerate the session, which is good practice to help
-        // guard against forms of session fixation
-        req.session.regenerate((err) => {
-          if (err) next(err)
-          res.redirect(redirectUrl)
-        })
-
-      }
-
-    })
-    .catch((error) => {
-      logInfo('Error IN LOGOUT USER : >>>>>>>>>>>>>>>>>>>>>.', error)
-      return res.send('Attention ! Error in logging out user..' + error)
-    })
+  .then((response) => {
+    logInfo('Success IN LOGOUT USER >>>>>>>>>>>' + response)
+    res.clearCookie('connect.sid')
+    res.redirect(200, redirectUrl)
+  })
+  .catch((error) => {
+    logInfo('Error IN LOGOUT USER : >>>>>>>>>>>>>>>>>>>>>.', error)
+    return res.send('Attention ! Error in logging out user..' + error)
+  })
 })
 
 proxiesV8.post('/upload/action/*', (req, res) => {
