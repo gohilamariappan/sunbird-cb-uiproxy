@@ -122,7 +122,6 @@ export function proxyCreatorLearner(route: Router, targetUrl: string, _timeout =
 }
 
 export function proxyCreatorSunbird(route: Router, targetUrl: string, _timeout = 10000): Router {
-  logInfo('2 ...............U visited here very soon.')
     // tslint:disable-next-line: no-any
   route.all('/*', (req: any, res) => {
     let url
