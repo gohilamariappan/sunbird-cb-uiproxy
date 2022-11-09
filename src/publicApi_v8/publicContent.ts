@@ -17,23 +17,23 @@ publicContentApi.post('/v1/search', async (_req, res) => {
     //   ...req.body,
     // }
     const body = {
-      "request": {
-          "filters": {
-              "primaryCategory": [
-                  "Course"
+      request: {
+          filters: {
+              primaryCategory: [
+                  'Course',
               ],
-              "contentType": [
-                  "Course"
+              contentType: [
+                  'Course',
               ],
-              "sourceName": "Ministry of Health and Family Welfare"
-          }
+              sourceName: 'Ministry of Health and Family Welfare',
+          },
       },
-      "query": "",
-      "sort": [
+      query: '',
+      sort: [
           {
-              "lastUpdatedOn": "desc"
-          }
-      ]
+              lastUpdatedOn: 'desc',
+          },
+      ],
   }
     const response = await axios({
       ...axiosRequestConfig,
