@@ -57,9 +57,7 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
         // tslint:disable-next-line: no-any
         const simulateFetchData = async (csvObjects: any) => {
             try {
-               // logInfo('URL 2 >>>>>> ' + JSON.stringify(csvObjects))
                 if (csvObjects.first_name) {
-                    // const orgId = csvObjects.organisationId.trim()
                     logInfo('CSV data present more than one row')
                     const collectData = {
                         channel: csvObjects.channel,
@@ -103,11 +101,12 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
                                 // tslint:disable-next-line: no-any
                                 logInfo('readApiResponse >>>>>>>> :' + readApiResponse)
                                 const roleData = {
+                                    // tslint:disable-next-line: max-line-length
+                                    organisationId: readApiResponse.data.result.response.organisations[0].organisationId, 
                                     roles: [
                                         'PUBLIC',
                                     ],
                                     userId: responseUserCreation.data.result.userId,
-                                    organisationId: readApiResponse.data.result.response.organisations[0].organisationId, // Pre-defined organisatin id
                                 }
 
                                 logInfo('Organisation id >>>>>>>> :' + readApiResponse.data.result.response.organisations[0])
