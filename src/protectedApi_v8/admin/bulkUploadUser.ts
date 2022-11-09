@@ -102,7 +102,7 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
                                 logInfo('readApiResponse >>>>>>>> :' + readApiResponse)
                                 const roleData = {
                                     // tslint:disable-next-line: max-line-length
-                                    organisationId: readApiResponse.data.result.response.organisations[0].organisationId, 
+                                    organisationId: readApiResponse.data.result.response.organisations[0].organisationId,
                                     roles: [
                                         'PUBLIC',
                                     ],

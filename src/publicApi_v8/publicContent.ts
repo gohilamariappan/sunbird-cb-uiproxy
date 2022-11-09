@@ -13,22 +13,19 @@ const GENERAL_ERROR_MSG = 'Failed due to unknown reason'
 export const publicContentApi = Router()
 publicContentApi.post('/v1/search', async (_req, res) => {
   try {
-    // const body = {
-    //   ...req.body,
-    // }
     const body = {
+      query: '',
       request: {
           filters: {
-              primaryCategory: [
+              contentType: [
                   'Course',
               ],
-              contentType: [
+              primaryCategory: [
                   'Course',
               ],
               sourceName: 'Ministry of Health and Family Welfare',
           },
       },
-      query: '',
       sort: [
           {
               lastUpdatedOn: 'desc',
