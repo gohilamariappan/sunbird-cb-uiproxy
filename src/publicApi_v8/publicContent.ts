@@ -11,27 +11,11 @@ const API_END_POINTS = {
 }
 const GENERAL_ERROR_MSG = 'Failed due to unknown reason'
 export const publicContentApi = Router()
-publicContentApi.post('/v1/search', async (_req, res) => {
+publicContentApi.post('/v1/search', async (req, res) => {
   try {
     const body = {
-      query: '',
-      request: {
-          filters: {
-              contentType: [
-                  'Course',
-              ],
-              primaryCategory: [
-                  'Course',
-              ],
-              sourceName: 'Ministry of Health and Family Welfare',
-          },
-      },
-      sort: [
-          {
-              lastUpdatedOn: 'desc',
-          },
-      ],
-  }
+      ...req.body,
+    }
     const response = await axios({
       ...axiosRequestConfig,
       data: body,
