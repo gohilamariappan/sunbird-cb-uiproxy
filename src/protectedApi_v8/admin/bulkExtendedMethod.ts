@@ -19,6 +19,9 @@ export const bulkExtendedMethod = async (
         const updateProfileReq = {
             profileDetails: {
               id : userId,
+              preferences: {
+                language: 'en',
+              },
               profileReq: {
                 academics: [
                     {
@@ -58,9 +61,6 @@ export const bulkExtendedMethod = async (
                     additionalSkills: request.orgType,
                     certificateDetails: request.orgType,
                 },
-              },
-              preferences: {
-                language: 'en',
               },
             },
             userId,

@@ -70,8 +70,6 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
                         usertype: csvObjects.usertype,
                     }
                     logInfo('collectData 22222 >>>>>' + JSON.stringify(collectData))
-
-                    // return false
                     try {
                         const responseUserCreation = await axios({
                             ...axiosRequestConfig,
