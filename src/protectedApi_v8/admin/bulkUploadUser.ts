@@ -5,6 +5,7 @@ import { axiosRequestConfig, axiosRequestConfigLong } from '../../configs/reques
 import { CONSTANTS } from '../../utils/env'
 import { logInfo } from '../../utils/logger'
 import { extractUserToken } from '../../utils/requestExtract'
+import { bulkExtendedMethod } from './bulkExtendedMethod'
 
 const API_ENDPOINTS = {
     assignRoleforBulkUsers: `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/user/v1/role/assign`,
@@ -69,7 +70,8 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
                         usertype: csvObjects.usertype,
                     }
                     logInfo('collectData 22222 >>>>>' + JSON.stringify(collectData))
-
+         
+                    //return false
                     try {
                         const responseUserCreation = await axios({
                             ...axiosRequestConfig,
@@ -125,6 +127,8 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
                                     })
                                 logInfo('Role Assigned data >>>> ' + responseRoleAssign)
                                 finalResponse.push(responseRoleAssign)
+                                const resultBulkUploadMethod = await bulkExtendedMethod(csvObjects, responseUserCreation.data.result.userId)
+                                logInfo('resultBulkUploadMethod 22222 >>>>>' + JSON.stringify(resultBulkUploadMethod))
                                 try {
                                     const passwordResetRequest = {
                                         key: 'email',
