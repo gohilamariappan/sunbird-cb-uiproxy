@@ -31,6 +31,7 @@ export const CONSTANTS = {
     env.DECRYPTION_API_BASE || 'http://decryption-service:8084',
   DEFAULT_ORG: env.DEFAULT_ORG || 'dopt',
   DEFAULT_ROOT_ORG: env.DEFAULT_ROOT_ORG || 'igot',
+  ENTITY_API_BASE: env.ENTITY_API_BASE || 'http://10.1.2.120:8083',
   ES_BASE: env.ES_BASE || 'http://localhost:9200',
   ES_PASSWORD: env.ES_PASSWORD || 'iGOT@123+',
   ES_USERNAME: env.ES_USERNAME || 'elastic',

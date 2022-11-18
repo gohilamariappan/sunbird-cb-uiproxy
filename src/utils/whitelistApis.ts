@@ -478,6 +478,36 @@ export const API_LIST = {
       // tslint:disable-next-line: object-literal-sort-keys
       ROLE_CHECK: [ROLE.PUBLIC],
     },
+    '/protected/v8/entityCompetency/addUpdateEntity': {
+      checksNeeded: [CHECK.ROLE],
+      // tslint:disable-next-line: object-literal-sort-keys
+      ROLE_CHECK: [ROLE.PUBLIC],
+    },
+    '/protected/v8/entityCompetency/reviewEntity': {
+      checksNeeded: [CHECK.ROLE],
+      // tslint:disable-next-line: object-literal-sort-keys
+      ROLE_CHECK: [ROLE.PUBLIC],
+    },
+    '/protected/v8/entityCompetency/addEntityRelation': {
+      checksNeeded: [CHECK.ROLE],
+      // tslint:disable-next-line: object-literal-sort-keys
+      ROLE_CHECK: [ROLE.PUBLIC],
+    },
+    '/protected/v8/entityCompetency/getEntityById/:id': {
+      checksNeeded: [CHECK.ROLE],
+      // tslint:disable-next-line: object-literal-sort-keys
+      ROLE_CHECK: [ROLE.PUBLIC],
+    },
+    '/protected/v8/entityCompetency/addEntities': {
+      checksNeeded: [CHECK.ROLE],
+      // tslint:disable-next-line: object-literal-sort-keys
+      ROLE_CHECK: [ROLE.PUBLIC],
+    },
+    '/protected/v8/entityCompetency/getAllEntity': {
+      checksNeeded: [CHECK.ROLE],
+      // tslint:disable-next-line: object-literal-sort-keys
+      ROLE_CHECK: [ROLE.PUBLIC],
+    },
     '/protected/v8/admin/userRegistration/bulkUploadData': {
       checksNeeded: [CHECK.ROLE],
       // tslint:disable-next-line: object-literal-sort-keys
@@ -1252,6 +1282,12 @@ export const API_LIST = {
     '/protected/v8/connections/connections/recommended/userDepartment',
     '/protected/v8/discussionHub/categories/:cid/:slug?/:tid?',
     '/protected/v8/discussionHub/topics/recent',
+    '/protected/v8/entityCompetency/addUpdateEntity',
+    '/protected/v8/entityCompetency/addEntityRelation',
+    '/protected/v8/entityCompetency/getEntityById/:id',
+    '/protected/v8/entityCompetency/getAllEntity',
+    '/protected/v8/entityCompetency/addEntities',
+    '/protected/v8/entityCompetency/reviewEntity',
     '/protected/v8/cohorts/:cohortType/:contentId',
     '/protected/v8/content/searchV5',
     '/protected/v8/user/content/like',
@@ -1266,6 +1302,7 @@ export const API_LIST = {
     '/protected/v8/portal/spv/department',
     '/protected/v8/portal/spv/deptAction/',
     '/protected/v8/user/roles/getUsersV2',
+
     '/protected/v8/portal/spv/mydepartment',
     '/protected/v8/portal/mdo/mydepartment',
     '/protected/v8/user/profileDetails/createUser',
