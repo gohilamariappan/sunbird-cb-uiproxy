@@ -57,6 +57,7 @@ export const CONSTANTS = {
   // tslint:disable-next-line: object-literal-sort-keys
   KC_NEW_USER_DEFAULT_PWD: env.KC_NEW_USER_DEFAULT_PWD || 'User@123',
   KEYCLOAK_CLIENT_SECRET: env.client_secret,
+  KEYCLOAK_CLIENT_SECRET_SASHAKT: env.client_secret_sashakt,
   KEYCLOAK_REALM: env.KEYCLOAK_REALM || 'sunbird',
   KEYCLOAK_REDIRECT_URL: env.KEYCLOAK_REDIRECT_URL || 'https://requestbin.io/',
   KEYCLOAK_SESSION_TTL: 30 * 24 * 60 * 60 * 1000,
