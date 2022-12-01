@@ -21,7 +21,6 @@ export const sashakt = express.Router();
 sashakt.post("/login", async (req: any, res) => {
   logInfo("Entered into sashakt route");
   const host = req.get("host");
-  console.log(host);
   const courseId = req.query.moduleId;
   let resRedirectUrl = `https://${host}/app/toc/${courseId}/overview?primaryCategory=Course`;
   try {
