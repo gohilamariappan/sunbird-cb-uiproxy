@@ -21,10 +21,11 @@ export const sashakt = express.Router();
 sashakt.post("/login", async (req: any, res) => {
   logInfo("Entered into sashakt route");
   const host = req.get("host");
-  const courseId = req.params.moduleId;
+  console.log(host);
+  const courseId = req.query.moduleId;
   let resRedirectUrl = `https://${host}/app/toc/${courseId}/overview?primaryCategory=Course`;
   try {
-    const sashaktToken = req.params.token;
+    const sashaktToken = req.query.token;
     const userDetailResponseFromShashakt = await axios({
       ...axiosRequestConfig,
       headers: {
