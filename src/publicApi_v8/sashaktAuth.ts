@@ -19,6 +19,7 @@ const API_END_POINTS = {
 export const sashakt = express.Router();
 // tslint:disable-next-line: no-any
 sashakt.post("/login", async (req: any, res) => {
+  logInfo("Entered into sashakt route");
   const host = req.get("host");
   const courseId = req.params.moduleId;
   let resRedirectUrl = `https://${host}/app/toc/${courseId}/overview?primaryCategory=Course`;
