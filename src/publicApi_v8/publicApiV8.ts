@@ -9,6 +9,7 @@ import { forgotPassword } from './forgotPassword'
 import { googleAuth } from './googleSignInRoutes'
 import { homePage } from './home'
 import { publicContentApi } from './publicContent'
+import { sashakt } from './sashaktAuth'
 import { signup } from './signup'
 import { publicTnc } from './tnc'
 
@@ -38,3 +39,4 @@ publicApiV8.use('/forgot-password/', forgotPassword)
 publicApiV8.use('/publicContent/', publicContentApi)
 publicApiV8.use('/login/', emailOrMobileLogin)
 publicApiV8.use('/certificate/', validateCertificate)
+publicApiV8.use('/sashaktAuth/*', sashakt)
