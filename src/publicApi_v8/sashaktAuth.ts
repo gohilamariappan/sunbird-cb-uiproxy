@@ -90,6 +90,7 @@ sashakt.get("/login", async (req: any, res) => {
     logError("Failed to process callback API.. error: " + JSON.stringify(err));
     resRedirectUrl = `https://${host}/public/home`;
   }
+  logInfo(resRedirectUrl);
   res.redirect(resRedirectUrl);
 });
 
