@@ -21,7 +21,6 @@ const API_END_POINTS = {
   verifyOtp: `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/otp/v1/verify`,
 }
 
-const GENERAL_ERROR_MSG = 'Failed due to unknown reason'
 const VALIDATION_FAIL = 'Please provide correct otp and try again.'
 const OTP_GENERATE_FAIL = 'Please provide correct otp and try again.'
 const CREATION_FAIL = 'Sorry ! User not created. Please try again in sometime.'
@@ -186,10 +185,10 @@ const validateRequestBody = (req: Request, res: Response, next: any) => {
 
 // validate  otp for  register's the user
 aesEncryption.post( '/validate-autologin', validateRequestBody,
-  async (req:any, res, next) => {
+ // tslint:disable-next-line: no-any
+  async (req: any, res, next) => {
     try {
-      if(!req.body.password)
-      {
+      if (!req.body.password) {
         res.status(400).json({
             msg: PASSWORD_REQD,
             status: 'success',
@@ -213,37 +212,36 @@ aesEncryption.post( '/validate-autologin', validateRequestBody,
         )
         if (verifyOtpResponse.data.result.response === 'SUCCESS') {
 
-          logInfo('opt verify : ')
-          setTimeout(() => {
-            updateRoles(userUUId)
-        }, 5000)
+          logInfo('Otp is verified. Now autologin check started.')
+        
+            setTimeout(() => {
+                updateRoles(userUUId)
+            }, 5000)
 
-        logInfo('Success validate otp now keycloak_redirect_url URI:>>>>', API_END_POINTS.keycloak_redirect_url)
-        logInfo('Sending Responses in phone part : ' + verifyOtpResponse)
-        logInfo('mobileNumber ? mobileNumber : email part : ' + mobileNumber ? mobileNumber : email)
-        logInfo('req.body.password : ' + verifyOtpResponse)
-        logInfo('Sending Responses in phone part : ' + verifyOtpResponse)
-
-        req.session.user = null
-        // tslint:disable-next-line: no-any
-        req.session.save(async (err: any) => {
+          logInfo('Success validate otp now keycloak_redirect_url URI:>>>>', API_END_POINTS.keycloak_redirect_url)
+          logInfo('Sending Responses in phone part : ' + verifyOtpResponse)
+          logInfo('mobileNumber ? mobileNumber : email part : ' + mobileNumber ? mobileNumber : email)
+          logInfo('req.body.password : ' + verifyOtpResponse)
+          logInfo('Sending Responses in phone part : ' + verifyOtpResponse)
+          
+          // Clearing session and cookies for a new generation of session and cookie for fresh login. 
+          res.clearCookie('connect.sid')
+          req.session.user = null
+         // tslint:disable-next-line: no-any
+          req.session.save(async (err: any) => {
             if (err) next(err)
             req.session.regenerate(async () => {
-            // will have a new session here
-            try {
-                logInfo('Entered into /login/authv2 endpoint >>> ')
 
+            // A new session and cookie will be generated from here. Keycloak activated.
                 try {
-                    logInfo('Redirect URI:>>>>', API_END_POINTS.keycloak_redirect_url)
-
                     const transformedData = qs.stringify({
                         client_id: 'portal',
-                        username : mobileNumber ? mobileNumber : email,
                         grant_type: 'password',
                         password: req.body.password,
+                        username : mobileNumber ? mobileNumber : email,
                         })
-                        logInfo('Entered into authorization part.' + transformedData)
-                        const authTokenResponse = await axios({
+                    logInfo('Entered into authorization part.' + transformedData)
+                    const authTokenResponse = await axios({
                         ...axiosRequestConfig,
                         data: transformedData,
                         headers: {
@@ -252,8 +250,8 @@ aesEncryption.post( '/validate-autologin', validateRequestBody,
                         method: 'POST',
                         url: API_END_POINTS.grantAccessToken,
                         })
-                        logInfo('Entered into authTokenResponsev2 :' + authTokenResponse)
-                        if (authTokenResponse.data) {
+                    logInfo('Entered into authTokenResponsev2 :' + authTokenResponse)
+                    if (authTokenResponse.data) {
                             const accessToken = authTokenResponse.data.access_token
                             // tslint:disable-next-line: no-any
                             const decodedToken: any = jwt_decode(accessToken)
@@ -270,44 +268,37 @@ aesEncryption.post( '/validate-autologin', validateRequestBody,
                             }
                             logInfo('Success ! Entered into usertokenResponse..')
                             await getCurrentUserRoles(req, accessToken)
-                
+
                             res.status(200).json({
                                 msg: AUTHENTICATED,
                                 status: 'success',
                             })
+                            res.end();
                     } else {
                         res.status(302).json({
                         msg: AUTH_FAIL,
                         status: 'failed',
                         })
                     }
-                }catch (e) {
+                } catch (e) {
                     logInfo('Error throwing Cookie inside auth route : ' + e)
                     res.status(400).send({
                         error: AUTH_FAIL,
-                        status:'failed'
+                        status: 'failed',
                     })
                 }
-            } catch (error) {
-                logInfo('error' + error)
-
-                res.status(500).send({
-                error: GENERAL_ERROR_MSG,
-                status:'failed'
-                })
-            }
             })
         })
-        
+
       } else {
         res.status(400).json({
           msg: EMAIL_OR_MOBILE_ERROR_MSG,
           status: 'error',
           status_code: 400,
         })
-        } 
-      } 
-    }catch (error) {
+        }
+      }
+    } catch (error) {
       res.status(500).send({
         message: VALIDATION_FAIL,
         status: 'failed',

@@ -17,7 +17,6 @@ import { publicTnc } from './tnc'
 export const publicApiV8 = express.Router()
 
 publicApiV8.get('/', (_req, res) => {
-  console.log("jdsfdsflkdsnvksdvbks fbk sk bjsk b")
   res.json({
     status: `Public Api is working fine https base: ${CONSTANTS.HTTPS_HOST}`,
   })
