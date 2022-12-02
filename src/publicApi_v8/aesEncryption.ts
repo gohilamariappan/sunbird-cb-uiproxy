@@ -314,65 +314,6 @@ aesEncryption.post( '/validate-autologin', validateRequestBody,
       })
     }
     })
-// aesEncryption.post('/registerUserWithMobile', async (req, res) => {
-//   try {
-//     if (!req.body.phone) {
-//       res.status(400).json({
-//         msg: EMAIL_OR_MOBILE_ERROR_MSG,
-//         status: 'error',
-//         status_code: 400,
-//       })
-//     }
-//     const { firstName, phone, lastName, password } = req.body
-//     // tslint:disable-next-line: no-any
-//     let profile: any = {}
-//     let isUserExist = {}
-//     // tslint:disable-next-line: no-any
-//     let newUserDetails: any = {}
-//     logInfo('Req body', req.body)
-//     isUserExist = await fetchUserBymobileorEmail(phone, 'phone')
-//     if (!isUserExist) {
-//       logInfo('creating new  user')
-//       profile = {
-//         fname: firstName,
-//         lname: lastName,
-//         mobile: phone,
-//         psw: password,
-//         type: 'phone',
-//       }
-//       newUserDetails = await createuserWithmobileOrEmail(profile).catch(
-//         handleCreateUserError
-//       )
-//       if (newUserDetails) {
-//         const userUUId = newUserDetails.result.userId
-//         const response = await getOTP(userUUId, phone, 'phone')
-//         // tslint:disable-next-line: no-console
-//         console.log('response form getOTP : ' + response)
-//         if (response.data.result.response === 'SUCCESS') {
-//           res.status(200).json({
-//             msg: 'user created successfully',
-//             status: 'success',
-//             status_code: 200,
-//             userUUId: newUserDetails.result.userId,
-//           })
-//         }
-//         logInfo('Sending Responses in phone part : ' + newUserDetails)
-//       }
-//     } else {
-//       logInfo('Mobile no. already exists.')
-//       res.status(400).json({
-//         msg: 'Mobile no.  already exists.',
-//         status: 'error',
-//         status_code: 400,
-//       })
-//       return
-//     }
-//   } catch (error) {
-//     res.status(500).send({
-//       error: GENERAL_ERROR_MSG,
-//     })
-//   }
-// })
 
 // tslint:disable-next-line: no-any
 const handleCreateUserError = (error: any) => {
