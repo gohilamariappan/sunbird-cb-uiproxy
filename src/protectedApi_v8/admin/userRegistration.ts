@@ -1,4 +1,5 @@
-/* tslint:disable */
+
+/* tslint-disable
 import axios from 'axios'
 import cassandraDriver from 'cassandra-driver'
 import { Router } from 'express'
@@ -44,8 +45,7 @@ userRegistrationApi.get('/listUsers/:source', async (req, res) => {
             { headers: { rootOrg } }
         )
         res.json(response.data)
-    // tslint:disable-next-line: no-any
-    } catch (err: any) {
+    } catch (err) {
         logError('ERROR ON GET ALL REGISTERED USERS >', err)
         res.status((err && err.response && err.response.status) || 500)
             .send(err && err.response && err.response.data || {})
@@ -62,8 +62,7 @@ userRegistrationApi.post('/deregisterUsers/:source', async (req, res) => {
             { headers: { rootOrg } }
         )
         res.json(response.data)
-    // tslint:disable-next-line: no-any
-    } catch (err: any) {
+    } catch (err) {
         logError('ERROR ON DEREGISTER USERS >', err)
         res.status((err && err.response && err.response.status) || 500)
             .send(err && err.response && err.response.data || {})
@@ -79,8 +78,7 @@ userRegistrationApi.get('/getAllSources', async (req, res) => {
         })
         const data = response.data.filter((o: { registrationUrl: string | null }) => o.registrationUrl !== null)
         res.json(data || {})
-     // tslint:disable-next-line: no-any
-    } catch (err: any) {
+    } catch (err) {
         logError('ERROR ON GET ALL SOURCES >', err)
         res.status((err && err.response && err.response.status) || 500)
             .send(err && err.response && err.response.data || {})
@@ -96,8 +94,7 @@ userRegistrationApi.get('/getSourceDetail/:id', async (req, res) => {
             headers: { rootOrg },
         })
         res.json(response.data || {})
-         // tslint:disable-next-line: no-any
-    } catch (err: any) {
+    } catch (err) {
         logError('ERROR ON GET SOURCE DETAILS >', err)
         res.status((err && err.response && err.response.status) || 500)
             .send(err && err.response && err.response.data || {})
@@ -115,8 +112,7 @@ userRegistrationApi.get('/checkUserRegistrationContent/:source', async (req, res
             headers: { rootOrg },
         })
         res.json(response.data || {})
-         // tslint:disable-next-line: no-any
-    } catch (err: any) {
+    } catch (err) {
         logError('ERROR ON CHECK SOURCE REGISTRATION STATUS >', err)
         res.status((err && err.response && err.response.status) || 500)
             .send(err && err.response && err.response.data || {})
@@ -138,8 +134,7 @@ userRegistrationApi.post('/register', async (req, res) => {
             }
         )
         res.json(response.data || {})
-         // tslint:disable-next-line: no-any
-    } catch (err: any) {
+    } catch (err) {
         logError('ERROR ON REGISTRATIO USERS >', err)
         res.status((err && err.response && err.response.status) || 500)
             .send(err && err.response && err.response.data || {})
@@ -190,8 +185,7 @@ userRegistrationApi.post('/create-user', async (req, res) => {
             // console.log('kcaAuthToken', kcaAuthToken)
             res.json({ data: 'User Created successfully!' })
         }
-         // tslint:disable-next-line: no-any
-    } catch (err: any) {
+    } catch (err) {
         logError('ERROR ON CREATE USERS >', err)
         res.status((err && err.response && err.response.status) || 500)
             .send(err && err.response && err.response.data || {})
@@ -204,8 +198,7 @@ userRegistrationApi.post('/user/access-path', async (req, res) => {
         // return new Promise((resolve, _reject) => {
         const query = `SELECT * FROM ${CONSTANTS.CASSANDRA_KEYSPACE}.user_access_paths
             WHERE user_id=${req.body.wid}`
-             // tslint:disable-next-line: no-any
-        clientConnect.execute(query, (err: any, result: any) => {
+        clientConnect.execute(query, (err, result) => {
             if (!err && result && result.rows) {
                 const key = result.rows
                 clientConnect.shutdown()
@@ -216,8 +209,7 @@ userRegistrationApi.post('/user/access-path', async (req, res) => {
             }
         })
         // })
-         // tslint:disable-next-line: no-any
-    } catch (err: any) {
+    } catch (err) {
         logError('/user/access-path:: ERROR ON access-path >', err)
         res.status((err && err.response && err.response.status) || 500)
             .send(err && err.response && err.response.data || {})
@@ -250,8 +242,7 @@ userRegistrationApi.post('/user/update-access-path', async (req, res) => {
             }
         })
         // })
-         // tslint:disable-next-line: no-any
-    } catch (err: any) {
+    } catch (err) {
         logError('/user/update-access-path:: ERROR ON access-path >', err)
         res.status((err && err.response && err.response.status) || 500)
             .send(err && err.response && err.response.data || {})
@@ -364,8 +355,8 @@ userRegistrationApi.post('/bulkUpload', async (req, res) => {
             uuid,
         }
         await insertBulkUploadStatus(reqToUpdate)
- // tslint:disable-next-line: no-any
-    } catch (err: any) {
+
+    } catch (err) {
         logError('ERROR ON BULK UPLOAD >', err)
         res.status((err && err.response && err.response.status) || 500)
             .send(err && err.response && err.response.data || {})
@@ -384,8 +375,7 @@ export async function createUser(req: any) {
             if (createKeycloak && createKeycloak.id) {
                 resolve(createKeycloak.id)
             }
-             // tslint:disable-next-line: no-any
-        } catch (err: any) {
+        } catch (err) {
             logError('ERROR ON CREATE USERS >', err)
         }
     })
@@ -393,7 +383,7 @@ export async function createUser(req: any) {
 
 // tslint:disable-next-line: no-any
 export async function performNewUserSteps(userId: any, req: any, email: any, roles?: any) {
-    return new Promise<void>(async (resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
         await UpdateKeycloakUserPassword(userId, false)
             .catch((error) => {
                 logError('performNewUserSteps:: ERROR ON UpdateKeycloakUserPassword', error)
@@ -425,8 +415,7 @@ export async function performNewUserSteps(userId: any, req: any, email: any, rol
                     }
                 }
             }
-             // tslint:disable-next-line: no-any
-        }).catch((error: any) => {
+        }).catch((error) => {
             logError('ERROR ON getAuthToken', error)
             reject(' User getAuthToken failed')
         })
@@ -452,8 +441,7 @@ export async function insertBulkUploadStatus(req: any) {
         const query = `INSERT INTO ${CONSTANTS.CASSANDRA_KEYSPACE}.bulk_user_upload_detail
             (id, name, user_id, status, report) VALUES
             (${req.uuid}, \'${req.name}\', ${req.user_id}, \'${req.status}\', textAsblob\(\'${req.report}\'\))`
-             // tslint:disable-next-line: no-any
-        return clientConnect.execute(query, async (err: any, _result: any) => {
+        return clientConnect.execute(query, async (err, _result) => {
             if (!err) {
                 clientConnect.shutdown()
                 logInfo('Insert Query to bulk_user_upload_detail successful')
@@ -463,8 +451,7 @@ export async function insertBulkUploadStatus(req: any) {
             }
         })
         // })
-         // tslint:disable-next-line: no-any
-    } catch (err: any) {
+    } catch (err) {
         logError('ERROR ON insertBulkUploadStatus >', err)
     }
 }
@@ -474,9 +461,8 @@ userRegistrationApi.get('/bulkUploadData', async (req, res) => {
         const clientConnect = new cassandraDriver.Client(cassandraClientOptions)
         const query = `SELECT id,name,status FROM ${CONSTANTS.CASSANDRA_KEYSPACE}.bulk_user_upload_detail
             WHERE user_id=${extractUserIdFromRequest(req)}  allow filtering`
-          // tslint:disable-next-line: no-any
-          /* tslint:disable-next-line */
-        clientConnect.execute(query, (err: any, result: any) => {
+        // tslint:disable-next-line: no-identical-functions
+        clientConnect.execute(query, (err, result) => {
             if (!err && result && result.rows) {
                 const key = result.rows
                 clientConnect.shutdown()
@@ -486,8 +472,7 @@ userRegistrationApi.get('/bulkUploadData', async (req, res) => {
                 res.status(400).send('Something went wrong!')
             }
         })
-         // tslint:disable-next-line: no-any
-    } catch (err: any) {
+    } catch (err) {
         logError('ERROR ON bulkUploadData >', err)
         res.status((err && err.response && err.response.status) || 500)
             .send(err && err.response && err.response.data || {})
@@ -501,8 +486,7 @@ userRegistrationApi.get('/bulkUploadReport/:id', async (req, res) => {
         const query = `SELECT report FROM ${CONSTANTS.CASSANDRA_KEYSPACE}.bulk_user_upload_detail
             WHERE id=${req.params.id}  allow filtering`
         // tslint:disable-next-line: no-identical-functions
-          // tslint:disable-next-line: no-any no-identical-functions
-        clientConnect.execute(query, async (err: any, result: any) => {
+        clientConnect.execute(query, async (err, result) => {
             if (!err && result && result.rows.length > 0) {
                 const key = result.rows[0]
                 clientConnect.shutdown()
@@ -512,8 +496,7 @@ userRegistrationApi.get('/bulkUploadReport/:id', async (req, res) => {
                 res.status(400).send('Something went wrong!')
             }
         })
-         // tslint:disable-next-line: no-any
-    } catch (err: any) {
+    } catch (err) {
         logError('ERROR ON /bulkUploadReport/:id >', err)
         res.status((err && err.response && err.response.status) || 500)
             .send(err && err.response && err.response.data || {})
@@ -537,8 +520,7 @@ userRegistrationApi.get('/user/department', async (req, res) => {
             }
         )
         res.json(response.data || {})
-         // tslint:disable-next-line: no-any
-    } catch (err: any) {
+    } catch (err) {
         logError('ERROR ON /user/department >', err)
         res.status((err && err.response && err.response.status) || 500)
             .send(err && err.response && err.response.data || {})
@@ -563,10 +545,11 @@ userRegistrationApi.post('/user/department/update', async (req, res) => {
             }
         )
         res.json(response.data || {})
-         // tslint:disable-next-line: no-any
-    } catch (err: any) {
+    } catch (err) {
         logError('ERROR ON /user/department >', err)
         res.status((err && err.response && err.response.status) || 500)
             .send(err && err.response && err.response.data || {})
     }
 })
+
+ */

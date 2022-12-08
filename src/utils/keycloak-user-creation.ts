@@ -1,4 +1,4 @@
-/* eslint-disable */
+/* tslint-disable
 import cassandraDriver from 'cassandra-driver'
 import KcAdminClient from 'keycloak-admin'
 import { RequiredActionAlias } from 'keycloak-admin/lib/defs/requiredActionProviderRepresentation'
@@ -38,9 +38,7 @@ const kcAdminClient = new KcAdminClient(keycloakConfig)
 export function checkUniqueKey(uniqueKey: any, callback: (arg0: Error, arg1: any) => void) {
     const clientConnect = new cassandraDriver.Client(cassandraClientOptions)
     clientConnect.execute(`SELECT * FROM ${CASSANDRA_KEYSPACE}.eagle_unique_identifiers
-     WHERE key=${uniqueKey}`,
-     // tslint:disable-next-line: no-any
-     (err: any, result: any) => {
+     WHERE key=${uniqueKey}`, (err, result) => {
         if (!err && result && result.rows.length > 0) {
             const key = result.rows[0]
             callback(err, key)
@@ -58,9 +56,7 @@ export function checkUUIDMaster(uniqueKey: any): Promise<any> {
         const clientConnect = new cassandraDriver.Client(cassandraClientOptions)
         return new Promise((resolve, reject) => {
             clientConnect.execute(`SELECT * FROM ${CASSANDRA_KEYSPACE}.eagle_uuid_master
-            WHERE key=${uniqueKey} allow filtering`,
-              // tslint:disable-next-line: no-any
-            (error: any, result: any) => {
+            WHERE key=${uniqueKey} allow filtering`, (error, result) => {
                 if (!error && result && result.rows.length > 0) {
                     const key = result.rows[0]
                     resolve(key)
@@ -82,9 +78,7 @@ export function updateUniqueKey(uniqueKey: any, callback: (arg0: Error, arg1: an
     const clientConnect = new cassandraDriver.Client(cassandraClientOptions)
     clientConnect.execute(`UPDATE ${CASSANDRA_KEYSPACE}.eagle_unique_identifiers
     SET active = false WHERE key = ${uniqueKey}`,
-    // tslint:disable-next-line: no-any
-    /* tslint:disable-next-line */
-        (err: any, result: any) => {
+        (err, result) => {
             if (result) {
                 callback(err, result)
             } else {
@@ -101,12 +95,10 @@ export function updateUUIDMaster(uniqueKey: any, email: string): Promise<any> {
         return new Promise((resolve, reject) => {
             clientConnect.execute(`UPDATE ${CASSANDRA_KEYSPACE}.eagle_uuid_master
             SET active = false WHERE key = ${uniqueKey} and email = '${email}'`,
-             // tslint:disable-next-line: no-any
-                (err: any, result: any) => {
+                (_err, result) => {
                     if (result) {
                         resolve(result)
                     } else {
-                        logInfo(err)
                         reject(new Error('updateUUIDMaster: No records'))
                     }
                     clientConnect.shutdown()
@@ -147,11 +139,12 @@ export async function createKeycloakUser(req: any) {
             })
             // tslint:disable-next-line: no-any
             .catch((err: any) => {
-                logError('ERROR IN METHOD createKeycloakUser >', err)
+                throw err
             })
- // tslint:disable-next-line: no-any
-    } catch (err: any) {
+
+    } catch (err) {
         logError('ERROR IN METHOD createKeycloakUser >', err)
+        throw err
     }
 
 }
@@ -185,8 +178,8 @@ export async function getAuthToken(email: any): Promise<any> {
                 }
             })
         })
- // tslint:disable-next-line: no-any
-    } catch (err: any) {
+
+    } catch (err) {
         logError('ERROR ON Keycloak openid-connect/token >', err)
         return err
     }
@@ -255,3 +248,5 @@ export async function sendActionsEmail(userId: string) {
             throw err
         })
 }
+
+*/
