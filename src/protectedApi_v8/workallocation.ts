@@ -418,7 +418,7 @@ workAllocationApi.get('/getWOPdf/:workOrderId', async (req, res) => {
                     Accept: 'application/pdf',
                     Authorization: CONSTANTS.SB_API_KEY,
                     // tslint:disable-next-line: no-duplicate-string
-                   'x-authenticated-user-token': extractUserToken(req),
+                    'x-authenticated-user-token': extractUserToken(req),
 
                 },
                 responseType: 'arraybuffer',

@@ -290,6 +290,7 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
                                 try {
                                 // tslint:disable-next-line: max-line-length
                                 const query = 'INSERT INTO sunbird.user_sso_bulkupload ( id, code, mainuseruuid, orgid, status) VALUES ( ?, ?, ?, ?, ? )'
+                                 // tslint:disable-next-line: max-line-length
                                 const params = [ uniqueSSOuserId,  csvObjects.Cadre, responseUserCreation.data.result.userId, readApiResponse.data.result.response.organisations[0].organisationId,  'success' ]
                                 // Set the prepare flag in the query options
                                 const resultSSOUser = client.execute(query, params, { prepare: true })

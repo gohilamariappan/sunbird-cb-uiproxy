@@ -184,7 +184,7 @@ const validateRequestBody = (req: Request, res: Response, next: any) => {
 }
 
 // validate  otp for  register's the user
-aesEncryption.post( '/validate-autologin', validateRequestBody,
+aesEncryption.post('/validate-autologin', validateRequestBody,
  // tslint:disable-next-line: no-any
   async (req: any, res, next) => {
     try {

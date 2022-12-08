@@ -106,6 +106,7 @@ export function updateUUIDMaster(uniqueKey: any, email: string): Promise<any> {
                     if (result) {
                         resolve(result)
                     } else {
+                        logInfo(err)
                         reject(new Error('updateUUIDMaster: No records'))
                     }
                     clientConnect.shutdown()
@@ -146,12 +147,11 @@ export async function createKeycloakUser(req: any) {
             })
             // tslint:disable-next-line: no-any
             .catch((err: any) => {
-                throw err
+                logError('ERROR IN METHOD createKeycloakUser >', err)
             })
  // tslint:disable-next-line: no-any
     } catch (err: any) {
         logError('ERROR IN METHOD createKeycloakUser >', err)
-        throw err
     }
 
 }
