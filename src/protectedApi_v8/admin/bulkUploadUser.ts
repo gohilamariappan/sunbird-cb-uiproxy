@@ -6,6 +6,7 @@ import { CONSTANTS } from '../../utils/env'
 import { logInfo } from '../../utils/logger'
 import { extractUserToken } from '../../utils/requestExtract'
 import { bulkExtendedMethod, saveExtendedData } from './bulkExtendedMethod'
+const cassandra = require("cassandra-driver");
 
 const API_ENDPOINTS = {
     assignRoleforBulkUsers: `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/user/v1/role/assign`,
@@ -14,9 +15,12 @@ const API_ENDPOINTS = {
     kongUserResetPassword: `${CONSTANTS.KONG_API_BASE}/private/user/v1/password/reset`,
 }
 
-const cassandra = require('cassandra-driver');
-const client = new cassandra.Client({ contactPoints: ['9043'], localDataCenter: 'localhost', keyspace: 'sunbird' });
-
+    const client = new cassandra.Client({
+        contactPoints: [CONSTANTS.HOST_BULK_DB],
+        localDataCenter: "datacenter1",
+        keyspace: "sunbird",
+    });
+    
 
 // tslint:disable-next-line: no-any
 const finalResponse: any = []
@@ -284,11 +288,11 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
                                try{
                                 // SSOUserId taking integer value for creating unique primary key for ashas user.
                                 let ssoUserId = Date.now()
-                                const query = 'INSERT INTO sunbird.user_sso_bulkupload ( id, externalId, mainUserUuid, code, status) VALUES ( ?, ?, ?, ?, ? )'; 
-                                const params = [ ssoUserId, readApiResponse.data.result.response.organisations[0],  responseUserCreation.data.result.userId,  csvObjects.Cadre, '1' ];
+                                const query = 'INSERT INTO sunbird.user_sso_bulkupload ( id, code, mainuseruuid, orgid, status) VALUES ( ?, ?, ?, ?, ? )'; 
+                                const params = [ ssoUserId,  csvObjects.Cadre, responseUserCreation.data.result.userId, readApiResponse.data.result.response.organisations[0].organisationId,  'success' ];
                                 // Set the prepare flag in the query options
                                 const resultSSOUser = client.execute(query, params, { prepare: true })
-                                logInfo('Successful ! User creation completed via SaveExtended Method : ' + resultSSOUser)
+                                logInfo('Successful ! User creation completed via SaveExtended Method Query Result : ' + resultSSOUser)
                             
                                } catch (error){
                                 logInfo('Error While inserting in cassandra table user_sso_bulkupload  : ' + error)

@@ -206,6 +206,8 @@ export const CONSTANTS = {
   DB_PORT_CASSANDARA : 9043,
   DB_USERNAME_CASSANDARA : '',
   DB_PASSWORD_CASSANDARA :'',
+  HOST_BULK_DB :env.HOST_BULK_DB || 'localhost:9043',
+
 }
 
 export const RESTRICTED_PYTHON_STMT: string[] = process.env
