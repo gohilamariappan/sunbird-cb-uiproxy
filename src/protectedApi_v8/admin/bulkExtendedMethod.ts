@@ -95,7 +95,7 @@ export const saveExtendedData = async (
   ) => {
 
     try {
-        logInfo("Entered into SaveExtended data for asha workers")
+        logInfo('Entered into SaveExtended data for asha workers')
         const updateProfileReq = {
             profileDetails: {
               id : userId,
@@ -138,7 +138,7 @@ export const saveExtendedData = async (
             },
             userId,
           }
-          logInfo("Check  into SaveExtended data for asha workers"+ JSON.stringify(request))
+        logInfo('Check  into SaveExtended data for asha workers' + JSON.stringify(request))
         const sbUserProfileUpdateResp = await axios({
             ...axiosRequestConfig,
             data: { request: updateProfileReq },

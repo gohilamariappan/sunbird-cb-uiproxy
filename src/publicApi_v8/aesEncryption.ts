@@ -213,8 +213,8 @@ aesEncryption.post( '/validate-autologin', validateRequestBody,
         if (verifyOtpResponse.data.result.response === 'SUCCESS') {
 
           logInfo('Otp is verified. Now autologin check started.')
-        
-            setTimeout(() => {
+
+          setTimeout(() => {
                 updateRoles(userUUId)
             }, 5000)
 
@@ -223,8 +223,8 @@ aesEncryption.post( '/validate-autologin', validateRequestBody,
           logInfo('mobileNumber ? mobileNumber : email part : ' + mobileNumber ? mobileNumber : email)
           logInfo('req.body.password : ' + verifyOtpResponse)
           logInfo('Sending Responses in phone part : ' + verifyOtpResponse)
-          
-          // Clearing session and cookies for a new generation of session and cookie for fresh login. 
+
+          // Clearing session and cookies for a new generation of session and cookie for fresh login.
           res.clearCookie('connect.sid')
           req.session.user = null
          // tslint:disable-next-line: no-any
@@ -273,7 +273,7 @@ aesEncryption.post( '/validate-autologin', validateRequestBody,
                                 msg: AUTHENTICATED,
                                 status: 'success',
                             })
-                            res.end();
+                            res.end()
                     } else {
                         res.status(302).json({
                         msg: AUTH_FAIL,
