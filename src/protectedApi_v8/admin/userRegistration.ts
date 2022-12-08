@@ -1,5 +1,5 @@
 
-/* tslint-disable
+/* tslint-disable*/
 import axios from 'axios'
 import cassandraDriver from 'cassandra-driver'
 import { Router } from 'express'
@@ -551,5 +551,3 @@ userRegistrationApi.post('/user/department/update', async (req, res) => {
             .send(err && err.response && err.response.data || {})
     }
 })
-
- */

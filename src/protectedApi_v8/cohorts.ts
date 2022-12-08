@@ -37,7 +37,7 @@ cohortsApi.get('/:cohortType/:contentId', async (req, res) => {
     }
     const org = req.header('org')
     const rootOrgValue = req.header('rootOrg')
-    const auth = req.header('Authorization') as string
+    const auth = req.header('Authorization')
     if (!org || !rootOrgValue) {
       res.status(400).send(ERROR.ERROR_NO_ORG_DATA)
       return
@@ -138,9 +138,11 @@ export async function getAuthorsDetails(host: string, auth: string, contentId: s
 cohortsApi.get('/user/autoenrollment/:courseId', async (req, res) => {
   try {
       const courseId = req.params.courseId
+  /* tslint:disable-next-line */
       const wid = req.headers.wid as string
       const rootOrgValue = req.headers.rootorg
-      const auth = req.header('Authorization') as string
+      const auth = req.header('Authorization')
+  /* tslint:disable-next-line */
       const response = await axios.get(API_END_POINTS.autoenrollment(wid, courseId), {
           ...axiosRequestConfig,
           headers: {

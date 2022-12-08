@@ -52,6 +52,7 @@ export class CustomKeycloak {
         }
       })
     }
+    /* tslint:disable-next-line */
     return (this.multiTenantKeycloak.get(req.hostname) ||
       this.multiTenantKeycloak.get(domain) ||
       this.multiTenantKeycloak.get('common')) as keycloakConnect
