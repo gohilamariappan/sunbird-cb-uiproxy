@@ -23,6 +23,7 @@ const client = new cassandra.Client({
 
 // tslint:disable-next-line: no-any
 const finalResponse: any = []
+const xAuthenticatedUsertoken:any  = 'x-authenticated-user-token'
 
 export const bulkUploadUserApi = Router()
 
@@ -106,7 +107,7 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
                                     headers: {
                                         Authorization: CONSTANTS.SB_API_KEY,
                                         'X-Channel-Id': CONSTANTS.X_Channel_Id,
-                                        'x-authenticated-user-token': extractUserToken(req),
+                                        xAuthenticatedUsertoken : extractUserToken(req),
                                         'x-authenticated-userid': newUserId,
                                       },
                                     method: 'GET',
@@ -132,7 +133,7 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
                                         headers: {
                                             Authorization: CONSTANTS.SB_API_KEY,
                                             // tslint:disable-next-line: all
-                                            'x-authenticated-user-token': extractUserToken(req)
+                                            xAuthenticatedUsertoken: extractUserToken(req)
                                         },
                                         method: 'POST',
                                         url: API_ENDPOINTS.assignRoleforBulkUsers,
@@ -248,7 +249,7 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
                                     headers: {
                                         Authorization: CONSTANTS.SB_API_KEY,
                                         'X-Channel-Id': CONSTANTS.X_Channel_Id,
-                                        'x-authenticated-user-token': extractUserToken(req),
+                                        xAuthenticatedUsertoken: extractUserToken(req),
                                         'x-authenticated-userid': responseUserCreation.data.result.userId,
                                       },
                                     method: 'GET',
@@ -274,7 +275,7 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
                                         headers: {
                                             Authorization: CONSTANTS.SB_API_KEY,
                                             // tslint:disable-next-line: all
-                                            'x-authenticated-user-token': extractUserToken(req)
+                                            xAuthenticatedUsertoken: extractUserToken(req)
                                         },
                                         method: 'POST',
                                         url: API_ENDPOINTS.assignRoleforBulkUsers,
