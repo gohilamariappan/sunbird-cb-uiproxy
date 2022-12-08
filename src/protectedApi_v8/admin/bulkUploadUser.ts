@@ -6,6 +6,7 @@ import { CONSTANTS } from '../../utils/env'
 import { logInfo } from '../../utils/logger'
 import { extractUserToken } from '../../utils/requestExtract'
 import { bulkExtendedMethod, saveExtendedData } from './bulkExtendedMethod'
+import {v4 as uuidv4} from 'uuid';
 const cassandra = require('cassandra-driver')
 
 const API_ENDPOINTS = {
@@ -16,13 +17,14 @@ const API_ENDPOINTS = {
 }
 
 const client = new cassandra.Client({
-        contactPoints: [CONSTANTS.HOST_BULK_DB],
+        contactPoints: [CONSTANTS.CASSANDRA_IP],
         keyspace: 'sunbird',
         localDataCenter: 'datacenter1',
     })
 
 // tslint:disable-next-line: no-any
 const finalResponse: any = []
+let uniqueSSOuserId = uuidv4();
 
 export const bulkUploadUserApi = Router()
 
@@ -284,11 +286,9 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
                                 const resultBulkUploadMethod = await saveExtendedData(csvObjects, responseUserCreation.data.result.userId)
                                 logInfo('resultBulkUploadMethod  >>>>>' + JSON.stringify(resultBulkUploadMethod))
                                 try {
-                                // SSOUserId taking integer value for creating unique primary key for ashas user.
-                                const ssoUserId = Date.now()
                                 // tslint:disable-next-line: max-line-length
                                 const query = 'INSERT INTO sunbird.user_sso_bulkupload ( id, code, mainuseruuid, orgid, status) VALUES ( ?, ?, ?, ?, ? )'
-                                const params = [ ssoUserId,  csvObjects.Cadre, responseUserCreation.data.result.userId, readApiResponse.data.result.response.organisations[0].organisationId,  'success' ]
+                                const params = [ uniqueSSOuserId,  csvObjects.Cadre, responseUserCreation.data.result.userId, readApiResponse.data.result.response.organisations[0].organisationId,  'success' ]
                                 // Set the prepare flag in the query options
                                 const resultSSOUser = client.execute(query, params, { prepare: true })
                                 logInfo('Successful ! User creation completed via SaveExtended Method Query Result : ' + resultSSOUser)
@@ -322,3 +322,4 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
         })
     }
 })
+
