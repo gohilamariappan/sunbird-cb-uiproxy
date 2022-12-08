@@ -1,12 +1,12 @@
 
 import axios from 'axios'
 import { Router } from 'express'
+import {v4 as uuidv4} from 'uuid'
 import { axiosRequestConfig, axiosRequestConfigLong } from '../../configs/request.config'
 import { CONSTANTS } from '../../utils/env'
 import { logInfo } from '../../utils/logger'
 import { extractUserToken } from '../../utils/requestExtract'
 import { bulkExtendedMethod, saveExtendedData } from './bulkExtendedMethod'
-import {v4 as uuidv4} from 'uuid';
 const cassandra = require('cassandra-driver')
 
 const API_ENDPOINTS = {
@@ -24,11 +24,12 @@ const client = new cassandra.Client({
 
 // tslint:disable-next-line: no-any
 const finalResponse: any = []
-let uniqueSSOuserId = uuidv4();
+const uniqueSSOuserId = uuidv4()
 
 export const bulkUploadUserApi = Router()
 
 // tslint:disable-next-line: no-any
+/* tslint:disable-next-line */
 bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
     try {
         const fileData = req.files.userData.data.toString('utf8')
@@ -108,6 +109,7 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
                                     headers: {
                                         Authorization: CONSTANTS.SB_API_KEY,
                                         'X-Channel-Id': CONSTANTS.X_Channel_Id,
+                                        /* tslint:disable-next-line */
                                         'x-authenticated-user-token' : extractUserToken(req),
                                         'x-authenticated-userid': newUserId,
                                       },
@@ -322,4 +324,3 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
         })
     }
 })
-
