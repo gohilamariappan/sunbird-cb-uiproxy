@@ -222,6 +222,7 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
                 if (csvObjects.first_name) {
                     logInfo('CSV data present more than one row')
                     const collectData = {
+                        accesscode : csvObjects.UserID,
                         channel: csvObjects.channel,
                         firstName: csvObjects.first_name,
                         lastName: csvObjects.last_name,
