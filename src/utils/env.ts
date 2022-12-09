@@ -201,12 +201,7 @@ export const CONSTANTS = {
   // tslint:disable-next-line: max-line-length
   CERT_AUTH_TOKEN: '',
   GOOGLE_CLIENT_ID: env.google_client_id || '',
-  BULK_USER : 'Sunbird@123' ,
-  DB_HOST_CASSANDARA : 'localhost',
-  DB_PORT_CASSANDARA : 9043,
-  DB_USERNAME_CASSANDARA : '',
-  DB_PASSWORD_CASSANDARA : '',
-  HOST_BULK_DB : env.HOST_BULK_DB || 'localhost:9043',
+  BULK_USER : env.BULK_USER || 'Sunbird@123' ,
 
 }
 
