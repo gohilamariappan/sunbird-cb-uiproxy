@@ -67,7 +67,7 @@ export const CONSTANTS = {
   KHUB_SEARCH_BASE: env.KHUB_SEARCH_BASE || 'http://localhost:3014',
   KNOWLEDGE_MW_API_BASE:
     env.KNOWLEDGE_MW_API_BASE || 'http://knowledge-mw-service:5000',
-  KONG_API_BASE: env.KONG_API_BASE || 'https://igot-dev.in/api',
+  KONG_API_BASE: env.KONG_API_BASE || 'https://sphere.aastrika.org/api',
   MSG91BASE: env.MSG91BASE || 'http://localhost:3300',
   MSG91KEY: env.MSG91KEY || 'http://localhost:3301',
   MSG91TEMPLATEID: env.MSG91TEMPLATEID || 'http://localhost:3302',
@@ -201,7 +201,7 @@ export const CONSTANTS = {
   // tslint:disable-next-line: max-line-length
   CERT_AUTH_TOKEN: '',
   GOOGLE_CLIENT_ID: env.google_client_id || '',
-  BULK_USER : env.BULK_USER || 'Sunbird@123' ,
+  BULK_USER : env.BULK_USER ||  'Sunbird@123' ,
 
 }
 

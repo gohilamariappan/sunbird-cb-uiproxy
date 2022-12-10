@@ -523,6 +523,11 @@ export const API_LIST = {
       // tslint:disable-next-line: object-literal-sort-keys
       ROLE_CHECK: [ROLE.PUBLIC],
     },
+    '/protected/v8/admin/bulk-user-mapping/provider': {
+      checksNeeded: [CHECK.ROLE],
+      // tslint:disable-next-line: object-literal-sort-keys
+      ROLE_CHECK: [ROLE.PUBLIC],
+    },
     '/protected/v8/connections/connections/recommended/userDepartment': {
       checksNeeded: [CHECK.ROLE],
       // tslint:disable-next-line: object-literal-sort-keys
@@ -1289,6 +1294,7 @@ export const API_LIST = {
     '/protected/v8/bulkUploadData/bulkUploadData',
     '/protected/v8/admin/bulk-upload/create-users',
     '/proxies/v8/admin/bulk-upload/create-users',
+    '/protected/v8/admin/bulk-user-mapping/provider',
     '/protected/v8/connections/connections/recommended/userDepartment',
     '/protected/v8/discussionHub/categories/:cid/:slug?/:tid?',
     '/protected/v8/discussionHub/topics/recent',
