@@ -9,7 +9,6 @@ const API_ENDPOINTS = {
     kongUserSearch: `${CONSTANTS.KONG_API_BASE}/user/v1/search`,
 }
 
-
 export const bulkUserSsoMappingApi = Router()
 
 /* tslint:disable-next-line */
@@ -19,6 +18,7 @@ bulkUserSsoMappingApi.post('/provider', async (req: any, _res) => {
         const lines = fileData.split('\n')
         // tslint:disable-next-line: no-any
         const result: any = []
+         // tslint:disable-next-line: no-any
         const createdUserId: any = []
         // NOTE: If your columns contain commas in their values, you'll need
         const headers = lines[0].split(',')
@@ -45,8 +45,7 @@ bulkUserSsoMappingApi.post('/provider', async (req: any, _res) => {
                         url: API_ENDPOINTS.kongUserSearch,
                     })
                     logInfo('userSearch response >>>>>>>>>>>>>>>' + userSearch)
-                    if (userSearch.data.result.response) {
-                        if (userSearch.data.result.response.count > 0) {
+                    if (userSearch.data.result.response && userSearch.data.result.response.count > 0) {
                             /* tslint:disable-next-line */
                           const userUUId = _.get(  _.find(userSearch.data.result.response.content, 'userId'), 'userId' )
                           const orgId =  userSearch.data.result.response.organisations[0].organisationId
@@ -54,7 +53,6 @@ bulkUserSsoMappingApi.post('/provider', async (req: any, _res) => {
                           logInfo('userUUId >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>' + userUUId)
                           logInfo('orgId >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>' + orgId)
                         }
-                    }
 
                 } catch (error) {
                     logInfo('Failed in fetching UserId ' + error)
