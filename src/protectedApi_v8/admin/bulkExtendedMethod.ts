@@ -139,7 +139,6 @@ export const saveExtendedData = async (
               },
             },
             userId,
-            tcStatus:false
           }
         logInfo('Check  into SaveExtended data for asha workers' + JSON.stringify(request))
         const sbUserProfileUpdateResp = await axios({
