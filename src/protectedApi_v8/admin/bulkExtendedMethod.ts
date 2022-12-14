@@ -47,7 +47,7 @@ export const bulkExtendedMethod = async (
                     postalAddress: request.postalAddress,
                     regNurseRegMidwifeNumber: request.RN_Number,
                     surname: request.last_name,
-                    tncAccepted:false
+                    tncAccepted: false,
                 },
                 professionalDetails: [
                     {
@@ -125,7 +125,7 @@ export const saveExtendedData = async (
                     firstname: request.first_name,
                     postalAddress: request.Cadre,
                     surname: request.last_name,
-                    tncAccepted:false
+                    tncAccepted: false,
                 },
                 professionalDetails: [
                     {
