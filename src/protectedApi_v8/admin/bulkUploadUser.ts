@@ -222,14 +222,14 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
                 if (csvObjects.first_name) {
                     logInfo('CSV data present more than one row')
                     const collectData = {
-                        usersubtype : csvObjects.UserID,
                         channel: csvObjects.channel,
                         firstName: csvObjects.first_name,
                         lastName: csvObjects.last_name,
                         [csvObjects.type]: csvObjects.phone ? csvObjects.phone : csvObjects.username,
                         password: CONSTANTS.BULK_USER,
                         username: csvObjects.username,
-                        tcStatus: false
+                        usersubtype : csvObjects.UserID,
+                        tcStatus: false,
                     }
                     logInfo('collectData coming >>>>>' + JSON.stringify(collectData))
                     try {
@@ -244,7 +244,7 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
                         })
                         logInfo('UserId after creation >>>>>' + responseUserCreation.data.result.userId)
                         if (responseUserCreation) {
-                            //logInfo('99. Response user creation >>>>>>>' + responseUserCreation)
+                            // logInfo('99. Response user creation >>>>>>>' + responseUserCreation)
                             finalResponse.push(responseUserCreation)
                             const readUrl = `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/user/v2/read/` + responseUserCreation.data.result.userId
                            // logInfo('readUrl  >>>>>>>>>>>>>>>>> : ' + readUrl)
