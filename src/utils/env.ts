@@ -74,6 +74,8 @@ export const CONSTANTS = {
   POST_ASSESSMENT_BASE: env.POST_ASSESSMENT_BASE || 'http://localhost.com',
   POST_ASSESSMENT_CLIENT_ID: env.POST_ASSESSMENT_CLIENT_ID || '',
   POST_ASSESSMENT_CLIENT_SECRET: env.POST_ASSESSMENT_CLIENT_SECRET || '',
+  S3_BUCKET_URL:
+    env.S3_BUCKET_URL || 'https://sunbirdcontent.s3-ap-south-1.amazonaws.com/',
   LEADERBOARD_API_BASE: env.LEADERBOARD_API_BASE || env.SB_EXT_API_BASE_2,
   LEARNING_HISTORY_API_BASE:
     env.LEARNING_HISTORY_API_BASE || env.SB_SEXT_API_BASE_3,
@@ -201,8 +203,7 @@ export const CONSTANTS = {
   // tslint:disable-next-line: max-line-length
   CERT_AUTH_TOKEN: '',
   GOOGLE_CLIENT_ID: env.google_client_id || '',
-  BULK_USER : env.BULK_USER ||  'Sunbird@123' ,
-
+  BULK_USER: env.BULK_USER || 'Sunbird@123',
 }
 
 export const RESTRICTED_PYTHON_STMT: string[] = process.env

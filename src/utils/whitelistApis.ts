@@ -62,6 +62,17 @@ export const API_LIST = {
       // tslint:disable-next-line: object-literal-sort-keys
       ROLE_CHECK: [ROLE.PUBLIC],
     },
+    '/protected/v8/assessmentCompetency/v1/assessment/content/:id/artifact/:id':
+      {
+        checksNeeded: [CHECK.ROLE],
+        // tslint:disable-next-line: object-literal-sort-keys
+        ROLE_CHECK: [ROLE.PUBLIC],
+      },
+    '/protected/v8/assessmentCompetency/v1/assessment/submit': {
+      checksNeeded: [CHECK.ROLE],
+      // tslint:disable-next-line: object-literal-sort-keys
+      ROLE_CHECK: [ROLE.PUBLIC],
+    },
     '/protected/v8/user/details': {
       checksNeeded: [CHECK.ROLE],
       // tslint:disable-next-line: object-literal-sort-keys
@@ -1311,6 +1322,7 @@ export const API_LIST = {
     '/protected/v8/user/telemetry',
     '/protected/v8/scrom/get/:id',
     '/protected/v8/user/progress/:contentId',
+    '/protected/v8/assessmentCompetency/v1/submitAssessment',
     '/protected/v8/user/rating/:contentId',
     '/protected/v8/user/progress',
     '/protected/v8/user/history/continue',
@@ -1318,7 +1330,6 @@ export const API_LIST = {
     '/protected/v8/portal/spv/department',
     '/protected/v8/portal/spv/deptAction/',
     '/protected/v8/user/roles/getUsersV2',
-
     '/protected/v8/portal/spv/mydepartment',
     '/protected/v8/portal/mdo/mydepartment',
     '/protected/v8/user/profileDetails/createUser',
