@@ -248,7 +248,7 @@ export function proxyCreatorToAppentUserId(route: Router, targetUrl: string, _ti
       proxy.web(req, res, {
         changeOrigin: true,
         ignorePath: true,
-       target: targetUrl + userId[userId.length - 1],
+        target: targetUrl + userId[userId.length - 1],
       })
     } else {
 

@@ -62,6 +62,17 @@ export const API_LIST = {
       // tslint:disable-next-line: object-literal-sort-keys
       ROLE_CHECK: [ROLE.PUBLIC],
     },
+    '/protected/v8/assessmentCompetency/v1/assessment/content/:id/artifact/:id':
+      {
+        checksNeeded: [CHECK.ROLE],
+        // tslint:disable-next-line: object-literal-sort-keys
+        ROLE_CHECK: [ROLE.PUBLIC],
+      },
+    '/protected/v8/assessmentCompetency/v1/assessment/submit': {
+      checksNeeded: [CHECK.ROLE],
+      // tslint:disable-next-line: object-literal-sort-keys
+      ROLE_CHECK: [ROLE.PUBLIC],
+    },
     '/protected/v8/user/details': {
       checksNeeded: [CHECK.ROLE],
       // tslint:disable-next-line: object-literal-sort-keys
@@ -519,6 +530,11 @@ export const API_LIST = {
       ROLE_CHECK: [ROLE.PUBLIC],
     },
     '/proxies/v8/admin/bulk-upload/create-users': {
+      checksNeeded: [CHECK.ROLE],
+      // tslint:disable-next-line: object-literal-sort-keys
+      ROLE_CHECK: [ROLE.PUBLIC],
+    },
+    '/protected/v8/admin/bulk-user-mapping/provider': {
       checksNeeded: [CHECK.ROLE],
       // tslint:disable-next-line: object-literal-sort-keys
       ROLE_CHECK: [ROLE.PUBLIC],
@@ -1289,6 +1305,7 @@ export const API_LIST = {
     '/protected/v8/bulkUploadData/bulkUploadData',
     '/protected/v8/admin/bulk-upload/create-users',
     '/proxies/v8/admin/bulk-upload/create-users',
+    '/protected/v8/admin/bulk-user-mapping/provider',
     '/protected/v8/connections/connections/recommended/userDepartment',
     '/protected/v8/discussionHub/categories/:cid/:slug?/:tid?',
     '/protected/v8/discussionHub/topics/recent',
@@ -1305,6 +1322,7 @@ export const API_LIST = {
     '/protected/v8/user/telemetry',
     '/protected/v8/scrom/get/:id',
     '/protected/v8/user/progress/:contentId',
+    '/protected/v8/assessmentCompetency/v1/submitAssessment',
     '/protected/v8/user/rating/:contentId',
     '/protected/v8/user/progress',
     '/protected/v8/user/history/continue',
@@ -1312,7 +1330,6 @@ export const API_LIST = {
     '/protected/v8/portal/spv/department',
     '/protected/v8/portal/spv/deptAction/',
     '/protected/v8/user/roles/getUsersV2',
-
     '/protected/v8/portal/spv/mydepartment',
     '/protected/v8/portal/mdo/mydepartment',
     '/protected/v8/user/profileDetails/createUser',

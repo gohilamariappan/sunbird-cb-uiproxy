@@ -43,9 +43,9 @@
         "name": ["*", "innerText"]
       }
     ],
-    "ban-ts-ignore": true,
+    "ban-ts-ignore": false,
     "ban-types": [
-      true,
+      false,
       ["Object", "Use {} instead."],
       ["String", "Use 'string' instead."],
       ["Number", "Use 'number' instead."],
@@ -64,7 +64,7 @@
     "no-angle-bracket-type-assertion": true,
     "no-any": true,
     "no-arg": true,
-    "no-conditional-assignment": true,
+    "no-conditional-assignment": false,
     "no-construct": true,
     "no-debugger": true,
     "no-default-export": true,
@@ -73,7 +73,7 @@
     "no-namespace": [true, "allow-declarations"],
     "no-reference": true,
     "no-return-await": true,
-    "no-string-throw": true,
+    "no-string-throw": false,
     "no-unsafe-finally": true,
     "no-unused-expression": true,
     "no-var-keyword": true,
@@ -89,7 +89,7 @@
       {
         "limit": 140,
         "ignore-pattern": "^import |^export {(.*?)}",
-        "check-strings": true,
+        "check-strings": false,
         "check-regex": true
       }
     ],
@@ -106,7 +106,7 @@
         }
       }
     ],
-    "triple-equals": [true, "allow-null-check"],
+    "triple-equals": [false, "allow-null-check"],
     "use-isnan": true,
     "variable-name": [
       true,

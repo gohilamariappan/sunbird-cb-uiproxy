@@ -31,8 +31,8 @@ export const fetchnodebbUserDetails = async (
                   Authorization: CONSTANTS.SB_API_KEY,
                   'Content-Type': 'application/json',
                 },
-                method: 'POST',
-                url: API_END_POINTS.createOrFetchUser,
+      method: 'POST',
+      url: API_END_POINTS.createOrFetchUser,
               })
 
     return response.data.result.userId.uid

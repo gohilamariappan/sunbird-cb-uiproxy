@@ -110,7 +110,7 @@ forgotPassword.post('/reset/proxy/password', async (req, res) => {
     return
   } catch (err) {
     logError('ERROR in Searching Users : ' + err)
-    res.status(500).send( { message : PASSWORD_RESET_FAIL, status : 'failed'} )
+    res.status(500).send({ message : PASSWORD_RESET_FAIL, status : 'failed'})
   }
 })
 

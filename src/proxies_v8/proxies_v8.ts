@@ -89,14 +89,14 @@ proxiesV8.get('/logout/user', (_req, res) => {
   res.clearCookie('connect.sid')
   axios({
     ...axiosRequestConfig,
-              headers: {
+    headers: {
                 // tslint:disable-next-line:max-line-length
                 Authorization: 'bearer ' + extractUserToken(_req),
                 org: 'aastar',
                 rootorg: 'aastar',
               },
-              method: 'get',
-              url: keycloakUrl,
+    method: 'get',
+    url: keycloakUrl,
   })
   .then((response) => {
     logInfo('Success IN LOGOUT USER >>>>>>>>>>>' + response)
