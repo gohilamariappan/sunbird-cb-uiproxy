@@ -13,7 +13,18 @@ export async function jumbler(path: string) {
     const randomCount =
       response.data.randomCount || response.data.questions.length
     logInfo('Success IN Getting Assessment JSON >>>>>>>>>>>' + response)
-    return _.sampleSize(response.data.questions, randomCount).map(falseCreator)
+    const questionArray = _.sampleSize(
+      response.data.questions,
+      randomCount
+    ).map(falseCreator)
+    const questionObject = {
+      isAssessment: true,
+      questions: questionArray,
+      randomCount: '20',
+      timeLimit: response.data.timeLimit,
+    }
+    logInfo('Question format....' + questionObject)
+    return questionObject
   })
 }
 // tslint:disable-next-line: no-any
