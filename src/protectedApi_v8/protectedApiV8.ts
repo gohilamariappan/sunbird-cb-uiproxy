@@ -2,6 +2,8 @@ import express from 'express'
 import { CONSTANTS } from '../utils/env'
 import { admin } from './admin/admin'
 import { assessmentApi } from './assessment'
+import { assessmentCompetency } from './assessmentCompetency'
+
 import { attendedContentApi } from './attendent-content'
 import { catalogApi } from './catalog'
 import { certificationApi } from './certifications'
@@ -48,6 +50,7 @@ protectedApiV8.get('/', (_req, res) => {
 })
 
 protectedApiV8.use('/admin', admin)
+protectedApiV8.use('/assessmentCompetency', assessmentCompetency)
 protectedApiV8.use('/catalog', catalogApi)
 protectedApiV8.use('/certifications', certificationApi)
 protectedApiV8.use('/cohorts', cohortsApi)

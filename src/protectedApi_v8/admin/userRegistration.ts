@@ -1,3 +1,5 @@
+
+/* tslint-disable*/
 import axios from 'axios'
 import cassandraDriver from 'cassandra-driver'
 import { Router } from 'express'

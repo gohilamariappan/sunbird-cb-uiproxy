@@ -1,11 +1,13 @@
 
 import axios from 'axios'
 import { Router } from 'express'
+import {v4 as uuidv4} from 'uuid'
 import { axiosRequestConfig, axiosRequestConfigLong } from '../../configs/request.config'
 import { CONSTANTS } from '../../utils/env'
 import { logInfo } from '../../utils/logger'
 import { extractUserToken } from '../../utils/requestExtract'
-import { bulkExtendedMethod } from './bulkExtendedMethod'
+import { bulkExtendedMethod, saveExtendedData } from './bulkExtendedMethod'
+const cassandra = require('cassandra-driver')
 
 const API_ENDPOINTS = {
     assignRoleforBulkUsers: `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/user/v1/role/assign`,
@@ -14,12 +16,20 @@ const API_ENDPOINTS = {
     kongUserResetPassword: `${CONSTANTS.KONG_API_BASE}/private/user/v1/password/reset`,
 }
 
+const client = new cassandra.Client({
+        contactPoints: [CONSTANTS.CASSANDRA_IP],
+        keyspace: 'sunbird',
+        localDataCenter: 'datacenter1',
+    })
+
 // tslint:disable-next-line: no-any
 const finalResponse: any = []
+const uniqueSSOuserId = uuidv4()
 
 export const bulkUploadUserApi = Router()
 
 // tslint:disable-next-line: no-any
+/* tslint:disable-next-line */
 bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
     try {
         const fileData = req.files.userData.data.toString('utf8')
@@ -40,7 +50,12 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
             try {
                 // tslint:disable-next-line: no-any
                 const data = await (Promise as any).allSettled(result.map(async (csvObjects: any) => {
-                    return simulateFetchData(csvObjects)
+                    logInfo('Checking csvObjects values >>>>>>>>>>>>>>>>>' + csvObjects.Cadre.toUpperCase())
+                    if (csvObjects.Cadre.toUpperCase() === 'ASHAS') {
+                        return saveAshaWorkerData(csvObjects)
+                    } else {
+                        return simulateFetchData(csvObjects)
+                    }
                 }))
                 logInfo('Data inside user processing >>>>> ' + data)
                 _res.status(200).send({
@@ -59,6 +74,7 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
         const simulateFetchData = async (csvObjects: any) => {
             try {
                 if (csvObjects.first_name) {
+                //     if(csvObjects.cadre === '')
                     logInfo('CSV data present more than one row')
                     const collectData = {
                         channel: csvObjects.channel,
@@ -69,7 +85,7 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
                         username: csvObjects.username,
                         usertype: csvObjects.usertype,
                     }
-                    logInfo('collectData 22222 >>>>>' + JSON.stringify(collectData))
+                    logInfo('collectData coming >>>>>' + JSON.stringify(collectData))
                     try {
                         const responseUserCreation = await axios({
                             ...axiosRequestConfig,
@@ -81,10 +97,11 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
                             url: API_ENDPOINTS.createUserOfBulkUpload,
                         })
                         logInfo('UserId after creation >>>>>' + responseUserCreation.data.result.userId)
+                        const newUserId = responseUserCreation.data.result.userId
                         if (responseUserCreation) {
                             logInfo('99. Response user creation >>>>>>>' + responseUserCreation)
                             finalResponse.push(responseUserCreation)
-                            const readUrl = `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/user/v2/read/` + responseUserCreation.data.result.userId
+                            const readUrl = `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/user/v2/read/` + newUserId
                             logInfo('readUrl  >>>>>>>>>>>>>>>>> : ' + readUrl)
                             try {
                                 const readApiResponse = await axios({
@@ -92,8 +109,9 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
                                     headers: {
                                         Authorization: CONSTANTS.SB_API_KEY,
                                         'X-Channel-Id': CONSTANTS.X_Channel_Id,
-                                        'x-authenticated-user-token': extractUserToken(req),
-                                        'x-authenticated-userid': responseUserCreation.data.result.userId,
+                                        /* tslint:disable-next-line */
+                                        'x-authenticated-user-token' : extractUserToken(req),
+                                        'x-authenticated-userid': newUserId,
                                       },
                                     method: 'GET',
                                     url: readUrl,
@@ -106,7 +124,7 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
                                     roles: [
                                         'PUBLIC',
                                     ],
-                                    userId: responseUserCreation.data.result.userId,
+                                    userId: newUserId,
                                 }
 
                                 logInfo('Organisation id >>>>>>>> :' + readApiResponse.data.result.response.organisations[0])
@@ -125,7 +143,7 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
                                     })
                                 logInfo('Role Assigned data >>>> ' + responseRoleAssign)
                                 finalResponse.push(responseRoleAssign)
-                                const resultBulkUploadMethod = await bulkExtendedMethod(csvObjects, responseUserCreation.data.result.userId)
+                                const resultBulkUploadMethod = await bulkExtendedMethod(csvObjects, newUserId)
                                 logInfo('resultBulkUploadMethod 22222 >>>>>' + JSON.stringify(resultBulkUploadMethod))
                                 try {
                                     const passwordResetRequest = {
@@ -182,6 +200,108 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
                                 } catch (error) {
                                     logInfo('Error While resetting password in generating link  : ' + error)
                                 }
+                            } catch (error) {
+                                logInfo('Error While assign  the role  : ' + error)
+                            }
+                            } catch (error) {
+                                logInfo('Error While getting read api data  : ' + error)
+                            }
+                        }
+                    } catch (error) {
+                        logInfo('Error While Creating the user  : ' + error)
+                    }
+                }
+            } catch (error) {
+                logInfo('Error While Creating the user & assigning role : ' + error)
+            }
+        }
+
+        // tslint:disable-next-line: no-any
+        const saveAshaWorkerData = async (csvObjects: any) => {
+            try {
+                if (csvObjects.first_name) {
+                    logInfo('CSV data present more than one row')
+                    const collectData = {
+                        channel: csvObjects.channel,
+                        firstName: csvObjects.first_name,
+                        lastName: csvObjects.last_name,
+                        [csvObjects.type]: csvObjects.phone ? csvObjects.phone : csvObjects.username,
+                        password: CONSTANTS.BULK_USER,
+                        tcStatus: false,
+                        username: csvObjects.username,
+                        usersubtype : csvObjects.UserID,
+                    }
+                    logInfo('collectData coming >>>>>' + JSON.stringify(collectData))
+                    try {
+                        const responseUserCreation = await axios({
+                            ...axiosRequestConfig,
+                            data: { request: collectData },
+                            headers: {
+                                Authorization: CONSTANTS.SB_API_KEY,
+                            },
+                            method: 'POST',
+                            url: API_ENDPOINTS.createUserOfBulkUpload,
+                        })
+                        logInfo('UserId after creation >>>>>' + responseUserCreation.data.result.userId)
+                        if (responseUserCreation) {
+                            // logInfo('99. Response user creation >>>>>>>' + responseUserCreation)
+                            finalResponse.push(responseUserCreation)
+                            const readUrl = `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/user/v2/read/` + responseUserCreation.data.result.userId
+                           // logInfo('readUrl  >>>>>>>>>>>>>>>>> : ' + readUrl)
+                            try {
+                                const readApiResponse = await axios({
+                                    ...axiosRequestConfig,
+                                    headers: {
+                                        Authorization: CONSTANTS.SB_API_KEY,
+                                        'X-Channel-Id': CONSTANTS.X_Channel_Id,
+                                        'x-authenticated-user-token': extractUserToken(req),
+                                        'x-authenticated-userid': responseUserCreation.data.result.userId,
+                                      },
+                                    method: 'GET',
+                                    url: readUrl,
+                                })
+                                // tslint:disable-next-line: no-any
+                                logInfo('readApiResponse >>>>>>>> :' + readApiResponse)
+                                const roleData = {
+                                    // tslint:disable-next-line: max-line-length
+                                    organisationId: readApiResponse.data.result.response.organisations[0].organisationId,
+                                    roles: [
+                                        'PUBLIC',
+                                    ],
+                                    userId: responseUserCreation.data.result.userId,
+                                }
+
+                                logInfo('Organisation id >>>>>>>> :' + readApiResponse.data.result.response.organisations[0])
+                                logInfo('roleData for assigning >>>>>>>> :' + JSON.stringify(roleData))
+                                try {
+                                const responseRoleAssign = await axios({
+                                        ...axiosRequestConfigLong,
+                                        data: { request: roleData },
+                                        headers: {
+                                            Authorization: CONSTANTS.SB_API_KEY,
+                                            // tslint:disable-next-line: all
+                                            'x-authenticated-user-token': extractUserToken(req)
+                                        },
+                                        method: 'POST',
+                                        url: API_ENDPOINTS.assignRoleforBulkUsers,
+                                    })
+                                logInfo('Role Assigned data >>>> ' + responseRoleAssign)
+                                finalResponse.push(responseRoleAssign)
+                                const resultBulkUploadMethod = await saveExtendedData(csvObjects, responseUserCreation.data.result.userId)
+                                logInfo('resultBulkUploadMethod  >>>>>' + JSON.stringify(resultBulkUploadMethod))
+                                try {
+                                // tslint:disable-next-line: max-line-length
+                                const query = 'INSERT INTO sunbird.user_sso_bulkupload ( id, code, mainuseruuid, orgid, status, shashaktUserId, provider) VALUES ( ?, ?, ?, ?, ?, ?, ? )'
+                                 // tslint:disable-next-line: max-line-length
+                                const params = [ uniqueSSOuserId,  csvObjects.Cadre, responseUserCreation.data.result.userId, readApiResponse.data.result.response.organisations[0].organisationId,  'success',
+                                csvObjects.UserID, 'SHASHAKT'  ]
+                                // Set the prepare flag in the query options
+                                const resultSSOUser = client.execute(query, params, { prepare: true })
+                                logInfo('Successful ! User creation completed via SaveExtended Method Query Result : ' + resultSSOUser)
+
+                               } catch (error) {
+                                logInfo('Error While inserting in cassandra table user_sso_bulkupload  : ' + error)
+                               }
                             } catch (error) {
                                 logInfo('Error While assign  the role  : ' + error)
                             }

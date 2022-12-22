@@ -32,20 +32,25 @@ export const extractUserId = (req: IAuthorizedRequest): string => {
   if (wid) {
     return wid
   }
+  /* tslint:disable-next-line */
   const userId = (req.kauth &&
     req.kauth.grant.access_token.content.sub) as string
   return userId.split(':')[2]
 }
 
 export const extractUserNameFromRequest = (req: IAuthorizedRequest) =>
+  /* tslint:disable-next-line */
   (req.kauth && req.kauth.grant.access_token.content.name) as string
 
 export const extractUserEmailFromRequest = (req: IAuthorizedRequest) =>
+  /* tslint:disable-next-line */
   ((req.kauth && req.kauth.grant.access_token.content.email) ||
     (req.kauth &&
+  /* tslint:disable-next-line */
       req.kauth.grant.access_token.content.preferred_username)) as string
 
 export const extractUserSessionState = (req: IAuthorizedRequest) =>
+  /* tslint:disable-next-line */
   (req.kauth && req.kauth.grant.access_token.content.session_state) as string
 
 export const extractUserTokenContent = (req: IAuthorizedRequest) => {
@@ -65,15 +70,16 @@ export const extractAuthorizationFromRequest = (
 }
 export const extractUserTokenFromRequest = (
   req: IAuthorizedRequest
+  /* tslint:disable-next-line */
 ): string => {
   const xAuthorization = req.header('X-Authenticated-User-Token')
-
+  /* tslint:disable-next-line */
   return xAuthorization as string
 }
 
 export const extractRootOrgFromRequest = (req: IAuthorizedRequest): string => {
   const rootOrg = req.header('rootorg')
-
+  /* tslint:disable-next-line */
   return rootOrg as string
 }
 

@@ -29,7 +29,7 @@ export const setRolesData = async (reqObj: any, body: any) => {
   const userData: any = body
   const fullName = userData.result.response.firstName + ' ' + userData.result.response.lastName
   const userName = userData.result.response.userName
-  const discussionReponse = await fetchnodebbUserDetails( userData.result.response.id, userName, fullName, userData.result.response)
+  const discussionReponse = await fetchnodebbUserDetails(userData.result.response.id, userName, fullName, userData.result.response)
   // logInfo('>>>> userData >>>>>>>>>>>> ' + JSON.stringify(userData))
 
   if (reqObj.session) {

@@ -57,6 +57,7 @@ export const CONSTANTS = {
   // tslint:disable-next-line: object-literal-sort-keys
   KC_NEW_USER_DEFAULT_PWD: env.KC_NEW_USER_DEFAULT_PWD || 'User@123',
   KEYCLOAK_CLIENT_SECRET: env.client_secret,
+  KEYCLOAK_CLIENT_SECRET_SASHAKT: env.client_secret_sashakt,
   KEYCLOAK_REALM: env.KEYCLOAK_REALM || 'sunbird',
   KEYCLOAK_REDIRECT_URL: env.KEYCLOAK_REDIRECT_URL || 'https://requestbin.io/',
   KEYCLOAK_SESSION_TTL: 30 * 24 * 60 * 60 * 1000,
@@ -66,13 +67,15 @@ export const CONSTANTS = {
   KHUB_SEARCH_BASE: env.KHUB_SEARCH_BASE || 'http://localhost:3014',
   KNOWLEDGE_MW_API_BASE:
     env.KNOWLEDGE_MW_API_BASE || 'http://knowledge-mw-service:5000',
-  KONG_API_BASE: env.KONG_API_BASE || 'https://igot-dev.in/api',
+  KONG_API_BASE: env.KONG_API_BASE || 'https://sphere.aastrika.org/api',
   MSG91BASE: env.MSG91BASE || 'http://localhost:3300',
   MSG91KEY: env.MSG91KEY || 'http://localhost:3301',
   MSG91TEMPLATEID: env.MSG91TEMPLATEID || 'http://localhost:3302',
   POST_ASSESSMENT_BASE: env.POST_ASSESSMENT_BASE || 'http://localhost.com',
   POST_ASSESSMENT_CLIENT_ID: env.POST_ASSESSMENT_CLIENT_ID || '',
   POST_ASSESSMENT_CLIENT_SECRET: env.POST_ASSESSMENT_CLIENT_SECRET || '',
+  S3_BUCKET_URL:
+    env.S3_BUCKET_URL || 'https://sunbirdcontent.s3-ap-south-1.amazonaws.com/',
   LEADERBOARD_API_BASE: env.LEADERBOARD_API_BASE || env.SB_EXT_API_BASE_2,
   LEARNING_HISTORY_API_BASE:
     env.LEARNING_HISTORY_API_BASE || env.SB_SEXT_API_BASE_3,
@@ -200,6 +203,7 @@ export const CONSTANTS = {
   // tslint:disable-next-line: max-line-length
   CERT_AUTH_TOKEN: '',
   GOOGLE_CLIENT_ID: env.google_client_id || '',
+  BULK_USER: env.BULK_USER || 'Sunbird@123',
 }
 
 export const RESTRICTED_PYTHON_STMT: string[] = process.env
