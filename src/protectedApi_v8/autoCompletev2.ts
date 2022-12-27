@@ -16,6 +16,7 @@ autoCompletev2.get("/getUserDetails", async (req, res) => {
     const detail = req.body.details;
     const resp = await client.search({
       body: {
+        size: 10000,
         query: {
           bool: {
             should: [
