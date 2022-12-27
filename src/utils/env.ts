@@ -33,6 +33,7 @@ export const CONSTANTS = {
   DEFAULT_ROOT_ORG: env.DEFAULT_ROOT_ORG || 'igot',
   ENTITY_API_BASE: env.ENTITY_API_BASE || 'http://10.1.2.120:8083',
   ES_BASE: env.ES_BASE || 'http://localhost:9200',
+  ES_IP: env.ES_IP || '10.1.1.131:9200',
   ES_PASSWORD: env.ES_PASSWORD || 'iGOT@123+',
   ES_USERNAME: env.ES_USERNAME || 'elastic',
   FEEDBACK_API_BASE: env.FEEDBACK_API_BASE || env.SB_EXT_API_BASE_2,

@@ -62,6 +62,7 @@ export const API_LIST = {
       // tslint:disable-next-line: object-literal-sort-keys
       ROLE_CHECK: [ROLE.PUBLIC],
     },
+
     '/protected/v8/assessmentCompetency/v1/assessment/content/:id/artifact/:id':
       {
         checksNeeded: [CHECK.ROLE],
@@ -69,6 +70,11 @@ export const API_LIST = {
         ROLE_CHECK: [ROLE.PUBLIC],
       },
     '/protected/v8/assessmentCompetency/v1/assessment/submit': {
+      checksNeeded: [CHECK.ROLE],
+      // tslint:disable-next-line: object-literal-sort-keys
+      ROLE_CHECK: [ROLE.PUBLIC],
+    },
+    '/protected/v8/autoCompletev2/getUserDetails': {
       checksNeeded: [CHECK.ROLE],
       // tslint:disable-next-line: object-literal-sort-keys
       ROLE_CHECK: [ROLE.PUBLIC],
@@ -1322,6 +1328,7 @@ export const API_LIST = {
     '/protected/v8/user/telemetry',
     '/protected/v8/scrom/get/:id',
     '/protected/v8/user/progress/:contentId',
+    '/protected/v8/autoCompletev2/getUserDetails',
     '/protected/v8/assessmentCompetency/v1/submitAssessment',
     '/protected/v8/user/rating/:contentId',
     '/protected/v8/user/progress',
