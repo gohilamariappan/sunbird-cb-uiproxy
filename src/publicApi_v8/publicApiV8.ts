@@ -2,6 +2,7 @@ import express from 'express'
 import { CONSTANTS } from '../utils/env'
 import { proxyCreatorRoute } from '../utils/proxyCreator'
 import { aesEncryption } from './aesEncryption'
+import { appCertificateDownload } from './appCertificateDownload'
 import { validateCertificate } from './certificateValidate'
 import { publicCompetencyUser } from './competencyUser'
 import { customSignUp } from './customSignup'
@@ -42,3 +43,4 @@ publicApiV8.use('/publicContent/', publicContentApi)
 publicApiV8.use('/login/', emailOrMobileLogin)
 publicApiV8.use('/certificate/', validateCertificate)
 publicApiV8.use('/sashaktAuth/', sashakt)
+publicApiV8.use('/appCertificateDownload/', appCertificateDownload)
