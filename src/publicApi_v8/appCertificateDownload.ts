@@ -48,9 +48,7 @@ appCertificateDownload.get('/download', async (req, res) => {
           // success case, the file was saved
         }
       )
-      const fileLocation = (
-        path.join(__dirname, '../') + 'certificate.svg'
-      ).replace(/\\/g, '/')
+      const fileLocation = path.join(__dirname, '../../', 'certificate.svg')
 
       res.download(fileLocation, (err) => {
         if (err) {
