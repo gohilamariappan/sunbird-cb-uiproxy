@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { Router } from 'express'
 import _ from 'lodash'
+import { axiosRequestConfig } from '../configs/request.config'
 import { CONSTANTS } from '../utils/env'
 import { jumbler } from '../utils/jumbler'
 import { logInfo } from '../utils/logger'
@@ -11,6 +12,7 @@ import {
 
 const API_END_POINTS = {
   assessmentSubmitV3: `${CONSTANTS.SB_EXT_API_BASE_2}/v2/user`,
+  updateAssessmentContent: `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/course/v1/content/state/update`,
 }
 
 export const assessmentCompetency = Router()
@@ -65,7 +67,32 @@ assessmentCompetency.post('/v1/assessment/submit', async (req, res) => {
       url,
     })
     logInfo('New submitAssessments competency >>>>>>>>>>> ')
-
+    const revisedData = {
+      request: {
+        contents: [
+          {
+            batchId: req.body.batchId,
+            completionPercentage: 100,
+            contentId: req.body.contentId,
+            courseId: req.body.courseId,
+            status: 2,
+          },
+        ],
+        userId: req.body.userId ? req.body.userId : userId,
+      },
+    }
+    if (response.data.result >= response.data.passPercent) {
+      await axios({
+        ...axiosRequestConfig,
+        data: revisedData,
+        headers: {
+          Authorization: CONSTANTS.SB_API_KEY,
+          'x-authenticated-user-token': accessToken,
+        },
+        method: 'PATCH',
+        url: API_END_POINTS.updateAssessmentContent,
+      })
+    }
     res.status(response.status).send(response.data)
   } catch (err) {
     res.status((err && err.response && err.response.status) || 500).send(
