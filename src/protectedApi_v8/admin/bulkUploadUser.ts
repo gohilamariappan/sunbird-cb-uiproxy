@@ -1,7 +1,7 @@
 
 import axios from 'axios'
 import { Router } from 'express'
-import {v4 as uuidv4} from 'uuid'
+import uuid from 'uuid'
 import { axiosRequestConfig, axiosRequestConfigLong } from '../../configs/request.config'
 import { CONSTANTS } from '../../utils/env'
 import { logInfo } from '../../utils/logger'
@@ -24,7 +24,6 @@ const client = new cassandra.Client({
 
 // tslint:disable-next-line: no-any
 const finalResponse: any = []
-const uniqueSSOuserId = uuidv4()
 
 export const bulkUploadUserApi = Router()
 
@@ -293,7 +292,7 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
                                 // tslint:disable-next-line: max-line-length
                                 const query = 'INSERT INTO sunbird.user_sso_bulkupload ( id, code, mainuseruuid, orgid, status, shashaktUserId, provider) VALUES ( ?, ?, ?, ?, ?, ?, ? )'
                                  // tslint:disable-next-line: max-line-length
-                                const params = [ uniqueSSOuserId,  csvObjects.Cadre, responseUserCreation.data.result.userId, readApiResponse.data.result.response.organisations[0].organisationId,  'success',
+                                const params = [ uuid(),  csvObjects.Cadre, responseUserCreation.data.result.userId, readApiResponse.data.result.response.organisations[0].organisationId,  'success',
                                 csvObjects.UserID, 'SHASHAKT'  ]
                                 // Set the prepare flag in the query options
                                 const resultSSOUser = client.execute(query, params, { prepare: true })
