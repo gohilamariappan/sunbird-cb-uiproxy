@@ -226,9 +226,11 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
                         lastName: csvObjects.last_name,
                         [csvObjects.type]: csvObjects.phone ? csvObjects.phone : csvObjects.username,
                         password: CONSTANTS.BULK_USER,
+                        subject : 'SHASHAKT',
                         tcStatus: false,
                         username: csvObjects.username,
-                        usersubtype : csvObjects.UserID,
+                        userSubType : csvObjects.UserID,
+
                     }
                     logInfo('collectData coming >>>>>' + JSON.stringify(collectData))
                     try {
@@ -289,17 +291,17 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
                                 const resultBulkUploadMethod = await saveExtendedData(csvObjects, responseUserCreation.data.result.userId)
                                 logInfo('resultBulkUploadMethod  >>>>>' + JSON.stringify(resultBulkUploadMethod))
                                 try {
-                                // tslint:disable-next-line: max-line-length
-                                const query = 'INSERT INTO sunbird.user_sso_bulkupload ( id, code, mainuseruuid, orgid, status, shashaktUserId, provider) VALUES ( ?, ?, ?, ?, ?, ?, ? )'
-                                 // tslint:disable-next-line: max-line-length
-                                const params = [ uuid(),  csvObjects.Cadre, responseUserCreation.data.result.userId, readApiResponse.data.result.response.organisations[0].organisationId,  'success',
-                                csvObjects.UserID, 'SHASHAKT'  ]
-                                // Set the prepare flag in the query options
-                                const resultSSOUser = client.execute(query, params, { prepare: true })
-                                logInfo('Successful ! User creation completed via SaveExtended Method Query Result : ' + resultSSOUser)
+                                    // tslint:disable-next-line: max-line-length
+                                    const query = 'INSERT INTO sunbird.user_sso_bulkupload_v2 ( id, code, mainuseruuid, orgid, status, shashaktUserId, provider) VALUES ( ?, ?, ?, ?, ?, ?, ? )'
+                                    // tslint:disable-next-line: max-line-length
+                                    const params = [ uuid(),  csvObjects.Cadre, responseUserCreation.data.result.userId, readApiResponse.data.result.response.organisations[0].organisationId,  'success',
+                                    csvObjects.UserID, 'SHASHAKT' ]
+                                    // Set the prepare flag in the query options
+                                    const resultSSOUser = client.execute(query, params, { prepare: true })
+                                    logInfo('Successful ! User creation completed via SaveExtended Method Query Result : ' + resultSSOUser)
 
                                } catch (error) {
-                                logInfo('Error While inserting in cassandra table user_sso_bulkupload  : ' + error)
+                                logInfo('Error While inserting in cassandra table user_sso_bulkupload_v2  : ' + error)
                                }
                             } catch (error) {
                                 logInfo('Error While assign  the role  : ' + error)
