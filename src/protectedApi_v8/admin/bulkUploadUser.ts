@@ -229,7 +229,6 @@ bulkUploadUserApi.post('/create-users', async (req: any, _res) => {
                         subject : 'SHASHAKT',
                         tcStatus: false,
                         username: csvObjects.username,
-                        userSubType : csvObjects.UserID,
 
                     }
                     logInfo('collectData coming >>>>>' + JSON.stringify(collectData))
