@@ -1,8 +1,7 @@
 import axios from 'axios'
 import { Router } from 'express'
-import fs from 'fs'
 import _ from 'lodash'
-import path from 'path'
+import nodeHtmlToImage from 'node-html-to-image'
 import { axiosRequestConfig } from '../configs/request.config'
 import { CONSTANTS } from '../utils/env'
 import { logError, logInfo } from '../utils/logger'
@@ -37,25 +36,43 @@ appCertificateDownload.get('/download', async (req, res) => {
       'Certificate download in progress of certificate ID',
       certificateId
     )
+    function getPosition(stringValue, subStringValue, index) {
+      return stringValue.split(subStringValue, index).join(subStringValue)
+        .length
+    }
+    let imageData = response.data.result.printUri
+    imageData = decodeURIComponent(imageData)
+    imageData = imageData.substring(imageData.indexOf(','))
+    const width = imageData.substring(
+      imageData.indexOf("<svg width='") + 12,
+      getPosition(imageData, "'", 2)
+    )
+    const height = imageData.substring(
+      imageData.indexOf("height='") + 8,
+      getPosition(imageData, "'", 4)
+    )
+    let image = await nodeHtmlToImage({
+      html: `<html>
+    <head>
+      <style>
+        body {
+          width:${width}px;
+          height: ${height}px;
+        }
+      </style>
+    </head>
+    <body>${imageData}</body>
+  </html>`,
+    })
+
     if (response.data.responseCode === 'OK') {
       logInfo('Certificate printURI received :')
-      fs.writeFile(
-        'certificate.svg',
-        JSON.stringify(response.data.result.printUri),
-        (err) => {
-          // throws an error, you could also catch it here
-          if (err) throw err
-          // success case, the file was saved
-        }
-      )
-      const fileLocation = path.join(__dirname, '../../', 'certificate.svg')
-
-      res.download(fileLocation, (err) => {
-        if (err) {
-          // tslint:disable-next-line: no-console
-          console.log(err)
-        }
+      res.writeHead(200, {
+        'Content-Type': 'image/png',
+        'Content-disposition': 'certificate.png',
       })
+      res.end(image, 'binary')
+      image = ''
     } else {
       throw new Error(
         _.get(response.data, 'params.errmsg') ||
@@ -64,6 +81,7 @@ appCertificateDownload.get('/download', async (req, res) => {
     }
   } catch (error) {
     logError('Error in validate certificate  >>>>>>' + error)
+
     res.status(500).send({
       message: VALIDATION_FAIL,
       status: 'failed',
