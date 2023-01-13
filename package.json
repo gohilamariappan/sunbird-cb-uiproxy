@@ -52,6 +52,7 @@
     "keycloak-connect": "^7.0.1",
     "lodash": "^4.17.21",
     "morgan": "^1.9.1",
+    "node-html-to-image": "^3.2.4",
     "node-xlsx": "^0.15.0",
     "path-to-regexp": "^6.2.0",
     "pino": "^6.11.3",
