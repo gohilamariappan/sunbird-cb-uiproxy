@@ -124,6 +124,7 @@ assessmentApi.post("/submit/v2", async (req, res) => {
         "do_1135834000562257921104",
         "do_1135834057607168001114",
         "do_1135834376942632961125",
+        "do_1137121760903741441359",
       ];
       if (assessmentZeroCases.indexOf(req.body.contentId) > 0) {
         response.data.passPercent = 0;
