@@ -1,70 +1,75 @@
-import axios from "axios";
-import { Router } from "express";
-import _ from "lodash";
-import nodeHtmlToImage from "node-html-to-image";
-import { axiosRequestConfig } from "../configs/request.config";
-import { CONSTANTS } from "../utils/env";
-import { logError, logInfo } from "../utils/logger";
+import axios from 'axios'
+import { Router } from 'express'
+import _ from 'lodash'
+import nodeHtmlToImage from 'node-html-to-image'
+import { axiosRequestConfig } from '../configs/request.config'
+import { CONSTANTS } from '../utils/env'
+import { logError, logInfo } from '../utils/logger'
 
 const API_END_POINTS = {
   DOWNLOAD_CERTIFICATE: `${CONSTANTS.HTTPS_HOST}/apis/proxies/v8/certreg/v2/certs/download/`,
-};
+}
 const VALIDATION_FAIL =
-  "Sorry ! Download cerificate not worked . Please try again in sometime.";
-export const appCertificateDownload = Router();
+  'Sorry ! Download cerificate not worked . Please try again in sometime.'
+export const appCertificateDownload = Router()
 
-appCertificateDownload.get("/download", async (req, res) => {
+appCertificateDownload.get('/download', async (req, res) => {
   try {
-    const certificateId = req.query.certificateId;
-    const userCookie = req.headers.cookie;
+    const certificateId = req.query.certificateId
+    const userCookie = req.query.cookie
+    const certificateName = req.query.certificateName || 'certificate'
     if (!certificateId) {
       res.status(400).json({
-        msg: "Certificate ID can not be empty",
-        status: "error",
+        msg: 'Certificate ID can not be empty',
+        status: 'error',
         status_code: 400,
-      });
+      })
     }
     const response = await axios({
       ...axiosRequestConfig,
       headers: {
         cookie: userCookie,
       },
-      method: "GET",
+      method: 'GET',
       url: `${API_END_POINTS.DOWNLOAD_CERTIFICATE}${certificateId}`,
-    });
+    })
     logInfo(
-      "Certificate download in progress of certificate ID",
+      'Certificate download in progress of certificate ID',
       certificateId
-    );
+    )
     function getPosition(stringValue, subStringValue, index) {
       return stringValue.split(subStringValue, index).join(subStringValue)
-        .length;
+        .length
     }
-    let imageData = response.data.result.printUri;
-    imageData = decodeURIComponent(imageData);
-    imageData = imageData.substring(imageData.indexOf(","));
-    const width = imageData.substring(
+    let imageData = response.data.result.printUri
+    imageData = decodeURIComponent(imageData)
+    imageData = imageData.substring(imageData.indexOf(','))
+    let width = imageData.substring(
       imageData.indexOf("<svg width='") + 12,
       getPosition(imageData, "'", 2)
-    );
-    const height = imageData.substring(
+    )
+    let height = imageData.substring(
       imageData.indexOf("height='") + 8,
       getPosition(imageData, "'", 4)
-    );
+    )
+    if (!imageData.includes("<svg width='")) {
+      width = '1400'
+      height = '950'
+    }
     const puppeteer = {
       args: [
-        "--no-sandbox",
-        "--disable-setuid-sandbox",
-        "--disable-dev-shm-usage",
-        "--disable-accelerated-2d-canvas",
-        "--no-first-run",
-        "--headless",
-        "--no-zygote",
-        "--disable-gpu",
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-dev-shm-usage',
+        '--disable-accelerated-2d-canvas',
+        '--no-first-run',
+        '--headless',
+        '--no-zygote',
+        '--disable-gpu',
       ],
       headless: true,
       ignoreHTTPSErrors: true,
-    };
+    }
 
     let image = await nodeHtmlToImage({
       html: `<html>
@@ -79,28 +84,30 @@ appCertificateDownload.get("/download", async (req, res) => {
     <body>${imageData}</body>
   </html>`,
       puppeteerArgs: puppeteer,
-    });
+    })
 
-    if (response.data.responseCode === "OK") {
-      logInfo("Certificate printURI received :");
+    if (response.data.responseCode === 'OK') {
+      logInfo('Certificate printURI received :')
+
       res.writeHead(200, {
-        "Content-Type": "image/png",
-        "Content-disposition": "certificate.png",
-      });
-      res.end(image, "binary");
-      image = "";
+        'Content-Disposition':
+          'attachment;filename=' + `${certificateName}.png`,
+        'Content-Type': 'image/png',
+      })
+      res.end(image, 'binary')
+      image = ''
     } else {
       throw new Error(
-        _.get(response.data, "params.errmsg") ||
-          _.get(response.data, "params.err")
-      );
+        _.get(response.data, 'params.errmsg') ||
+          _.get(response.data, 'params.err')
+      )
     }
   } catch (error) {
-    logError("Error in validate certificate  >>>>>>" + error);
+    logError('Error in validate certificate  >>>>>>' + error)
 
     res.status(500).send({
       message: VALIDATION_FAIL,
-      status: "failed",
-    });
+      status: 'failed',
+    })
   }
-});
+})
