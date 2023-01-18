@@ -50,8 +50,8 @@ sashakt.get("/login", async (req: any, res) => {
       client_id: "eShashakt",
       client_secret: `${CONSTANTS.KEYCLOAK_CLIENT_SECRET_SASHAKT}`,
       grant_type: "password",
-      username: userEmail,
       scope: "offline_access",
+      username: userEmail,
     });
     logInfo("Entered into authorization part." + encodedData);
     logInfo(userEmail, "useremail..");
