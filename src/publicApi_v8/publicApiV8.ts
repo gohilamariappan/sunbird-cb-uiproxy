@@ -2,6 +2,7 @@ import express from 'express'
 import { CONSTANTS } from '../utils/env'
 import { proxyCreatorRoute } from '../utils/proxyCreator'
 import { aesEncryption } from './aesEncryption'
+import { appCertificateDownload } from './appCertificateDownload'
 import { validateCertificate } from './certificateValidate'
 import { publicCompetencyUser } from './competencyUser'
 import { customSignUp } from './customSignup'
@@ -9,6 +10,7 @@ import { emailOrMobileLogin } from './emailOrMobileLoginSignIn'
 import { forgotPassword } from './forgotPassword'
 import { googleAuth } from './googleSignInRoutes'
 import { homePage } from './home'
+import { publicCertificateFlinkv2 } from './publicCertifcateFlinkv2'
 import { publicContentApi } from './publicContent'
 import { sashakt } from './sashaktAuth'
 import { signup } from './signup'
@@ -42,3 +44,5 @@ publicApiV8.use('/publicContent/', publicContentApi)
 publicApiV8.use('/login/', emailOrMobileLogin)
 publicApiV8.use('/certificate/', validateCertificate)
 publicApiV8.use('/sashaktAuth/', sashakt)
+publicApiV8.use('/appCertificateDownload/', appCertificateDownload)
+publicApiV8.use('/publicCertificateFlinkv2/', publicCertificateFlinkv2)
