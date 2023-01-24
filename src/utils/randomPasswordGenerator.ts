@@ -20,9 +20,12 @@ export function generateRandomPassword(length, options) {
 
   let password = ''
   // tslint:disable-next-line: no-any
-  for (let j = 0; j < chars.length; j++) {
-    password += chars[j].charAt(Math.floor(Math.random() * chars[j].length))
+  for (const [index] of chars.entries()) {
+    password += chars[index].charAt(
+      Math.floor(Math.random() * chars[index].length)
+    )
   }
+
   if (length > chars.length) {
     length = length - chars.length
     for (let i = 0; i < length; i++) {

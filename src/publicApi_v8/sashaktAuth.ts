@@ -23,6 +23,7 @@ export const sashakt = express.Router()
 // tslint:disable-next-line: no-any
 sashakt.get('/login', async (req: any, res) => {
   logInfo('Entered into sashakt route')
+
   const courseId = req.query.moduleId
   const host = req.get('host')
   let resRedirectUrl = `https://sphere.aastrika.org/app/toc/${courseId}/overview?primaryCategory=Course`
@@ -56,11 +57,11 @@ sashakt.get('/login', async (req: any, res) => {
 
     logInfo('User details sunbird', resultEmail)
     if (!resultEmail && !resultPhone) {
-      const randomPassword = generateRandomPassword(9, {
+      const randomPassword = generateRandomPassword(8, {
         digits: true,
         lowercase: true,
-        uppercase: true,
         symbols: true,
+        uppercase: true,
       })
 
       logInfo(randomPassword)
@@ -140,7 +141,6 @@ sashakt.get('/login', async (req: any, res) => {
       })
     }
   } catch (err) {
-    console.log(err)
     logError('Failed to process callback API.. error: ' + JSON.stringify(err))
     resRedirectUrl = `https://${host}/public/home`
   }
