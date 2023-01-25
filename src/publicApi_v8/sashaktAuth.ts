@@ -1,21 +1,22 @@
-import axios from 'axios'
-import cassandra from 'cassandra-driver'
-import express from 'express'
-import jwt_decode from 'jwt-decode'
-import _ from 'lodash'
-import qs from 'querystring'
-import { v4 as uuidv4 } from 'uuid'
-import { axiosRequestConfig } from '../configs/request.config'
-import { CONSTANTS } from '../utils/env'
-import { logError, logInfo } from '../utils/logger'
-import { generateRandomPassword } from '../utils/randomPasswordGenerator'
-import { getCurrentUserRoles } from './rolePermission'
+import axios from "axios";
+import cassandra from "cassandra-driver";
+import express from "express";
+import jwt_decode from "jwt-decode";
+import _ from "lodash";
+import qs from "querystring";
+import { v4 as uuidv4 } from "uuid";
+import { axiosRequestConfig } from "../configs/request.config";
+import { CONSTANTS } from "../utils/env";
+import { logError, logInfo } from "../utils/logger";
+import { generateRandomPassword } from "../utils/randomPasswordGenerator";
+import { getCurrentUserRoles } from "./rolePermission";
 
 const client = new cassandra.Client({
   contactPoints: [CONSTANTS.CASSANDRA_IP],
-  keyspace: 'sunbird',
-  localDataCenter: 'datacenter1',
-})
+  keyspace: "sunbird",
+  localDataCenter: "datacenter1",
+});
+
 const AUTH_FAIL =
   'Authentication failed ! Please check credentials and try again.'
 const API_END_POINTS = {
@@ -43,13 +44,14 @@ sashakt.get('/login', async (req: any, res) => {
       },
       method: 'POST',
       url: API_END_POINTS.sashaktUserDetailsUrl,
-    })
-    const sashaktData = userDetailResponseFromShashakt.data.userDetails[0]
-    const sashaktEmail = sashaktData.email
-    const sashaktPhone = sashaktData.phone
-    const typeOfLogin = sashaktData.email ? 'email' : 'phone'
+    });
+    const sashaktData = userDetailResponseFromShashakt.data.userDetails[0];
+    const sashaktEmail = sashaktData.email;
+    const sashaktPhone = sashaktData.phone;
+    const typeOfLogin = sashaktData.phone ? "phone" : "email";
 
-    logInfo('User details from shashakt', sashaktData)
+    logInfo("User details from shashakt", sashaktData);
+    
     if (!sashaktData) {
       res.status(400).json({
         msg: 'User not present in sashakt',
@@ -103,35 +105,37 @@ sashakt.get('/login', async (req: any, res) => {
         headers: { Authorization: CONSTANTS.SB_API_KEY },
         method: 'POST',
         url: API_END_POINTS.userRoles,
-      })
-      logInfo('Data after role update', userRoleUpdate.data)
-      const uniqueSSOuserId = uuidv4()
+      });
+      logInfo("Data after role update", userRoleUpdate.data);
+      const uniqueSSOuserId = uuidv4();
       const query =
         // tslint:disable-next-line: max-line-length
-        'INSERT INTO sunbird.user_sso_bulkupload_v2 ( id, code, mainuseruuid, orgid, status, shashaktUserId, provider) VALUES ( ?, ?, ?, ?, ?, ?, ? )'
+        "INSERT INTO sunbird.user_sso_bulkupload_v2 ( id, code, mainuseruuid, orgid, status, shashaktUserId, provider) VALUES ( ?, ?, ?, ?, ?, ?, ? )";
 
       const params = [
         uniqueSSOuserId,
-        'ASHAs',
+        "ASHAs",
         responseCreateUser.data.result.userId,
-        '0136856524313067523939',
-        'success',
+        "0136856524313067523939",
+        "success",
         userDetailResponseFromShashakt.data.userId,
-        'SHASHAKT',
-      ]
+        "SHASHAKT",
+      ];
       await client.execute(query, params, {
         prepare: true,
-      })
-      client.shutdown()
+      });
+      client.shutdown();
+      
     }
     const encodedData = qs.stringify({
       client_id: 'eShashakt',
       client_secret: `${CONSTANTS.KEYCLOAK_CLIENT_SECRET_SASHAKT}`,
-      grant_type: 'password',
-      scope: 'offline_access',
-      username: sashaktEmail || sashaktPhone,
-    })
-    logInfo('Entered into authorization part.' + encodedData)
+      grant_type: "password",
+      scope: "offline_access",
+      username: sashaktPhone || sashaktEmail,
+    });
+    logInfo("Entered into authorization part." + encodedData);
+
 
     const authTokenResponse = await axios({
       ...axiosRequestConfig,
