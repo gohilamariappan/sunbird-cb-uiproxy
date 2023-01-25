@@ -8,7 +8,14 @@ import { CONSTANTS } from "../utils/env";
 import { logError, logInfo } from "../utils/logger";
 import { generateRandomPassword } from "../utils/randomPasswordGenerator";
 import { getCurrentUserRoles } from "./rolePermission";
+import { v4 as uuidv4 } from "uuid";
+import cassandra from "cassandra-driver";
 
+const client = new cassandra.Client({
+  contactPoints: [CONSTANTS.CASSANDRA_IP],
+  keyspace: "sunbird",
+  localDataCenter: "datacenter1",
+});
 const AUTH_FAIL =
   "Authentication failed ! Please check credentials and try again.";
 const API_END_POINTS = {
@@ -41,6 +48,7 @@ sashakt.get("/login", async (req: any, res) => {
     const sashaktEmail = sashaktData.email;
     const sashaktPhone = sashaktData.phone;
     const typeOfLogin = sashaktData.email ? "email" : "phone";
+
     logInfo("User details from shashakt", sashaktData);
     if (!sashaktData) {
       res.status(400).json({
@@ -97,6 +105,24 @@ sashakt.get("/login", async (req: any, res) => {
         url: API_END_POINTS.userRoles,
       });
       logInfo("Data after role update", userRoleUpdate.data);
+      const uniqueSSOuserId = uuidv4();
+      console.log(uniqueSSOuserId, "unique SSO");
+      const query =
+        "INSERT INTO sunbird.user_sso_bulkupload_v2 ( id, code, mainuseruuid, orgid, status, shashaktUserId, provider) VALUES ( ?, ?, ?, ?, ?, ?, ? )";
+      // tslint:disable-next-line: max-line-length
+      const params = [
+        uniqueSSOuserId,
+        "ASHAs",
+        responseCreateUser.data.result.userId,
+        "0136856524313067523939",
+        "success",
+        userDetailResponseFromShashakt.data.userId,
+        "SHASHAKT",
+      ];
+      await client.execute(query, params, {
+        prepare: true,
+      });
+      client.shutdown();
     }
     const encodedData = qs.stringify({
       client_id: "eShashakt",
