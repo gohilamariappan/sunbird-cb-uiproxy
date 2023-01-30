@@ -150,6 +150,7 @@ sashakt.get('/login', async (req: any, res) => {
       await client.execute(query, params, {
         prepare: true,
       })
+
     }
     const encodedData = qs.stringify({
       client_id: 'eShashakt',
