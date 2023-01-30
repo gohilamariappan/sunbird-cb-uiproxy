@@ -124,7 +124,6 @@ sashakt.get('/login', async (req: any, res) => {
       await client.execute(query, params, {
         prepare: true,
       });
-      client.shutdown();
       
     }
     const encodedData = qs.stringify({
