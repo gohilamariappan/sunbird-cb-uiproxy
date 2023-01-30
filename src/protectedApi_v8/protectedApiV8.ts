@@ -6,6 +6,7 @@ import { assessmentCompetency } from './assessmentCompetency'
 
 import { attendedContentApi } from './attendent-content'
 import { autoCompletev2 } from './autoCompletev2'
+import { autoEnrollmentApiv2 } from './autoEnrollmentv2'
 import { catalogApi } from './catalog'
 import { certificationApi } from './certifications'
 import { cohortsApi } from './cohorts'
@@ -89,4 +90,5 @@ protectedApiV8.use('/resource', userAuthKeyCloakApi)
 protectedApiV8.use('/workallocation', workAllocationApi)
 protectedApiV8.use('/frac', fracApi)
 protectedApiV8.use('/assessment', assessmentApi)
+protectedApiV8.use('/autoEnrollmentv2', autoEnrollmentApiv2)
 protectedApiV8.use('/autoCompletev2', autoCompletev2)
