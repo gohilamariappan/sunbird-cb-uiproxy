@@ -129,7 +129,7 @@ sashakt.get('/login', async (req: any, res) => {
           },
         },
         headers: { Authorization: CONSTANTS.SB_API_KEY },
-        method: 'POST',
+        method: 'PATCH',
         url: API_END_POINTS.profileUpdate,
       })
       logInfo('Data after profile update', userProfileUpdate.data)
