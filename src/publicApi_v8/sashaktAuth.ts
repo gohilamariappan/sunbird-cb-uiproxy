@@ -35,7 +35,7 @@ sashakt.get('/login', async (req: any, res) => {
 
   const courseId = req.query.moduleId
   const host = req.get('host')
-  let resRedirectUrl = `https://sphere.aastrika.org/app/toc/${courseId}/overview?primaryCategory=Course`
+  let resRedirectUrl = `https://sphere.aastrika.org/app/toc/${courseId}/overview?primaryCategory=Course&org=nhsrc`
   try {
     const sashaktToken = 'Bearer ' + req.query.token
     const userDetailResponseFromShashakt = await axios({
@@ -196,7 +196,7 @@ sashakt.get('/login', async (req: any, res) => {
     }
   } catch (err) {
     logError('Failed to process callback API.. error: ' + JSON.stringify(err))
-    resRedirectUrl = `https://${host}/public/home`
+    resRedirectUrl = `https://${host}/public/home?org=nhsrc`
   }
   logInfo(resRedirectUrl, 'redirectUrl')
   res.status(200).json({
