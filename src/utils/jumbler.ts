@@ -23,7 +23,7 @@ export async function jumbler(path: string) {
       timeLimit: response.data.timeLimit,
     }
     logInfo('Question format....' + questionObject)
-    i = 0
+    i = 1
     return questionObject
   })
 }
