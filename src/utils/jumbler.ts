@@ -27,7 +27,7 @@ export async function jumbler(path: string) {
     return questionObject
   })
 }
-let i = 0
+let i = 1
 // tslint:disable-next-line: no-any
 const falseCreator = (nums: any) => {
   for (const value of nums.options) {
