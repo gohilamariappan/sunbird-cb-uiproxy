@@ -73,10 +73,7 @@ mobileAppApi.post("/submitAssessment", async (req, res) => {
       accessToken,
       userId
     );
-    res.status(assessmentSubmitStatus.status).json({
-      data: assessmentSubmitStatus.data,
-      message: assessmentSubmitStatus.message,
-    });
+    res.status(assessmentSubmitStatus.status).json(assessmentSubmitStatus.data);
   } catch (err) {
     res.status(404).json({
       message: "Error occured while submit",
