@@ -1,89 +1,64 @@
 import axios from 'axios'
-import { Router } from 'express'
 import _ from 'lodash'
-import { axiosRequestConfig } from '../configs/request.config'
-import { CONSTANTS } from '../utils/env'
-import { logError, logInfo } from '../utils/logger'
-import { ERROR } from '../utils/message'
-import {
-  extractUserIdFromRequest,
-  extractUserToken,
-} from '../utils/requestExtract'
-export const assessmentApi = Router()
-const GENERAL_ERR_MSG = 'Failed due to unknown reason'
+import { CONSTANTS } from './env'
+import { logError, logInfo } from './logger'
 const API_END_POINTS = {
   assessmentSubmitV2: `${CONSTANTS.SB_EXT_API_BASE_2}/v2/user`,
   updateAssessmentContent: `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/course/v1/content/state/update`,
 }
-assessmentApi.post('/submit/v2', async (req, res) => {
-  logInfo('>>>>>>>>>>>>inside submit v2')
+
+export async function assessmentCreator(
+  // tslint:disable-next-line: no-any
+  assessmentReqData: any,
+  // tslint:disable-next-line: no-any
+  userToken: any,
+  // tslint:disable-next-line: no-any
+  userId: any
+) {
+  const statusMessage = {
+    data: {},
+    message: 'Assessment submitted successfully',
+    status: 200,
+  }
   try {
-    logInfo('Check Submit V2 : ', req.body.artifactUrl)
-    if (!req.body.artifactUrl) {
-      res.status(400).json({
-        msg: 'Warning ! Artifact Url can not be empty.',
-        status: 'error',
-        status_code: 400,
-      })
-    }
-    if (!req.body.courseId) {
-      res.status(400).json({
-        msg: 'Warning ! Course Id can not be empty.',
-        status: 'error',
-        status_code: 400,
-      })
-    }
-    if (!req.body.batchId) {
-      res.status(400).json({
-        msg: 'Warning ! Batch Id can not be empty.',
-        status: 'error',
-        status_code: 400,
-      })
-    }
-    const org = req.header('org')
-    const rootOrg = req.header('rootOrg')
-    if (!org || !rootOrg) {
-      res.status(400).send(ERROR.ERROR_NO_ORG_DATA)
-      return
-    }
-    const { artifactUrl } = req.body
-    const assessmentData = await fetchAssessment(artifactUrl)
-    if (assessmentData) {
-      const formatedRequest = getFormatedRequest(assessmentData, req.body)
-      logInfo('formatedRequest', formatedRequest)
-      const userId = extractUserIdFromRequest(req)
+    const batchId = assessmentReqData.batchId
+    const courseId = assessmentReqData.courseId
+    const assessmentId = assessmentReqData.contentId
+    const assessmentQuestions = await fetchAssessment(
+      assessmentReqData.artifactUrl
+    )
+    if (assessmentQuestions) {
+      const formatedRequest = getFormatedRequest(
+        assessmentQuestions,
+        assessmentReqData
+      )
       const url = `${API_END_POINTS.assessmentSubmitV2}/assessment/submit`
-      // Create new key into session and add metadata
-      const accessToken = extractUserToken(req)
       const response = await axios({
-        ...axiosRequestConfig,
         data: formatedRequest,
         headers: {
           Authorization: CONSTANTS.SB_API_KEY,
-          rootOrg,
+          rootOrg: 'aastar',
           userId,
-          'x-authenticated-user-token': accessToken,
+          'x-authenticated-user-token': userToken,
         },
         method: 'POST',
         url,
       })
+      logInfo('Submit assessment response', response.data)
       const revisedData = {
         request: {
           contents: [
             {
-              batchId: req.body.batchId,
+              batchId,
               completionPercentage: 100,
-              contentId: req.body.contentId,
-              courseId: req.body.courseId,
+              contentId: assessmentId,
+              courseId,
               status: 2,
             },
           ],
-          userId: req.body.userId ? req.body.userId : userId,
+          userId,
         },
       }
-      logInfo('Content has completed the course.' + revisedData)
-      // exception for pre-assessments
-      // tslint:disable-next-line: max-line-length
       const assessmentZeroCases = [
         'do_113474390542598144143',
         'do_113474390542598144144',
@@ -128,57 +103,33 @@ assessmentApi.post('/submit/v2', async (req, res) => {
         'do_113752574847107072175',
         'do_113752615709573120178',
       ]
-      if (assessmentZeroCases.indexOf(req.body.contentId) > 0) {
+      if (assessmentZeroCases.indexOf(assessmentId) > 0) {
         response.data.passPercent = 0
       }
       if (response.data.result >= response.data.passPercent) {
         await axios({
-          ...axiosRequestConfig,
           data: revisedData,
           headers: {
             Authorization: CONSTANTS.SB_API_KEY,
-            'x-authenticated-user-token': accessToken,
+            'x-authenticated-user-token': userToken,
           },
           method: 'PATCH',
           url: API_END_POINTS.updateAssessmentContent,
         })
       }
-
-      res.status(response.status).send(response.data)
+      statusMessage.data = response.data
+      return statusMessage
     }
   } catch (err) {
-    logError('submitassessment  failed >>>>>' + err)
-    res.status(500).send({
-      error: err,
-      message: GENERAL_ERR_MSG,
-    })
+    statusMessage.status = 404
+    statusMessage.message = 'Error occured while submit in cb-ext'
+    return statusMessage
   }
-})
-assessmentApi.post('/get', async (req, res) => {
-  try {
-    if (!req.body.artifactUrl) {
-      res.status(400).json({
-        msg: 'artifact Url can not be empty',
-        status: 'error',
-        status_code: 400,
-      })
-    }
-    const { artifactUrl } = req.body
-    const assessmentData = await fetchAssessment(artifactUrl)
-    const formatedData = getFormatedResponse(assessmentData)
-    res.status(200).json(formatedData)
-    logInfo('formatedData Data in JSON :', JSON.stringify(formatedData))
-  } catch (err) {
-    res.status(401).send({
-      error: 'error while fetching assesment !!',
-    })
-  }
-})
+}
 const fetchAssessment = async (artifactUrl: string) => {
   logInfo('Checking fetchAssessment : ', artifactUrl)
   try {
     const response = await axios({
-      ...axiosRequestConfig,
       method: 'GET',
       url: artifactUrl,
     })
@@ -191,36 +142,6 @@ const fetchAssessment = async (artifactUrl: string) => {
     logError('fetchAssement  failed')
   }
 }
-// tslint:disable-next-line: no-any
-const getFormatedResponse = (data: any) => {
-  logInfo(
-    'Response of questions in formated method JSON :',
-    JSON.stringify(data.questions)
-  )
-  const assessmentInfo = {
-    isAssessment: _.get(data, 'isAssessment'),
-    questions: [],
-    timeLimit: _.get(data, 'timeLimit'),
-  }
-
-  const formtedAssessmentInfo = _.forEach(data.questions, (qkey) => {
-    // eslint-disable-next-line
-    if (qkey.questionType === 'mcq-sca' || qkey.questionType === 'mtf') {
-      _.forEach(qkey.options, (optKey) => {
-        _.set(optKey, 'isCorrect', false)
-      })
-      // eslint-disable-next-line
-    } else if (qkey.questionType === 'fitb' && qkey.options.length > 0) {
-      _.forEach(qkey.options, (optKey) => {
-        _.set(optKey, 'isCorrect', false)
-        _.set(optKey, 'text', '')
-      })
-    }
-  })
-  assessmentInfo.questions = formtedAssessmentInfo
-  return assessmentInfo
-}
-// eslint-disable-next-line
 // tslint:disable-next-line: no-any
 const getFormatedRequest = (data: any, requestBody: any) => {
   logInfo(
