@@ -24,7 +24,7 @@ const API_END_POINTS = {
   fetchUserByEmail: `${CONSTANTS.KONG_API_BASE}/user/v1/exists/email/`,
   fetchUserByMobileNo: `${CONSTANTS.KONG_API_BASE}/user/v1/exists/phone/`,
   generateToken: `${CONSTANTS.HTTPS_HOST}/auth/realms/sunbird/protocol/openid-connect/token`,
-  profileUpdate: `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/api/user/private/v1/update`,
+  profileUpdate: `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/user/private/v1/update`,
   sashaktUserDetailsUrl: `${CONSTANTS.SASHAKT_USER_DETAILS_URL}`,
   userRoles: `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/user/private/v1/assign/role`,
 }
@@ -35,7 +35,7 @@ sashakt.get('/login', async (req: any, res) => {
 
   const courseId = req.query.moduleId
   const host = req.get('host')
-  let resRedirectUrl = `https://sphere.aastrika.org/app/toc/${courseId}/overview?primaryCategory=Course`
+  let resRedirectUrl = `https://sphere.aastrika.org/app/toc/${courseId}/overview?primaryCategory=Course&org=nhsrc`
   try {
     const sashaktToken = 'Bearer ' + req.query.token
     const userDetailResponseFromShashakt = await axios({
@@ -196,7 +196,7 @@ sashakt.get('/login', async (req: any, res) => {
     }
   } catch (err) {
     logError('Failed to process callback API.. error: ' + JSON.stringify(err))
-    resRedirectUrl = `https://${host}/public/home`
+    resRedirectUrl = `https://${host}/public/home?org=nhsrc`
   }
   logInfo(resRedirectUrl, 'redirectUrl')
   res.status(200).json({
