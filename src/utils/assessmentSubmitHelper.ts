@@ -27,6 +27,13 @@ export async function assessmentCreator(
     const assessmentQuestions = await fetchAssessment(
       assessmentReqData.artifactUrl
     )
+    let passPercentage = 60
+    if (assessmentReqData.passPercentage == 0) {
+      passPercentage = 0
+    } else if (assessmentReqData.passPercentage) {
+      passPercentage = assessmentReqData.passPercentage
+    }
+    logInfo(JSON.stringify(passPercentage), 'passPercentage')
     if (assessmentQuestions) {
       const formatedRequest = getFormatedRequest(
         assessmentQuestions,
@@ -59,54 +66,9 @@ export async function assessmentCreator(
           userId,
         },
       }
-      const assessmentZeroCases = [
-        'do_113474390542598144143',
-        'do_113474390542598144144',
-        'do_1135849304134778881218',
-        'do_11357406890855628811485',
-        'do_11357407983906816011501',
-        'do_11363374472452505611136',
-        'do_1135849304134778881218',
-        'do_1136196375912202241920',
-        'do_1136196375912202241920',
-        'do_11363162331070464011096',
-        'do_11363237170624102411122',
-        'do_1136131879061176321784',
-        'do_11364359967729254411225',
-        'do_11364361767574732811236',
-        'do_11364354964428390411199',
-        'do_11364352865782169611191',
-        'do_11364358297626214411209',
-        'do_11364849088283443211275',
-        'do_11364359355564851211217',
-        'do_11364850667644518411277',
-        'do_1135835104849838081189',
-        'do_11357630305401241611605',
-        'do_11357423020077056011549',
-        'do_11357638775481958411623',
-        'do_11357840328540979211643',
-        'do_11357843749466112011652',
-        'do_11357846999601152011667',
-        'do_11357848737662566411678',
-        'do_11357849253907660811686',
-        'do_113581218511626240112',
-        'do_113581269589901312120',
-        'do_113581315671564288133',
-        'do_1135834780320645121175',
-        'do_113581326312898560149',
-        'do_113581384324685824164',
-        'do_113583331597459456191',
-        'do_1135834000562257921104',
-        'do_1135834057607168001114',
-        'do_1135834376942632961125',
-        'do_1137121760903741441359',
-        'do_113752574847107072175',
-        'do_113752615709573120178',
-      ]
-      if (assessmentZeroCases.indexOf(assessmentId) > 0) {
-        response.data.passPercent = 0
-      }
-      if (response.data.result >= response.data.passPercent) {
+      logInfo('response.data.result', response.data.result)
+      if (response.data.result >= passPercentage) {
+        logInfo('Came inside if condition')
         await axios({
           data: revisedData,
           headers: {
