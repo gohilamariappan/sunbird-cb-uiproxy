@@ -28,6 +28,7 @@ export async function assessmentCreator(
       assessmentReqData.artifactUrl
     );
     const passPercentage = assessmentQuestions.passPercentage || 60;
+    logInfo(passPercentage, "passPercentage");
     if (assessmentQuestions) {
       const formatedRequest = getFormatedRequest(
         assessmentQuestions,
@@ -60,8 +61,9 @@ export async function assessmentCreator(
           userId,
         },
       };
-
+      logInfo("response.data.result", response.data.result);
       if (response.data.result >= passPercentage) {
+        logInfo("Came inside if condition");
         await axios({
           data: revisedData,
           headers: {
