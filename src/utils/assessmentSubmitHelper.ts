@@ -27,6 +27,7 @@ export async function assessmentCreator(
     const assessmentQuestions = await fetchAssessment(
       assessmentReqData.artifactUrl
     );
+    logInfo(assessmentQuestions, "questions");
     const passPercentage = assessmentQuestions.passPercentage || 60;
     logInfo(passPercentage, "passPercentage");
     if (assessmentQuestions) {
