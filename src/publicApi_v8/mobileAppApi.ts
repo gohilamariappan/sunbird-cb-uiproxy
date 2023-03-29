@@ -4,6 +4,7 @@ import request from "request";
 import { assessmentCreator } from "../utils/assessmentSubmitHelper";
 import { CONSTANTS } from "../utils/env";
 import { logInfo } from "../utils/logger";
+import { getCurrentUserRoles } from "./rolePermission";
 
 export const mobileAppApi = Router();
 
@@ -79,6 +80,37 @@ mobileAppApi.post("/submitAssessment", async (req, res) => {
       message: "Error occured while submit",
     });
   }
+});
+mobileAppApi.get("/webviewLogin", async (req: any, res) => {
+  const AUTH_FAIL =
+    "Authentication failed ! Please check credentials and try again.";
+  const userToken = req.headers.authorization;
+  if (userToken) {
+    // tslint:disable-next-line: no-any
+    const decodedToken: any = jwt_decode(userToken);
+    const decodedTokenArray = decodedToken.sub.split(":");
+    const userId = decodedTokenArray[decodedTokenArray.length - 1];
+    req.session.userId = userId;
+    logInfo(userId, "userid......................");
+    req.kauth = {
+      grant: {
+        access_token: { content: decodedToken, token: userToken },
+      },
+    };
+    req.session.grant = {
+      access_token: { content: decodedToken, token: userToken },
+    };
+    logInfo("Success ! Entered into usertokenResponse..");
+    await getCurrentUserRoles(req, userToken);
+  } else {
+    res.status(302).json({
+      msg: AUTH_FAIL,
+      status: "error",
+    });
+  }
+  res.status(200).json({
+    message: "success",
+  });
 });
 function removePrefix(prefix: string, s: string) {
   return s.substr(prefix.length);
