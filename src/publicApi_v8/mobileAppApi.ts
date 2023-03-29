@@ -8,41 +8,42 @@ import { getCurrentUserRoles } from './rolePermission'
 
 export const mobileAppApi = Router()
 
-const getHeaders = (req) => {
-  return req.headers['x-authenticated-user-token']
+// tslint:disable-next-line: no-any
+const verifyToken = (req: any, res: any) => {
+  try {
+    const accessToken = req.headers['x-authenticated-user-token']
+    // tslint:disable-next-line: no-any
+    const decodedToken: any = jwt_decode(accessToken.toString())
+    const decodedTokenArray = decodedToken.sub.split(':')
+    const userId = decodedTokenArray[decodedTokenArray.length - 1]
+    return {
+      accessToken,
+      decodedToken,
+      status: 200,
+      userId,
+    }
+  } catch (error) {
+    return res.status(404).json({
+      message: 'User token missing or invalid',
+      redirectUrl: 'https://sphere.aastrika.org/public/home',
+    })
+  }
 }
 mobileAppApi.get('/getContents/*', (req, res) => {
   try {
-    const accessToken = getHeaders(req)
-    if (!accessToken) {
-      res.status(404).json({
-        message: 'User token missing',
-      })
-      return
+    const accesTokenResult = verifyToken(req, res)
+    if (accesTokenResult.status == 200) {
+      const path = removePrefix(
+        '/public/v8/mobileApp/getContents/',
+        req.originalUrl
+      )
+      const sunbirdUrl = CONSTANTS.S3_BUCKET_URL + path
+      logInfo(
+        'New getcontents sunbird URL for Mobile APP >>>>>>>>>>> ',
+        sunbirdUrl
+      )
+      return request(sunbirdUrl).pipe(res)
     }
-    let userId = ''
-    try {
-      // tslint:disable-next-line: no-any
-      const decodedToken: any = jwt_decode(accessToken.toString())
-      const decodedTokenArray = decodedToken.sub.split(':')
-      userId = decodedTokenArray[decodedTokenArray.length - 1]
-    } catch (error) {
-      res.status(404).json({
-        message: 'Invalid user token',
-      })
-      return
-    }
-    logInfo('UserId for new APP api getContents', userId)
-    const path = removePrefix(
-      '/public/v8/mobileApp/getContents/',
-      req.originalUrl
-    )
-    const sunbirdUrl = CONSTANTS.S3_BUCKET_URL + path
-    logInfo(
-      'New getcontents sunbird URL for Mobile APP >>>>>>>>>>> ',
-      sunbirdUrl
-    )
-    return request(sunbirdUrl).pipe(res)
   } catch (err) {
     res.status(404).json({
       message: 'Content not found',
@@ -52,32 +53,19 @@ mobileAppApi.get('/getContents/*', (req, res) => {
 
 mobileAppApi.post('/submitAssessment', async (req, res) => {
   try {
-    const assessmentData = req.body
-    const accessToken = getHeaders(req)
-    if (!accessToken) {
-      res.status(404).json({
-        message: 'User token missing',
-      })
-      return
+    const accesTokenResult = verifyToken(req, res)
+    if (accesTokenResult.status == 200) {
+      const accessToken = accesTokenResult.accessToken
+      const userId = accesTokenResult.userId
+      const assessmentSubmitStatus = await assessmentCreator(
+        req.body,
+        accessToken,
+        userId
+      )
+      res
+        .status(assessmentSubmitStatus.status)
+        .json(assessmentSubmitStatus.data)
     }
-    let userId = ''
-    try {
-      // tslint:disable-next-line: no-any
-      const decodedToken: any = jwt_decode(accessToken.toString())
-      const decodedTokenArray = decodedToken.sub.split(':')
-      userId = decodedTokenArray[decodedTokenArray.length - 1]
-    } catch (error) {
-      res.status(404).json({
-        message: 'Invalid user token',
-      })
-      return
-    }
-    const assessmentSubmitStatus = await assessmentCreator(
-      assessmentData,
-      accessToken,
-      userId
-    )
-    res.status(assessmentSubmitStatus.status).json(assessmentSubmitStatus.data)
   } catch (err) {
     res.status(404).json({
       message: 'Error occured while submit',
@@ -86,35 +74,28 @@ mobileAppApi.post('/submitAssessment', async (req, res) => {
 })
 // tslint:disable-next-line: no-any
 mobileAppApi.get('/webviewLogin', async (req: any, res) => {
-  const AUTH_FAIL =
-    'Authentication failed ! Please check credentials and try again.'
-  const userToken = getHeaders(req)
-  if (userToken) {
-    // tslint:disable-next-line: no-any
-    const decodedToken: any = jwt_decode(userToken)
-    const decodedTokenArray = decodedToken.sub.split(':')
-    const userId = decodedTokenArray[decodedTokenArray.length - 1]
+  const accesTokenResult = verifyToken(req, res)
+  const accessToken = accesTokenResult.accessToken
+  const decodedToken = accesTokenResult.decodedToken
+  const userId = accesTokenResult.userId
+  if (accesTokenResult.status == 200) {
     req.session.userId = userId
     logInfo(userId, 'userid......................')
     req.kauth = {
       grant: {
-        access_token: { content: decodedToken, token: userToken },
+        access_token: { content: decodedToken, token: accessToken },
       },
     }
     req.session.grant = {
-      access_token: { content: decodedToken, token: userToken },
+      access_token: { content: decodedToken, token: accessToken },
     }
     logInfo('Success ! Entered into usertokenResponse..')
-    await getCurrentUserRoles(req, userToken)
-  } else {
-    res.status(302).json({
-      msg: AUTH_FAIL,
-      status: 'error',
+    await getCurrentUserRoles(req, accessToken)
+    res.status(200).json({
+      message: 'success',
+      redirectUrl: 'https://sphere.aastrika.org/app/profile-view',
     })
   }
-  res.status(200).json({
-    message: 'success',
-  })
 })
 function removePrefix(prefix: string, s: string) {
   return s.substr(prefix.length)
