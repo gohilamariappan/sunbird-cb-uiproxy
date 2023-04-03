@@ -31,19 +31,16 @@ const verifyToken = (req: any, res: any) => {
 }
 mobileAppApi.get('/getContents/*', (req, res) => {
   try {
-    const accesTokenResult = verifyToken(req, res)
-    if (accesTokenResult.status == 200) {
-      const path = removePrefix(
-        '/public/v8/mobileApp/getContents/',
-        req.originalUrl
-      )
-      const sunbirdUrl = CONSTANTS.S3_BUCKET_URL + path
-      logInfo(
-        'New getcontents sunbird URL for Mobile APP >>>>>>>>>>> ',
-        sunbirdUrl
-      )
-      return request(sunbirdUrl).pipe(res)
-    }
+    const path = removePrefix(
+      '/public/v8/mobileApp/getContents/',
+      req.originalUrl
+    )
+    const sunbirdUrl = CONSTANTS.S3_BUCKET_URL + path
+    logInfo(
+      'New getcontents sunbird URL for Mobile APP >>>>>>>>>>> ',
+      sunbirdUrl
+    )
+    return request(sunbirdUrl).pipe(res)
   } catch (err) {
     res.status(404).json({
       message: 'Content not found',
