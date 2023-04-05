@@ -13,6 +13,7 @@ import { homePage } from './home'
 import { mobileAppApi } from './mobileAppApi'
 import { publicCertificateFlinkv2 } from './publicCertifcateFlinkv2'
 import { publicContentApi } from './publicContent'
+import { publicSearch } from './publicSearch'
 import { sashakt } from './sashaktAuth'
 import { signup } from './signup'
 import { publicTnc } from './tnc'
@@ -48,3 +49,4 @@ publicApiV8.use('/sashaktAuth/', sashakt)
 publicApiV8.use('/appCertificateDownload/', appCertificateDownload)
 publicApiV8.use('/publicCertificateFlinkv2/', publicCertificateFlinkv2)
 publicApiV8.use('/mobileApp/', mobileAppApi)
+publicApiV8.use('/publicSearch/', publicSearch)
