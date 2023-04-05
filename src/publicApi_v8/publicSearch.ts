@@ -122,12 +122,12 @@ publicSearch.post("/getCourses", async (request, response) => {
           }
           finalConcatenatedData = courseDataPrimary.concat(courseDataSecondary);
           response.status(200).json({
+            responseCode: "OK",
             result: {
               content: finalConcatenatedData,
               factes: facetsData,
             },
             status: 200,
-            responseCode: "OK",
           });
         }
       );
