@@ -125,7 +125,7 @@ publicSearch.post("/getCourses", async (request, response) => {
             responseCode: "OK",
             result: {
               content: finalConcatenatedData,
-              factes: facetsData,
+              facets: facetsData,
             },
             status: 200,
           });
