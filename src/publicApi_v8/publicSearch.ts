@@ -126,6 +126,8 @@ publicSearch.post("/getCourses", async (request, response) => {
               content: finalConcatenatedData,
               factes: facetsData,
             },
+            status: 200,
+            responseCode: "OK",
           });
         }
       );
