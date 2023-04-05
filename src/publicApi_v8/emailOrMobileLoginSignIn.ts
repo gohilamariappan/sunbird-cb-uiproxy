@@ -7,8 +7,10 @@ import qs from 'querystring'
 import { axiosRequestConfig } from '../configs/request.config'
 import { CONSTANTS } from '../utils/env'
 import { logError, logInfo } from '../utils/logger'
+import { generateRandomPassword } from '../utils/randomPasswordGenerator'
 import { getOTP, validateOTP } from './otp'
 import { getCurrentUserRoles } from './rolePermission'
+
 const API_END_POINTS = {
   createUserWithMobileNo: `${CONSTANTS.KONG_API_BASE}/user/v3/create`,
   fetchUserByEmail: `${CONSTANTS.KONG_API_BASE}/user/v1/exists/email/`,
@@ -45,10 +47,12 @@ emailOrMobileLogin.post('/signup', async (req, res) => {
         status_code: 400,
       })
     }
-    const { firstName, email, lastName, password } = req.body
+    const { firstName, email, lastName } = req.body
     // tslint:disable-next-line: no-any
     let profile: any = {}
     let isUserExist = {}
+    let password = req.body.password
+
     // tslint:disable-next-line: no-any
     let newUserDetails: any = {}
     logInfo('Req body', req.body)
@@ -56,6 +60,14 @@ emailOrMobileLogin.post('/signup', async (req, res) => {
     if (!isUserExist) {
       logInfo('creating new  user')
       // tslint:disable-next-line: no-any
+      if (!password) {
+        password = generateRandomPassword(8, {
+          digits: true,
+          lowercase: true,
+          symbols: true,
+          uppercase: true,
+        })
+      }
       profile = {
         emailId: email,
         fname: firstName,
@@ -248,16 +260,25 @@ emailOrMobileLogin.post('/registerUserWithMobile', async (req, res) => {
         status_code: 400,
       })
     }
-    const { firstName, phone, lastName, password } = req.body
+    const { firstName, phone, lastName } = req.body
     // tslint:disable-next-line: no-any
     let profile: any = {}
     let isUserExist = {}
     // tslint:disable-next-line: no-any
     let newUserDetails: any = {}
+    let password = req.body.password
     logInfo('Req body', req.body)
     isUserExist = await fetchUserBymobileorEmail(phone, 'phone')
     if (!isUserExist) {
       logInfo('creating new  user')
+      if (!password) {
+        password = generateRandomPassword(8, {
+          digits: true,
+          lowercase: true,
+          symbols: true,
+          uppercase: true,
+        })
+      }
       profile = {
         fname: firstName,
         lname: lastName,
@@ -419,7 +440,15 @@ emailOrMobileLogin.post('/auth', async (req: any, res, next) => {
           logInfo('Entered into /login/auth endpoint >>> ')
           const mobileNumber = req.body.mobileNumber
           const email = req.body.email
-          const password = req.body.password
+          let password = req.body.password
+          if (!password) {
+            password = generateRandomPassword(8, {
+              digits: true,
+              lowercase: true,
+              symbols: true,
+              uppercase: true,
+            })
+          }
           const username = mobileNumber ? mobileNumber : email
           const isEmailUserExist = await fetchUserBymobileorEmail(
             email,
@@ -524,7 +553,6 @@ emailOrMobileLogin.post('/authv2/*', async (req: any, res, next) => {
         logInfo('Entered into /login/authv2 endpoint >>> ')
 
         try {
-
           const code = req.query.code
 
           logInfo('Valdating Code >>> ', code)
