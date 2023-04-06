@@ -188,13 +188,7 @@ const validateRequestBody = (req: Request, res: Response, next: any) => {
       status_code: 400,
     })
   }
-  if (!req.body.password) {
-    res.status(400).json({
-      msg: 'Password. can not be empty',
-      status: 'error',
-      status_code: 400,
-    })
-  }
+
   next()
 }
 
