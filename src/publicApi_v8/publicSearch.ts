@@ -257,9 +257,14 @@ publicSearch.post("/getCourses", async (request, response) => {
             if (!courseDataPrimary) {
               courseDataPrimary = [];
             }
+            let finalFilteredData = [];
             finalConcatenatedData =
               courseDataPrimary.concat(courseDataSecondary);
-
+            finalConcatenatedData.forEach((element) => {
+              if (!(element.competency == true)) {
+                finalFilteredData.push(element);
+              }
+            });
             if (finalConcatenatedData.length == 0) {
               response.status(200).json({
                 responseCode: "OK",
@@ -272,12 +277,11 @@ publicSearch.post("/getCourses", async (request, response) => {
               });
               return;
             }
-
             response.status(200).json({
               responseCode: "OK",
               result: {
-                content: finalConcatenatedData,
-                count: finalConcatenatedData.length,
+                content: finalFilteredData,
+                count: finalFilteredData.length,
                 facets: facetsData,
               },
               status: 200,
