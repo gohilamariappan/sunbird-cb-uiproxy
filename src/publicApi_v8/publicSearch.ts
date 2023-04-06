@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { Router } from 'express'
+import _ from 'lodash'
 import { Client } from 'pg'
 import { CONSTANTS } from '../utils/env'
 import { logInfo } from '../utils/logger'
@@ -265,6 +266,7 @@ publicSearch.post('/getCourses', async (request, response) => {
                 finalFilteredData.push(element)
               }
             })
+            const uniqueCourseData = _.uniqBy(finalFilteredData, 'identifier')
             if (finalConcatenatedData.length == 0) {
               response.status(200).json({
                 responseCode: 'OK',
@@ -280,8 +282,8 @@ publicSearch.post('/getCourses', async (request, response) => {
             response.status(200).json({
               responseCode: 'OK',
               result: {
-                content: finalFilteredData,
-                count: finalFilteredData.length,
+                content: uniqueCourseData,
+                count: uniqueCourseData.length,
                 facets: facetsData,
               },
               status: 200,
