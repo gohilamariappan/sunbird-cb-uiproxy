@@ -218,7 +218,7 @@ publicSearch.post('/getCourses', async (request, response) => {
         client.connect()
         let finalConcatenatedData = []
         client.query(
-          `SELECT id FROM public.data_node where type='Competency' and name LIKE  '%${courseSearchRequestData.request.query}%'`,
+          `SELECT id FROM public.data_node where type='Competency' and name ILIKE  '%${courseSearchRequestData.request.query}%'`,
           // tslint:disable-next-line: no-any
           async (err: any, res: any) => {
             logInfo(err)
