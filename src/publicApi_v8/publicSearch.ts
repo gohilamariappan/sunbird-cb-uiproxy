@@ -182,7 +182,6 @@ publicSearch.post("/getCourses", async (request, response) => {
       );
       const responseForCompetencySelfAssessmentController =
         selfAssessmentCourseControllerData.data.result.content;
-      console.log(selfAssessmentCourseControllerData.data.result);
       response.status(200).json({
         responseCode: "OK",
         result: {
