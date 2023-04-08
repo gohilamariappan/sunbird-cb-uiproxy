@@ -3,10 +3,8 @@ import { Router } from 'express'
 import _ from 'lodash'
 import { Client } from 'pg'
 import { CONSTANTS } from '../utils/env'
-import { logInfo } from '../utils/logger'
 
 export const publicSearch = Router()
-const unknownError = 'Failed due to unknown reason'
 
 const API_END_POINTS = {
   search: `${CONSTANTS.HTTPS_HOST}/apis/public/v8/publicContent/v1/search`,
@@ -61,7 +59,7 @@ const competencySearchController = async (courseSearchRequestData: any) => {
   })
 }
 // tslint:disable-next-line: no-any
-const homePageCourseController = async () => {
+const homePageCourseController = async (sortMethod: any) => {
   const requestBodyHomePageCourseData = JSON.stringify({
     query: '',
     request: {
@@ -81,7 +79,7 @@ const homePageCourseController = async () => {
         status: ['Live'],
       },
       sort_by: {
-        lastUpdatedOn: 'desc',
+        lastUpdatedOn: sortMethod,
       },
     },
     sort: [
@@ -125,8 +123,6 @@ const selfAssessmentController = async (courseSearchRequestData: any) => {
 publicSearch.post('/getCourses', async (request, response) => {
   try {
     const courseSearchRequestData = request.body
-    logInfo(courseSearchRequestData, 'Request data')
-    // .................................For competency search levels..................................
     if (courseSearchRequestData.request.filters.competencySearch) {
       const competencySearchControllerData = await competencySearchController(
         courseSearchRequestData
@@ -166,7 +162,11 @@ publicSearch.post('/getCourses', async (request, response) => {
       !courseSearchRequestData.request.filters.competencySearch &&
       !courseSearchRequestData.request.query
     ) {
-      const homePageCourseControllerData = await homePageCourseController()
+      const sortMethod =
+        courseSearchRequestData.request.sort_by.lastUpdatedOn || 'asc'
+      const homePageCourseControllerData = await homePageCourseController(
+        sortMethod
+      )
       const responseForHomePageCourseData =
         homePageCourseControllerData.data.result.content
       const homePageCourseFiltered = []
@@ -270,7 +270,6 @@ publicSearch.post('/getCourses', async (request, response) => {
                 method: 'post',
                 url: API_END_POINTS.search,
               })
-
               courseDataSecondary =
                 elasticSearchResponseSecond.data.result.content
             }
@@ -316,10 +315,8 @@ publicSearch.post('/getCourses', async (request, response) => {
       }
     }
   } catch (err) {
-    response.status((err && err.response && err.response.status) || 500).send(
-      (err && err.response && err.response.data) || {
-        error: unknownError,
-      }
-    )
+    response.status(400).json({
+      message: 'Error while public search',
+    })
   }
 })
