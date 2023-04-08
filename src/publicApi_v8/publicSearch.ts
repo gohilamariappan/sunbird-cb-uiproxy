@@ -162,8 +162,9 @@ publicSearch.post('/getCourses', async (request, response) => {
       !courseSearchRequestData.request.filters.competencySearch &&
       !courseSearchRequestData.request.query
     ) {
-      const sortMethod =
-        courseSearchRequestData.request.sort_by.lastUpdatedOn || 'asc'
+      const sortMethod = courseSearchRequestData.request.sort_by
+        ? courseSearchRequestData.request.sort_by.lastUpdatedOn
+        : 'asc'
       const homePageCourseControllerData = await homePageCourseController(
         sortMethod
       )
@@ -273,9 +274,7 @@ publicSearch.post('/getCourses', async (request, response) => {
               courseDataSecondary =
                 elasticSearchResponseSecond.data.result.content
             }
-            if (!courseDataPrimary) {
-              courseDataPrimary = []
-            }
+            if (!courseDataPrimary) courseDataPrimary = []
             const finalFilteredData = []
             finalConcatenatedData =
               courseDataPrimary.concat(courseDataSecondary)
