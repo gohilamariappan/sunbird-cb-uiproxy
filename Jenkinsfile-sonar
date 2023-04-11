@@ -23,7 +23,7 @@ node('build-slave') {
 		
 		              stage('SonarQube analysis') {
                
-                  sh 'cd $docker_file_path && npm cache clear && npm install -g node'
+                  sh 'cd $docker_file_path && npm cache clear && npm install'
              
    			 // requires SonarQube Scanner 2.8+
    				 def scannerHome = tool 'sonar_scanner';
