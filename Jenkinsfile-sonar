@@ -20,11 +20,8 @@ node('build-slave') {
                 commit_hash = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
                 build_tag = sh(script: "echo " + params.github_release_tag.split('/')[-1] + "_" + commit_hash + "_" + env.BUILD_NUMBER, returnStdout: true).trim()
                 echo "build_tag: " + build_tag
-		
-		              stage('SonarQube analysis') {
+		          stage('SonarQube analysis') {
                
-                  sh 'cd $docker_file_path && npm cache clear && npm install'
-             
    			 // requires SonarQube Scanner 2.8+
    				 def scannerHome = tool 'sonar_scanner';
    				 withSonarQubeEnv('sonarqube') {
@@ -33,7 +30,11 @@ node('build-slave') {
                  '''
     			 }
   	}
-  stage("Quality Gate") {
+    
+    
+    
+    
+    stage("Quality Gate") {
   
     timeout(time: 1, unit: 'HOURS') {       // Just in case something goes wrong, pipeline will be killed after a timeout
   		 def qg = waitForQualityGate() // Reuse taskId previously collected by withSonarQubeEnv
@@ -44,7 +45,7 @@ node('build-slave') {
   }
 }
 
-		      stage('docker-pre-build') {
+		          stage('docker-pre-build') {
               sh '''
               pwd
               docker build -f ./Dockerfile.build -t $docker_pre_build .
