@@ -22,7 +22,7 @@ node('build-slave') {
                 echo "build_tag: " + build_tag
 		          stage('SonarQube analysis') {
                
-                  sh 'cd $docker_file_path && npm install'
+                  sh 'cd $docker_file_path && npm i'
              
    			 // requires SonarQube Scanner 2.8+
    				 def scannerHome = tool 'sonar_scanner';
