@@ -4,6 +4,7 @@ import jwt_decode from 'jwt-decode'
 import request from 'request'
 import { assessmentCreator } from '../utils/assessmentSubmitHelper'
 import { CONSTANTS } from '../utils/env'
+import { jumbler } from '../utils/jumbler'
 import { logError, logInfo } from '../utils/logger'
 import { getCurrentUserRoles } from './rolePermission'
 
@@ -76,6 +77,40 @@ mobileAppApi.post('/submitAssessment', async (req, res) => {
   } catch (err) {
     res.status(404).json({
       message: 'Error occured while submit',
+    })
+  }
+})
+mobileAppApi.get('/v1/assessment/*', async (req, res) => {
+  try {
+    const path = removePrefix(
+      '/public/v8/mobileApp/v1/assessment/',
+      req.originalUrl
+    )
+    jumbler(path).then((response) => {
+      return res.send(response)
+    })
+    logInfo('New getAssessments competency mobile APP >>>>>>>>>>> ', path)
+  } catch (err) {
+    res.status(404).json({
+      message: 'Error occured while get assessment',
+    })
+  }
+})
+mobileAppApi.post('/v1/competencyAssessment/submit', async (req, res) => {
+  try {
+    const accesTokenResult = verifyToken(req, res)
+    const accessToken = accesTokenResult.accessToken
+    const userId = accesTokenResult.userId
+    const assessmentData = req.body
+    const assessmentSubmitStatus = await assessmentCreator(
+      assessmentData,
+      accessToken,
+      userId
+    )
+    res.status(assessmentSubmitStatus.status).json(assessmentSubmitStatus.data)
+  } catch (err) {
+    res.status(404).json({
+      message: 'Error occured while submit assessment',
     })
   }
 })
