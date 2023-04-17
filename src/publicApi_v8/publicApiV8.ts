@@ -1,7 +1,6 @@
 import express from 'express'
 import { CONSTANTS } from '../utils/env'
 import { proxyCreatorRoute } from '../utils/proxyCreator'
-import { aesEncryption } from './aesEncryption'
 import { appCertificateDownload } from './appCertificateDownload'
 import { validateCertificate } from './certificateValidate'
 import { publicCompetencyUser } from './competencyUser'
@@ -16,6 +15,7 @@ import { publicContentApi } from './publicContent'
 import { publicSearch } from './publicSearch'
 import { sashakt } from './sashaktAuth'
 import { signup } from './signup'
+import { signupWithAutoLogin } from './signupWithAutoLogin'
 import { publicTnc } from './tnc'
 
 export const publicApiV8 = express.Router()
@@ -36,7 +36,7 @@ publicApiV8.use(
 publicApiV8.use('/competency', publicCompetencyUser)
 publicApiV8.use('/tnc', publicTnc)
 publicApiV8.use('/signup', signup)
-publicApiV8.use('/autologinSignup', aesEncryption)
+publicApiV8.use('/signupWithAutoLogin', signupWithAutoLogin)
 publicApiV8.use('/homePage', homePage)
 publicApiV8.use('/register/', customSignUp)
 publicApiV8.use('/emailMobile/', emailOrMobileLogin)
