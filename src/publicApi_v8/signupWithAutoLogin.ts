@@ -129,7 +129,7 @@ const profileUpdate = async (profileData: any, userId: any) => {
               personalDetails: {
                 dob: "01-01-2000",
                 firstname: profileData.firstName,
-                surname: profileData.lasNname,
+                surname: profileData.lastName,
               },
               userId,
             },
