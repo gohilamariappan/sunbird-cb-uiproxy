@@ -244,7 +244,7 @@ publicSearch.post('/getCourses', async (request, response) => {
         pool.connect((err: any, client: any, release: any) => {
           logError(err)
           client.query(
-            `SELECT id FROM public.data_node where type=$1 and name ILIKE $2'`,
+            `SELECT id FROM public.data_node where type=$1 and name ILIKE $2`,
             ['competency', courseSearchRequestData.request.query],
             // tslint:disable-next-line: no-any
             async (_err: any, res: any) => {
