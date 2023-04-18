@@ -1,35 +1,46 @@
-import axios from "axios";
-import { Router } from "express";
-import _ from "lodash";
-import { Client } from "pg";
-import { CONSTANTS } from "../utils/env";
+import axios from 'axios'
+import { Router } from 'express'
+import _ from 'lodash'
+import { Pool } from 'pg'
+import { CONSTANTS } from '../utils/env'
+import { logError } from '../utils/logger'
 
-export const publicSearch = Router();
+export const publicSearch = Router()
 
+const facets = [
+  'learningMode',
+  'duration',
+  'complexityLevel',
+  'catalogPaths',
+  'sourceShortName',
+  'region',
+  'concepts',
+  'lastUpdatedOn',
+]
 const API_END_POINTS = {
   search: `${CONSTANTS.HTTPS_HOST}/apis/public/v8/publicContent/v1/search`,
-};
+}
 const elasticSearchConnectionDetails = {
   database: CONSTANTS.POSTGRES_DATABASE,
   host: CONSTANTS.POSTGRES_HOST,
   password: CONSTANTS.POSTGRES_PASSWORD,
   port: CONSTANTS.POSTGRES_PORT,
   user: CONSTANTS.POSTGRES_USER,
-};
-const client = new Client({
+}
+
+const pool = new Pool({
   database: elasticSearchConnectionDetails.database,
   host: elasticSearchConnectionDetails.host,
   password: elasticSearchConnectionDetails.password,
   port: Number(elasticSearchConnectionDetails.port),
   user: elasticSearchConnectionDetails.user,
-});
-
+})
 const headers = {
-  Accept: "application/json, text/plain, */*",
-  "Content-Type": "application/json",
-  org: "aastar",
-  rootorg: "aastar",
-};
+  Accept: 'application/json, text/plain, */*',
+  'Content-Type': 'application/json',
+  org: 'aastar',
+  rootorg: 'aastar',
+}
 // tslint:disable-next-line: no-any
 const competencySearchController = async (courseSearchRequestData: any) => {
   const requestBodyForCompetencyLevel = JSON.stringify({
@@ -37,46 +48,46 @@ const competencySearchController = async (courseSearchRequestData: any) => {
       filters: {
         competencySearch:
           courseSearchRequestData.request.filters.competencySearch,
-        contentType: ["Course"],
-        primaryCategory: ["Course"],
-        status: ["Live"],
+        contentType: ['Course'],
+        primaryCategory: ['Course'],
+        status: ['Live'],
       },
       sort_by: {
-        lastUpdatedOn: "desc",
+        lastUpdatedOn: 'desc',
       },
     },
     sort: [
       {
-        lastUpdatedOn: "desc",
+        lastUpdatedOn: 'desc',
       },
     ],
-  });
+  })
   return axios({
     data: requestBodyForCompetencyLevel,
     headers,
-    method: "post",
+    method: 'post',
     url: API_END_POINTS.search,
-  });
-};
+  })
+}
 // tslint:disable-next-line: no-any
 const homePageCourseController = async (sortMethod: any) => {
   const requestBodyHomePageCourseData = JSON.stringify({
-    query: "",
+    query: '',
     request: {
       facets: [
-        "learningMode",
-        "duration",
-        "complexityLevel",
-        "catalogPaths",
-        "sourceShortName",
-        "region",
-        "concepts",
-        "lastUpdatedOn",
+        'learningMode',
+        'duration',
+        'complexityLevel',
+        'catalogPaths',
+        'sourceShortName',
+        'region',
+        'concepts',
+        'lastUpdatedOn',
       ],
       filters: {
-        contentType: ["Course"],
-        primaryCategory: ["Course"],
-        status: ["Live"],
+        contentType: ['Course'],
+        primaryCategory: ['Course'],
+        status: ['Live'],
       },
       sort_by: {
         lastUpdatedOn: sortMethod,
@@ -84,78 +95,78 @@ const homePageCourseController = async (sortMethod: any) => {
     },
     sort: [
       {
-        lastUpdatedOn: "desc",
+        lastUpdatedOn: 'desc',
       },
     ],
-  });
+  })
   return axios({
     data: requestBodyHomePageCourseData,
     headers,
-    method: "post",
+    method: 'post',
     url: API_END_POINTS.search,
-  });
-};
+  })
+}
 // tslint:disable-next-line: no-any
 const selfAssessmentController = async (courseSearchRequestData: any) => {
   const requestBodyForCompetencySelfAssessment = JSON.stringify({
     request: {
       filters: {
         competency: [true],
-        contentType: ["Course"],
+        contentType: ['Course'],
         lang: courseSearchRequestData.request.filters.lang,
-        primaryCategory: ["Course"],
-        status: ["Live"],
+        primaryCategory: ['Course'],
+        status: ['Live'],
       },
     },
     sort: [
       {
-        lastUpdatedOn: "desc",
+        lastUpdatedOn: 'desc',
       },
     ],
-  });
+  })
   return axios({
     data: requestBodyForCompetencySelfAssessment,
     headers,
-    method: "post",
+    method: 'post',
     url: API_END_POINTS.search,
-  });
-};
-publicSearch.post("/getCourses", async (request, response) => {
+  })
+}
+publicSearch.post('/getCourses', async (request, response) => {
   try {
-    const courseSearchRequestData = request.body;
+    const courseSearchRequestData = request.body
     if (courseSearchRequestData.request.filters.competencySearch) {
       const competencySearchControllerData = await competencySearchController(
         courseSearchRequestData
-      );
+      )
       if (competencySearchControllerData.data.result.count == 0) {
         response.status(200).json({
-          responseCode: "OK",
+          responseCode: 'OK',
           result: {
             content: [],
             count: 0,
           },
           status: 200,
-        });
-        return;
+        })
+        return
       }
       const responseForCompetencyLevel =
-        competencySearchControllerData.data.result.content;
-      const competencyLevelCourseFiltered = [];
+        competencySearchControllerData.data.result.content
+      const competencyLevelCourseFiltered = []
       // tslint:disable-next-line: no-any
       responseForCompetencyLevel.forEach((element: any) => {
         if (!element.competency) {
-          competencyLevelCourseFiltered.push(element);
+          competencyLevelCourseFiltered.push(element)
         }
-      });
+      })
       response.status(200).json({
-        responseCode: "OK",
+        responseCode: 'OK',
         result: {
           content: competencyLevelCourseFiltered,
           count: competencyLevelCourseFiltered.length,
         },
         status: 200,
-      });
-      return;
+      })
+      return
     } // ................................For home page courses........................................
     if (
       !courseSearchRequestData.request.filters.competency &&
@@ -164,159 +175,157 @@ publicSearch.post("/getCourses", async (request, response) => {
     ) {
       const sortMethod = courseSearchRequestData.request.sort_by
         ? courseSearchRequestData.request.sort_by.lastUpdatedOn
-        : "asc";
+        : 'asc'
       const homePageCourseControllerData = await homePageCourseController(
         sortMethod
-      );
+      )
       const responseForHomePageCourseData =
-        homePageCourseControllerData.data.result.content;
-      const homePageCourseFiltered = [];
+        homePageCourseControllerData.data.result.content
+      const homePageCourseFiltered = []
       // tslint:disable-next-line: no-any
       responseForHomePageCourseData.forEach((element: any) => {
         if (!element.competency) {
-          homePageCourseFiltered.push(element);
+          homePageCourseFiltered.push(element)
         }
-      });
+      })
       response.status(200).json({
-        responseCode: "OK",
+        responseCode: 'OK',
         result: {
           content: homePageCourseFiltered,
           count: homePageCourseFiltered.length,
           facets: homePageCourseControllerData.data.result.facets,
         },
         status: 200,
-      });
-      return;
+      })
+      return
     } // ............................. For Self assessment courses.............................
     if (courseSearchRequestData.request.filters.competency) {
       const selfAssessmentCourseControllerData = await selfAssessmentController(
         courseSearchRequestData
-      );
+      )
       const responseForCompetencySelfAssessmentController =
-        selfAssessmentCourseControllerData.data.result.content;
+        selfAssessmentCourseControllerData.data.result.content
       response.status(200).json({
-        responseCode: "OK",
+        responseCode: 'OK',
         result: {
           content: responseForCompetencySelfAssessmentController,
           count: responseForCompetencySelfAssessmentController.length,
         },
         status: 200,
-      });
-      return;
+      })
+      return
     } // .................................For search button with query on home page..............................
     if (courseSearchRequestData.request.query) {
       const courseSearchPrimaryData = JSON.stringify({
         request: {
-          facets: [
-            "learningMode",
-            "duration",
-            "complexityLevel",
-            "catalogPaths",
-            "sourceShortName",
-            "region",
-            "concepts",
-            "lastUpdatedOn",
-          ],
+          facets,
           fields: [],
           filters: {
-            contentType: ["Course"],
-            status: ["Live"],
+            contentType: ['Course'],
+            status: ['Live'],
           },
           query: `${courseSearchRequestData.request.query}`,
           sort_by: {
-            lastUpdatedOn: "",
+            lastUpdatedOn: '',
           },
         },
-      });
+      })
       const esResponsePrimaryCourses = await axios({
         data: courseSearchPrimaryData,
         headers,
-        method: "post",
+        method: 'post',
         url: API_END_POINTS.search,
-      });
-      let courseDataPrimary = esResponsePrimaryCourses.data.result.content;
-      const facetsData = esResponsePrimaryCourses.data.result.facets;
+      })
+      let courseDataPrimary = esResponsePrimaryCourses.data.result.content
+      const facetsData = esResponsePrimaryCourses.data.result.facets
       try {
-        client.connect();
-        let finalConcatenatedData = [];
-        client.query(
-          `SELECT id FROM public.data_node where type=$1 and name ILIKE $2'`,
-          ["competency", courseSearchRequestData.request.query],
-          // tslint:disable-next-line: no-any
-          async (_err: any, res: any) => {
+        let finalConcatenatedData = []
+        // tslint:disable-next-line: no-any
+        pool.connect((err: any, client: any, release: any) => {
+          logError(err)
+          client.query(
+            `SELECT id FROM public.data_node where type=$1 and name ILIKE $2'`,
+            ['competency', courseSearchRequestData.request.query],
             // tslint:disable-next-line: no-any
-            const postgresResponseData = res.rows.map((val: any) => val.id);
-            let courseDataSecondary = [];
-            if (postgresResponseData.length > 0) {
-              const elasticSearchData = [];
-              for (const postgresResponse of postgresResponseData) {
-                for (const value of [1, 2, 3, 4, 5]) {
-                  elasticSearchData.push(`${postgresResponse}-${value}`);
+            async (_err: any, res: any) => {
+              // tslint:disable-next-line: no-any
+              const postgresResponseData = res.rows.map((val: any) => val.id)
+              release()
+              let courseDataSecondary = []
+              if (postgresResponseData.length > 0) {
+                const elasticSearchData = []
+                for (const postgresResponse of postgresResponseData) {
+                  for (const value of [1, 2, 3, 4, 5]) {
+                    elasticSearchData.push(`${postgresResponse}-${value}`)
+                  }
                 }
-              }
-              const courseSearchSecondaryData = {
-                request: {
-                  filters: {
-                    competencySearch: elasticSearchData,
-                    contentType: ["Course"],
-                    primaryCategory: ["Course"],
-                    status: ["Live"],
+                const courseSearchSecondaryData = {
+                  request: {
+                    filters: {
+                      competencySearch: elasticSearchData,
+                      contentType: ['Course'],
+                      primaryCategory: ['Course'],
+                      status: ['Live'],
+                    },
+                    sort_by: { lastUpdatedOn: 'desc' },
                   },
-                  sort_by: { lastUpdatedOn: "desc" },
-                },
-                sort: [{ lastUpdatedOn: "desc" }],
-              };
-              const elasticSearchResponseSecond = await axios({
-                data: courseSearchSecondaryData,
-                headers,
-                method: "post",
-                url: API_END_POINTS.search,
-              });
-              courseDataSecondary =
-                elasticSearchResponseSecond.data.result.content;
-            }
-            if (!courseDataPrimary) courseDataPrimary = [];
-            const finalFilteredData = [];
-            finalConcatenatedData =
-              courseDataPrimary.concat(courseDataSecondary);
-            finalConcatenatedData.forEach((element) => {
-              if (!element.competency) {
-                finalFilteredData.push(element);
+                  sort: [{ lastUpdatedOn: 'desc' }],
+                }
+                const elasticSearchResponseSecond = await axios({
+                  data: courseSearchSecondaryData,
+                  headers,
+                  method: 'post',
+                  url: API_END_POINTS.search,
+                })
+                courseDataSecondary =
+                  elasticSearchResponseSecond.data.result.content
               }
-            });
-            const uniqueCourseData = _.uniqBy(finalFilteredData, "identifier");
-            if (finalConcatenatedData.length == 0) {
+              if (!courseDataPrimary) courseDataPrimary = []
+              const finalFilteredData = []
+              finalConcatenatedData =
+                courseDataPrimary.concat(courseDataSecondary)
+              finalConcatenatedData.forEach((element) => {
+                if (!element.competency) {
+                  finalFilteredData.push(element)
+                }
+              })
+              const uniqueCourseData = _.uniqBy(
+                finalFilteredData,
+                'identifier'
+              )
+              if (finalConcatenatedData.length == 0) {
+                response.status(200).json({
+                  responseCode: 'OK',
+                  result: {
+                    content: [],
+                    count: 0,
+                    facets: [],
+                  },
+                  status: 200,
+                })
+                return
+              }
               response.status(200).json({
-                responseCode: "OK",
+                responseCode: 'OK',
                 result: {
-                  content: [],
-                  count: 0,
-                  facets: [],
+                  content: uniqueCourseData,
+                  count: uniqueCourseData.length,
+                  facets: facetsData,
                 },
                 status: 200,
-              });
-              return;
+              })
             }
-            response.status(200).json({
-              responseCode: "OK",
-              result: {
-                content: uniqueCourseData,
-                count: uniqueCourseData.length,
-                facets: facetsData,
-              },
-              status: 200,
-            });
-          }
-        );
+          )
+        })
       } catch (error) {
         response.status(400).json({
-          message: "Error while connecting postgres",
-        });
+          message: 'Error while connecting postgres',
+        })
       }
     }
   } catch (err) {
     response.status(400).json({
-      message: "Error while public search",
-    });
+      message: 'Error while public search',
+    })
   }
-});
+})
