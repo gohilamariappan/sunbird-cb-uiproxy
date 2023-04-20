@@ -70,8 +70,13 @@ const competencySearchController = async (courseSearchRequestData: any) => {
   })
 }
 // tslint:disable-next-line: no-any
-const homePageCourseController = async (sortMethod: any) => {
-  const requestBodyHomePageCourseData = JSON.stringify({
+const homePageCourseController = async (
+  // tslint:disable-next-line: no-any
+  sortMethod: any,
+  // tslint:disable-next-line: no-any
+  languageSelected: any
+) => {
+  const requestBodyHomePageCourseData = {
     query: '',
     request: {
       facets: [
@@ -86,6 +91,7 @@ const homePageCourseController = async (sortMethod: any) => {
       ],
       filters: {
         contentType: ['Course'],
+        lang: [languageSelected] || '',
         primaryCategory: ['Course'],
         status: ['Live'],
       },
@@ -98,7 +104,10 @@ const homePageCourseController = async (sortMethod: any) => {
         lastUpdatedOn: 'desc',
       },
     ],
-  })
+  }
+  if (!languageSelected) {
+    delete requestBodyHomePageCourseData.request.filters.lang
+  }
   return axios({
     data: requestBodyHomePageCourseData,
     headers,
@@ -108,12 +117,12 @@ const homePageCourseController = async (sortMethod: any) => {
 }
 // tslint:disable-next-line: no-any
 const selfAssessmentController = async (courseSearchRequestData: any) => {
-  const requestBodyForCompetencySelfAssessment = JSON.stringify({
+  const requestBodyForCompetencySelfAssessment = {
     request: {
       filters: {
         competency: [true],
         contentType: ['Course'],
-        lang: courseSearchRequestData.request.filters.lang,
+        lang: courseSearchRequestData.request.filters.lang || '',
         primaryCategory: ['Course'],
         status: ['Live'],
       },
@@ -123,7 +132,10 @@ const selfAssessmentController = async (courseSearchRequestData: any) => {
         lastUpdatedOn: 'desc',
       },
     ],
-  })
+  }
+  if (!courseSearchRequestData.request.filters.lang) {
+    delete requestBodyForCompetencySelfAssessment.request.filters.lang
+  }
   return axios({
     data: requestBodyForCompetencySelfAssessment,
     headers,
@@ -131,22 +143,24 @@ const selfAssessmentController = async (courseSearchRequestData: any) => {
     url: API_END_POINTS.search,
   })
 }
+const nullResponseStatus = {
+  responseCode: 'OK',
+  result: {
+    content: [],
+    count: 0,
+  },
+  status: 200,
+}
 publicSearch.post('/getCourses', async (request, response) => {
   try {
     const courseSearchRequestData = request.body
+    const languageSelected = courseSearchRequestData.request.filters.lang || ''
     if (courseSearchRequestData.request.filters.competencySearch) {
       const competencySearchControllerData = await competencySearchController(
         courseSearchRequestData
       )
       if (competencySearchControllerData.data.result.count == 0) {
-        response.status(200).json({
-          responseCode: 'OK',
-          result: {
-            content: [],
-            count: 0,
-          },
-          status: 200,
-        })
+        response.status(200).json(nullResponseStatus)
         return
       }
       const responseForCompetencyLevel =
@@ -177,7 +191,8 @@ publicSearch.post('/getCourses', async (request, response) => {
         ? courseSearchRequestData.request.sort_by.lastUpdatedOn
         : 'asc'
       const homePageCourseControllerData = await homePageCourseController(
-        sortMethod
+        sortMethod,
+        languageSelected
       )
       const responseForHomePageCourseData =
         homePageCourseControllerData.data.result.content
@@ -216,12 +231,13 @@ publicSearch.post('/getCourses', async (request, response) => {
       return
     } // .................................For search button with query on home page..............................
     if (courseSearchRequestData.request.query) {
-      const courseSearchPrimaryData = JSON.stringify({
+      const courseSearchPrimaryData = {
         request: {
           facets,
           fields: [],
           filters: {
             contentType: ['Course'],
+            lang: [languageSelected] || '',
             status: ['Live'],
           },
           query: `${courseSearchRequestData.request.query}`,
@@ -229,7 +245,10 @@ publicSearch.post('/getCourses', async (request, response) => {
             lastUpdatedOn: '',
           },
         },
-      })
+      }
+      if (!languageSelected) {
+        delete courseSearchPrimaryData.request.filters.lang
+      }
       const esResponsePrimaryCourses = await axios({
         data: courseSearchPrimaryData,
         headers,
@@ -264,12 +283,16 @@ publicSearch.post('/getCourses', async (request, response) => {
                     filters: {
                       competencySearch: elasticSearchData,
                       contentType: ['Course'],
+                      lang: [languageSelected] || '',
                       primaryCategory: ['Course'],
                       status: ['Live'],
                     },
                     sort_by: { lastUpdatedOn: 'desc' },
                   },
                   sort: [{ lastUpdatedOn: 'desc' }],
+                }
+                if (!languageSelected) {
+                  delete courseSearchSecondaryData.request.filters.lang
                 }
                 const elasticSearchResponseSecond = await axios({
                   data: courseSearchSecondaryData,
