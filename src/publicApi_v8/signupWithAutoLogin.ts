@@ -127,11 +127,13 @@ const profileUpdate = async (profileData: any, userId: any) => {
             profileReq: {
               id: userId,
               personalDetails: {
-                dob: "01-01-2000",
                 firstname: profileData.firstName,
                 surname: profileData.lastName,
               },
               userId,
+            },
+            preferences: {
+              language: "en",
             },
           },
           userId,
@@ -183,7 +185,6 @@ signupWithAutoLogin.post("/register", async (req, res) => {
     const newUserDetail = await createAccount(profileData);
 
     const userId = newUserDetail.data.result.userId;
-    await updateRoles(userId);
     await profileUpdate(profileData, userId);
     try {
       await getOTP(
@@ -239,6 +240,7 @@ signupWithAutoLogin.post("/validateOtpWithLogin", async (req: any, res) => {
       );
       if (verifyOtpResponse.data.result.response === "SUCCESS") {
         logInfo("Otp is verified. Now autologin started.");
+        await updateRoles(userUUId);
         res.clearCookie("connect.sid");
         req.session.user = null;
         // tslint:disable-next-line: no-any
